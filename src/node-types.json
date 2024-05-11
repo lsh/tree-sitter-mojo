@@ -1787,7 +1787,7 @@
         ]
       },
       "name": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
@@ -1797,7 +1797,7 @@
         ]
       },
       "parameters": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
@@ -1817,7 +1817,7 @@
         ]
       },
       "type_parameters": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
           {
@@ -3552,6 +3552,10 @@
     "named": false
   },
   {
+    "type": "borrowed",
+    "named": false
+  },
+  {
     "type": "break",
     "named": false
   },
@@ -3565,8 +3569,7 @@
   },
   {
     "type": "comment",
-    "named": true,
-    "extra": true
+    "named": true
   },
   {
     "type": "continue",
@@ -3621,6 +3624,10 @@
     "named": true
   },
   {
+    "type": "fn",
+    "named": false
+  },
+  {
     "type": "for",
     "named": false
   },
@@ -3649,6 +3656,10 @@
     "named": false
   },
   {
+    "type": "inout",
+    "named": false
+  },
+  {
     "type": "integer",
     "named": true
   },
@@ -3662,8 +3673,7 @@
   },
   {
     "type": "line_continuation",
-    "named": true,
-    "extra": true
+    "named": true
   },
   {
     "type": "match",
@@ -3686,6 +3696,10 @@
     "named": false
   },
   {
+    "type": "owned",
+    "named": false
+  },
+  {
     "type": "pass",
     "named": false
   },
@@ -3695,6 +3709,10 @@
   },
   {
     "type": "raise",
+    "named": false
+  },
+  {
+    "type": "raises",
     "named": false
   },
   {
@@ -3724,6 +3742,10 @@
   {
     "type": "type_conversion",
     "named": true
+  },
+  {
+    "type": "var",
+    "named": false
   },
   {
     "type": "while",

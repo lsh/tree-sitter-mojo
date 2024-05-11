@@ -1,5 +1,5 @@
 {
-  "name": "tree-sitter-python",
+  "name": "tree-sitter-mojo",
   "version": "0.25.0",
   "description": "Python grammar for tree-sitter",
   "repository": "https://github.com/tree-sitter/tree-sitter-python",
@@ -56,5 +56,17 @@
     "prestart": "tree-sitter build --wasm",
     "start": "tree-sitter playground",
     "test": "node --test bindings/node/*_test.js"
-  }
+  },
+  "tree-sitter": [
+     {
+       "scope": "source.python",
+       "file-types": [
+        "mojo",
+        "🔥"
+       ],
+      "injection-regex": "mojo",
+       "highlights": "queries/highlights.scm",
+       "tags": "queries/tags.scm"
+     }
+   ]
 }
