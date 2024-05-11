@@ -133,6 +133,7 @@
   "raise"
   "raises"
   "return"
+  "struct"
   "try"
   "var"
   "while"
