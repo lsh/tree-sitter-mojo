@@ -104,6 +104,7 @@
 
 [
   "as"
+  "alias"
   "assert"
   "async"
   "await"
