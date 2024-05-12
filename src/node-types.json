@@ -855,6 +855,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "parameter_list",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2513,6 +2523,37 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "parameter_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "dictionary_splat",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "keyword_argument",
+          "named": true
+        },
+        {
+          "type": "list_splat",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
+          "named": true
+        }
+      ]
     }
   },
   {
