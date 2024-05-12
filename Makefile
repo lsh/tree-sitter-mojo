@@ -2,8 +2,8 @@ ifeq ($(OS),Windows_NT)
 $(error Windows is not supported)
 endif
 
-LANGUAGE_NAME := tree-sitter-python
-HOMEPAGE_URL := https://github.com/tree-sitter/tree-sitter-python
+LANGUAGE_NAME := tree-sitter-mojo
+HOMEPAGE_URL := https://github.com/tree-sitter/tree-sitter-mojo
 VERSION := 0.25.0
 
 # repository

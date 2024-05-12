@@ -2,7 +2,7 @@
   "name": "tree-sitter-mojo",
   "version": "0.25.0",
   "description": "Python grammar for tree-sitter",
-  "repository": "https://github.com/tree-sitter/tree-sitter-python",
+  "repository": "github:lsh/tree-sitter-mojo",
   "license": "MIT",
   "author": {
     "name": "Max Brunsfeld",
@@ -20,7 +20,7 @@
     "incremental",
     "parsing",
     "tree-sitter",
-    "python"
+    "mojo"
   ],
   "files": [
     "grammar.js",
@@ -58,15 +58,15 @@
     "test": "node --test bindings/node/*_test.js"
   },
   "tree-sitter": [
-     {
-       "scope": "source.python",
-       "file-types": [
+    {
+      "scope": "source.mojo",
+      "file-types": [
         "mojo",
         "🔥"
-       ],
+      ],
       "injection-regex": "mojo",
-       "highlights": "queries/highlights.scm",
-       "tags": "queries/tags.scm"
-     }
-   ]
+      "highlights": "queries/highlights.scm",
+      "tags": "queries/tags.scm"
+    }
+  ]
 }
