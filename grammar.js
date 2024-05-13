@@ -862,7 +862,7 @@ module.exports = grammar({
     ),
 
     assignment: $ => seq(
-      choice('var', 'alias'),
+      optional(choice('var', 'alias')),
       field('left', $._left_hand_side),
       choice(
         seq('=', field('right', $._right_hand_side)),
@@ -922,7 +922,10 @@ module.exports = grammar({
     attribute: $ => prec(PREC.call, seq(
       field('object', $.primary_expression),
       '.',
-      field('attribute', $.identifier),
+      choice(
+        field('attribute', $.identifier),
+        seq($.string_start, $.string_content, $.string_end),
+      ),
     )),
 
     subscript: $ => prec(PREC.call, seq(
