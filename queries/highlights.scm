@@ -156,3 +156,17 @@
   "match"
   "case"
 ] @keyword
+
+(mlir_type "!" @punctuation.special (#set! "priority" 110))
+(mlir_type ">" @punctuation.special (#set! "priority" 110))
+(mlir_type "<" @punctuation.special (#set! "priority" 110))
+(mlir_type "->" @punctuation.special (#set! "priority" 110))
+(mlir_type "(" @punctuation.special (#set! "priority" 110))
+(mlir_type ")" @punctuation.special (#set! "priority" 110))
+(mlir_type "." @punctuation.special (#set! "priority" 110))
+(mlir_type ":" @punctuation.special (#set! "priority" 110))
+(mlir_type "+" @punctuation.special (#set! "priority" 110))
+(mlir_type "-" @punctuation.special (#set! "priority" 110))
+(mlir_type "*" @punctuation.special (#set! "priority" 110))
+(mlir_type "," @punctuation (#set! "priority" 110))
+(mlir_type) @type
