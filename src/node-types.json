@@ -316,6 +316,10 @@
         "named": true
       },
       {
+        "type": "mlir_type",
+        "named": true
+      },
+      {
         "type": "none",
         "named": true
       },
@@ -2436,6 +2440,25 @@
     }
   },
   {
+    "type": "mlir_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "module",
     "named": true,
     "root": true,
@@ -3033,7 +3056,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "constrained_type",
@@ -3411,6 +3434,10 @@
     }
   },
   {
+    "type": "!",
+    "named": false
+  },
+  {
     "type": "!=",
     "named": false
   },
@@ -3480,6 +3507,10 @@
   },
   {
     "type": ".",
+    "named": false
+  },
+  {
+    "type": ".`",
     "named": false
   },
   {
@@ -3588,6 +3619,14 @@
   },
   {
     "type": "__future__",
+    "named": false
+  },
+  {
+    "type": "__mlir_type",
+    "named": false
+  },
+  {
+    "type": "`",
     "named": false
   },
   {
