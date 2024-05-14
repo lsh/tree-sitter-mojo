@@ -1001,7 +1001,7 @@ module.exports = grammar({
           '[',
           commaSep1(
             choice(
-              seq('`', $._mlir_type, optional(choice('<', '>')), '`'),
+              seq('`', $._mlir_type, '`'),
               alias($.identifier, $.type),
               seq('`', choice('<', '>', ','), '`')
             )
@@ -1015,9 +1015,17 @@ module.exports = grammar({
     _mlir_type: $ => prec.left(
       seq(
         optional('>'),
-        choice($._mlir_type_def,
-          seq('(', repeat(seq($._mlir_type_def, optional(','))), ')', '->', $._mlir_type_def)
-        )
+        choice(
+          $._mlir_type_def,
+          seq(
+            '(',
+            repeat(seq($._mlir_type_def, optional(','))),
+            ')',
+            '->',
+            $._mlir_type_def
+          )
+        ),
+        optional(choice(seq('<', $._mlir_type, '>'), '<')),
       )
     ),
     _mlir_type_def: $=> prec.left(seq(
@@ -1025,7 +1033,6 @@ module.exports = grammar({
         seq('!', $.identifier, '.', alias($.identifier, $.type)),
         alias($.identifier, $.type),
       ),
-      optional(seq('<', $._mlir_type, '>')),
     )),
 
     list: $ => seq(
