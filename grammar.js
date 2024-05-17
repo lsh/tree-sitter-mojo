@@ -414,7 +414,7 @@ module.exports = grammar({
       field('parameters', $.parameters),
       optional(
         seq(
-          optional('raises'),
+          optional(sep1(choice('raises', 'capturing', 'escaping'), ' ')),
           seq(
             '->',
             field('return_type', $.type),
@@ -513,7 +513,7 @@ module.exports = grammar({
       '[',
       optional(commaSep1(
         choice(
-          $.expression,
+          seq(optional('inferred'), $.expression),
           $.list_splat,
           $.dictionary_splat,
           alias($.parenthesized_list_splat, $.parenthesized_expression),
