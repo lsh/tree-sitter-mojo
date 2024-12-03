@@ -1,5 +1,5 @@
-#ifndef TREE_SITTER_PYTHON_H_
-#define TREE_SITTER_PYTHON_H_
+#ifndef TREE_SITTER_MOJO_H_
+#define TREE_SITTER_MOJO_H_
 
 typedef struct TSLanguage TSLanguage;
 
@@ -7,10 +7,10 @@ typedef struct TSLanguage TSLanguage;
 extern "C" {
 #endif
 
-const TSLanguage *tree_sitter_python(void);
+extern const TSLanguage *tree_sitter_mojo(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // TREE_SITTER_PYTHON_H_
+#endif // TREE_SITTER_MOJO_H_

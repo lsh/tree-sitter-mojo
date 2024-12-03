@@ -58,6 +58,10 @@
         "named": true
       },
       {
+        "type": "comptime_assert_statement",
+        "named": true
+      },
+      {
         "type": "continue_statement",
         "named": true
       },
@@ -555,8 +559,44 @@
         "required": false,
         "types": [
           {
+            "type": "comptime",
+            "named": false
+          },
+          {
+            "type": "deinit",
+            "named": false
+          },
+          {
             "type": "identifier",
             "named": true
+          },
+          {
+            "type": "mut",
+            "named": false
+          },
+          {
+            "type": "out",
+            "named": false
+          },
+          {
+            "type": "read",
+            "named": false
+          },
+          {
+            "type": "ref",
+            "named": false
+          },
+          {
+            "type": "unified",
+            "named": false
+          },
+          {
+            "type": "var",
+            "named": false
+          },
+          {
+            "type": "where",
+            "named": false
           }
         ]
       },
@@ -1193,6 +1233,21 @@
     }
   },
   {
+    "type": "comptime_assert_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "concatenated_string",
     "named": true,
     "fields": {},
@@ -1256,6 +1311,10 @@
           },
           {
             "type": "function_definition",
+            "named": true
+          },
+          {
+            "type": "trait_definition",
             "named": true
           }
         ]
@@ -1583,34 +1642,36 @@
   {
     "type": "except_clause",
     "named": true,
-    "fields": {
-      "alias": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "expression",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "expression",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "except_group_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "expression",
           "named": true
         }
       ]
@@ -1861,6 +1922,16 @@
           }
         ]
       },
+      "raises_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      },
       "return_type": {
         "multiple": false,
         "required": false,
@@ -1883,11 +1954,19 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "unified_clause",
+          "named": true
+        },
+        {
+          "type": "where_clause",
           "named": true
         }
       ]
@@ -3067,7 +3146,7 @@
     },
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "else_clause",
@@ -3075,6 +3154,10 @@
         },
         {
           "type": "except_clause",
+          "named": true
+        },
+        {
+          "type": "except_group_clause",
           "named": true
         },
         {
@@ -3217,6 +3300,10 @@
         {
           "type": "type",
           "named": true
+        },
+        {
+          "type": "where_clause",
+          "named": true
         }
       ]
     }
@@ -3330,6 +3417,25 @@
     }
   },
   {
+    "type": "unified_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "argument_convention",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "union_pattern",
     "named": true,
     "fields": {},
@@ -3410,6 +3516,21 @@
       "types": [
         {
           "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "where_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
           "named": true
         }
       ]
@@ -3531,10 +3652,6 @@
         }
       ]
     }
-  },
-  {
-    "type": " ",
-    "named": false
   },
   {
     "type": "!",
@@ -3721,6 +3838,10 @@
     "named": false
   },
   {
+    "type": "__comptime_assert",
+    "named": false
+  },
+  {
     "type": "__future__",
     "named": false
   },
@@ -3757,10 +3878,6 @@
     "named": false
   },
   {
-    "type": "borrowed",
-    "named": false
-  },
-  {
     "type": "break",
     "named": false
   },
@@ -3782,11 +3899,19 @@
     "extra": true
   },
   {
+    "type": "comptime",
+    "named": false
+  },
+  {
     "type": "continue",
     "named": false
   },
   {
     "type": "def",
+    "named": false
+  },
+  {
+    "type": "deinit",
     "named": false
   },
   {
@@ -3819,6 +3944,10 @@
   },
   {
     "type": "except",
+    "named": false
+  },
+  {
+    "type": "except*",
     "named": false
   },
   {
@@ -3874,10 +4003,6 @@
     "named": false
   },
   {
-    "type": "inout",
-    "named": false
-  },
-  {
     "type": "integer",
     "named": true
   },
@@ -3899,6 +4024,10 @@
     "named": false
   },
   {
+    "type": "mut",
+    "named": false
+  },
+  {
     "type": "none",
     "named": true
   },
@@ -3915,7 +4044,7 @@
     "named": false
   },
   {
-    "type": "owned",
+    "type": "out",
     "named": false
   },
   {
@@ -3932,6 +4061,10 @@
   },
   {
     "type": "raises",
+    "named": false
+  },
+  {
+    "type": "read",
     "named": false
   },
   {
@@ -3979,7 +4112,15 @@
     "named": true
   },
   {
+    "type": "unified",
+    "named": false
+  },
+  {
     "type": "var",
+    "named": false
+  },
+  {
+    "type": "where",
     "named": false
   },
   {

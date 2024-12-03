@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tree-sitter-mojo"
-description = "Python grammar for tree-sitter"
+description = "Mojo grammar for tree-sitter"
 version = "0.25.0"
-keywords = ["parsing", "incremental", "mojo"]
+keywords = ["parsing", "incremental", "mojo", "tree-sitter"]
 classifiers = [
   "Intended Audience :: Developers",
   "Topic :: Software Development :: Compilers",

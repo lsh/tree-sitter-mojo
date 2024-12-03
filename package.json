@@ -1,7 +1,7 @@
 {
   "name": "tree-sitter-mojo",
   "version": "0.25.0",
-  "description": "Python grammar for tree-sitter",
+  "description": "Mojo grammar for tree-sitter",
   "repository": "github:lsh/tree-sitter-mojo",
   "license": "MIT",
   "author": {
@@ -52,6 +52,7 @@
   },
   "scripts": {
     "install": "node-gyp-build",
+    "prebuildify": "prebuildify --napi --strip",
     "lint": "eslint grammar.js",
     "prestart": "tree-sitter build --wasm",
     "start": "tree-sitter playground",

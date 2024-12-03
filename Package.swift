@@ -10,6 +10,7 @@ if FileManager.default.fileExists(atPath: "src/scanner.c") {
 
 let package = Package(
     name: "TreeSitterMojo",
+    platforms: [.macOS(.v10_13), .iOS(.v11)],
     products: [
         .library(name: "TreeSitterMojo", targets: ["TreeSitterMojo"]),
     ],
