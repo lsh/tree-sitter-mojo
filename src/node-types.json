@@ -3899,6 +3899,10 @@
     "named": false
   },
   {
+    "type": "out",
+    "named": false
+  },
+  {
     "type": "owned",
     "named": false
   },
