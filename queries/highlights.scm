@@ -142,12 +142,14 @@
   "import"
   "inout"
   "lambda"
+  "mut"
   "nonlocal"
   "owned"
   "pass"
   "print"
   "raise"
   "raises"
+  "read"
   "ref"
   "return"
   "struct"
@@ -173,5 +175,3 @@
 (mlir_type "-" @punctuation.special (#set! "priority" 110))
 (mlir_type "*" @punctuation.special (#set! "priority" 110))
 (mlir_type "," @punctuation (#set! "priority" 110))
-(mlir_type) @type
-; (argument_convention) @keyword
