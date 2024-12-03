@@ -3572,6 +3572,10 @@
         },
         {
           "type": "STRING",
+          "value": "out"
+        },
+        {
+          "type": "STRING",
           "value": "read"
         },
         {
