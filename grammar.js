@@ -1060,7 +1060,7 @@ module.exports = grammar({
 
     assignment: ($) =>
       seq(
-        optional(choice("var", "alias")),
+        optional(choice("var", "alias", "__disable_del")),
         field("left", $._left_hand_side),
         choice(
           seq("=", field("right", $._right_hand_side)),

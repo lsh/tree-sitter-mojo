@@ -3842,6 +3842,10 @@
     "named": false
   },
   {
+    "type": "__disable_del",
+    "named": false
+  },
+  {
     "type": "__future__",
     "named": false
   },

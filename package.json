@@ -52,7 +52,6 @@
   },
   "scripts": {
     "install": "node-gyp-build",
-    "prebuildify": "prebuildify --napi --strip",
     "lint": "eslint grammar.js",
     "prestart": "tree-sitter build --wasm",
     "start": "tree-sitter playground",
