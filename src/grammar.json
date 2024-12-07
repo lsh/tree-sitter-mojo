@@ -3572,6 +3572,10 @@
         },
         {
           "type": "STRING",
+          "value": "out"
+        },
+        {
+          "type": "STRING",
           "value": "read"
         },
         {
@@ -4783,6 +4787,10 @@
                 {
                   "type": "STRING",
                   "value": "alias"
+                },
+                {
+                  "type": "STRING",
+                  "value": "__disable_del"
                 }
               ]
             },

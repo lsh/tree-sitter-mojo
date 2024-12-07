@@ -114,6 +114,7 @@
 ] @operator
 
 [
+  "__disable_del"
   "as"
   "alias"
   "assert"
@@ -143,6 +144,7 @@
   "mut"
   "nonlocal"
   "owned"
+  "out"
   "pass"
   "print"
   "raise"

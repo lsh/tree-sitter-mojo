@@ -649,7 +649,15 @@ module.exports = grammar({
 
     _ref_convention: ($) => seq("ref", "[", $.expression, "]"),
     argument_convention: ($) =>
-      choice("borrowed", "inout", "owned", "read", "mut", $._ref_convention),
+      choice(
+        "borrowed",
+        "inout",
+        "owned",
+        "out",
+        "read",
+        "mut",
+        $._ref_convention,
+      ),
 
     self_parameter: ($) => seq(optional($.argument_convention), SELF),
 
@@ -875,7 +883,7 @@ module.exports = grammar({
 
     assignment: ($) =>
       seq(
-        optional(choice("var", "alias")),
+        optional(choice("var", "alias", "__disable_del")),
         field("left", $._left_hand_side),
         choice(
           seq("=", field("right", $._right_hand_side)),
