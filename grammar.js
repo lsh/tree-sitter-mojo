@@ -186,7 +186,7 @@ module.exports = grammar({
       ),
 
     aliased_import: ($) =>
-      seq(field("name", $.dotted_name), "as", field("alias", $.identifier)),
+      seq(field("name", $.dotted_name), "as", field("comptime", $.identifier)),
 
     wildcard_import: (_) => "*",
 
@@ -890,7 +890,7 @@ module.exports = grammar({
         seq(
           $.expression,
           "as",
-          field("alias", alias($.expression, $.as_pattern_target)),
+          field("comptime", alias($.expression, $.as_pattern_target)),
         ),
       ),
 
@@ -1060,7 +1060,7 @@ module.exports = grammar({
 
     assignment: ($) =>
       seq(
-        optional(choice("var", "alias", "__disable_del")),
+        optional(choice("var", "comptime", "__disable_del")),
         field("left", $._left_hand_side),
         choice(
           seq("=", field("right", $._right_hand_side)),

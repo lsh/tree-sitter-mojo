@@ -371,7 +371,7 @@
         },
         {
           "type": "FIELD",
-          "name": "alias",
+          "name": "comptime",
           "content": {
             "type": "SYMBOL",
             "name": "identifier"
@@ -4135,7 +4135,7 @@
           },
           {
             "type": "FIELD",
-            "name": "alias",
+            "name": "comptime",
             "content": {
               "type": "ALIAS",
               "content": {
@@ -5106,7 +5106,7 @@
                 },
                 {
                   "type": "STRING",
-                  "value": "alias"
+                  "value": "comptime"
                 },
                 {
                   "type": "STRING",

@@ -373,7 +373,7 @@
     "type": "aliased_import",
     "named": true,
     "fields": {
-      "alias": {
+      "comptime": {
         "multiple": false,
         "required": true,
         "types": [
@@ -445,7 +445,7 @@
     "type": "as_pattern",
     "named": true,
     "fields": {
-      "alias": {
+      "comptime": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3855,10 +3855,6 @@
   },
   {
     "type": "`",
-    "named": false
-  },
-  {
-    "type": "alias",
     "named": false
   },
   {
