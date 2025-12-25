@@ -4025,6 +4025,18 @@
         "type": "SEQ",
         "members": [
           {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "argument_convention"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
             "type": "FIELD",
             "name": "name",
             "content": {
@@ -5110,7 +5122,7 @@
                 },
                 {
                   "type": "STRING",
-                  "value": "__disable_del"
+                  "value": "ref"
                 }
               ]
             },
@@ -6693,6 +6705,18 @@
           {
             "type": "STRING",
             "value": "for"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "argument_convention"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
           {
             "type": "FIELD",

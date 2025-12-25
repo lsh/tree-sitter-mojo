@@ -494,19 +494,19 @@ finally:
     body: (block
       (identifier))
     (except_clause
-      value: (identifier)
+      (identifier)
       (block
         (identifier)))
     (except_clause
-      value: (as_pattern
+      (as_pattern
         (identifier)
-        alias: (as_pattern_target
+        comptime: (as_pattern_target
           (identifier)))
       (block
         (identifier)))
     (except_clause
-      value: (identifier)
-      value: (identifier)
+      (identifier)
+      (identifier)
       (block
         (identifier)))
     (except_clause
@@ -516,7 +516,7 @@ finally:
     body: (block
       (identifier))
     (except_clause
-      value: (identifier)
+      (identifier)
       (block
         (identifier)
         (identifier)))
@@ -529,14 +529,14 @@ finally:
   (try_statement
     body: (block
       (identifier))
-    (except_clause
-      value: (identifier)
+    (except_group_clause
+      (identifier)
       (block
         (identifier)))
-    (except_clause
-      value: (as_pattern
+    (except_group_clause
+      (as_pattern
         (identifier)
-        alias: (as_pattern_target
+        comptime: (as_pattern_target
           (identifier)))
       (block
         (identifier)))
@@ -883,10 +883,11 @@ fn e(**list: String):
     name: (identifier)
     type_parameters: (type_parameter
       (type
-      (constrained_type
-        (type
-          (identifier))
-        (type (identifier)))))
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (identifier)))))
     parameters: (parameters
       (typed_parameter
         (identifier)
@@ -899,7 +900,7 @@ fn e(**list: String):
         (call
           function: (identifier)
           arguments: (argument_list
-          (identifier))))))
+            (identifier))))))
   (function_definition
     name: (identifier)
     parameters: (parameters
@@ -1153,7 +1154,6 @@ trait D:
     (identifier)
     (block
       (pass_statement)))
-
   (trait_definition
     (identifier)
     (block
@@ -1164,7 +1164,6 @@ trait D:
         (block
           (expression_statement
             (ellipsis))))))
-
   (trait_definition
     (identifier)
     (block
@@ -1173,8 +1172,7 @@ trait D:
         (parameters
           (self_parameter))
         (block
-          (pass_statement)))            
-
+          (pass_statement)))
       (function_definition
         (identifier)
         (parameters
@@ -1185,7 +1183,6 @@ trait D:
               (identifier))))
         (block
           (pass_statement)))))
-
   (trait_definition
     (identifier)
     (block
@@ -1199,8 +1196,7 @@ trait D:
               (identifier)))
           (positional_separator))
         (block
-          (pass_statement)))            
-
+          (pass_statement)))
       (function_definition
         (identifier)
         (parameters
@@ -1243,7 +1239,6 @@ trait I(J, K, L):
       (identifier))
     (block
       (pass_statement)))
-
   (trait_definition
     (identifier)
     (trait_list
@@ -1256,7 +1251,6 @@ trait I(J, K, L):
         (block
           (expression_statement
             (ellipsis))))))
-
   (trait_definition
     (identifier)
     (trait_list
@@ -1268,8 +1262,7 @@ trait I(J, K, L):
         (parameters
           (self_parameter))
         (block
-          (pass_statement)))            
-
+          (pass_statement)))
       (function_definition
         (identifier)
         (parameters
@@ -1280,7 +1273,6 @@ trait I(J, K, L):
               (identifier))))
         (block
           (pass_statement)))))
-
   (trait_definition
     (identifier)
     (trait_list
@@ -1298,8 +1290,7 @@ trait I(J, K, L):
               (identifier)))
           (positional_separator))
         (block
-          (pass_statement)))            
-
+          (pass_statement)))
       (function_definition
         (identifier)
         (parameters
@@ -1800,3 +1791,962 @@ def more_generic[T, *Ts, **P]():
                               (identifier)))))))))))))
       (return_statement
         (identifier)))))
+
+================================================================================
+Assignment with var modifier
+================================================================================
+
+var x = 5
+var y = "hello"
+var z = [1, 2, 3]
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (integer))
+  (assignment
+    (identifier)
+    (string
+      (string_start)
+      (string_content)
+      (string_end)))
+  (assignment
+    (identifier)
+    (list
+      (integer)
+      (integer)
+      (integer))))
+
+================================================================================
+Assignment with comptime modifier
+================================================================================
+
+comptime x = 5
+comptime y = "hello"
+comptime z = True
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (integer))
+  (assignment
+    (identifier)
+    (string
+      (string_start)
+      (string_content)
+      (string_end)))
+  (assignment
+    (identifier)
+    (true)))
+
+================================================================================
+Assignment with ref modifier
+================================================================================
+
+ref x = y
+ref a = b.c
+ref item = list[0]
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (identifier))
+  (assignment
+    (identifier)
+    (attribute
+      (identifier)
+      (identifier)))
+  (assignment
+    (identifier)
+    (subscript
+      (identifier)
+      (integer))))
+
+================================================================================
+Assignment with var and type annotation
+================================================================================
+
+var x: Int
+var y: String
+var z: List[Int]
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (type
+      (identifier)))
+  (assignment
+    (identifier)
+    (type
+      (identifier)))
+  (assignment
+    (identifier)
+    (type
+      (generic_type
+        (identifier)
+        (type_parameter
+          (type
+            (identifier)))))))
+
+================================================================================
+Assignment with comptime and type annotation
+================================================================================
+
+comptime x: Int
+comptime y: String
+comptime z: Bool
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (type
+      (identifier)))
+  (assignment
+    (identifier)
+    (type
+      (identifier)))
+  (assignment
+    (identifier)
+    (type
+      (identifier))))
+
+================================================================================
+Assignment with ref and type annotation
+================================================================================
+
+ref x: Int
+ref y: String
+ref z: MyType
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (type
+      (identifier)))
+  (assignment
+    (identifier)
+    (type
+      (identifier)))
+  (assignment
+    (identifier)
+    (type
+      (identifier))))
+
+================================================================================
+Assignment with var, type, and value
+================================================================================
+
+var x: Int = 5
+var y: String = "hello"
+var z: Float = 3.14
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (type
+      (identifier))
+    (integer))
+  (assignment
+    (identifier)
+    (type
+      (identifier))
+    (string
+      (string_start)
+      (string_content)
+      (string_end)))
+  (assignment
+    (identifier)
+    (type
+      (identifier))
+    (float)))
+
+================================================================================
+Assignment with comptime, type, and value
+================================================================================
+
+comptime x: Int = 5
+comptime y: String = "world"
+comptime z: Bool = False
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (type
+      (identifier))
+    (integer))
+  (assignment
+    (identifier)
+    (type
+      (identifier))
+    (string
+      (string_start)
+      (string_content)
+      (string_end)))
+  (assignment
+    (identifier)
+    (type
+      (identifier))
+    (false)))
+
+================================================================================
+Assignment with ref, type, and value
+================================================================================
+
+ref x: Int = other_value
+ref y: String = obj.field
+ref z: MyType = container[key]
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (type
+      (identifier))
+    (identifier))
+  (assignment
+    (identifier)
+    (type
+      (identifier))
+    (attribute
+      (identifier)
+      (identifier)))
+  (assignment
+    (identifier)
+    (type
+      (identifier))
+    (subscript
+      (identifier)
+      (identifier))))
+
+================================================================================
+Multiple assignments without modifiers
+================================================================================
+
+x = 5
+y = 10
+z = x + y
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (integer))
+  (assignment
+    (identifier)
+    (integer))
+  (assignment
+    (identifier)
+    (binary_operator
+      (identifier)
+      (identifier))))
+
+================================================================================
+Function with read argument convention
+================================================================================
+
+fn process(read x: Int):
+    print(x)
+
+fn compute(read a: String, read b: String):
+    return a + b
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (call
+        function: (identifier)
+        arguments: (argument_list
+          (identifier)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier)))
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (return_statement
+        (binary_operator
+          left: (identifier)
+          right: (identifier))))))
+
+================================================================================
+Function with read argument convention
+================================================================================
+
+fn process(read x: Int):
+    print(x)
+
+fn compute(read a: String, read b: String):
+    return a + b
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (call
+        function: (identifier)
+        arguments: (argument_list
+          (identifier)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier)))
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (return_statement
+        (binary_operator
+          left: (identifier)
+          right: (identifier))))))
+
+================================================================================
+Function with mut argument convention
+================================================================================
+
+fn modify(mut x: Int):
+    x = x + 1
+
+fn update(mut data: List[Int]):
+    data.append(5)
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (assignment
+        left: (identifier)
+        right: (binary_operator
+          left: (identifier)
+          right: (integer)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (generic_type
+            (identifier)
+            (type_parameter
+              (type
+                (identifier)))))))
+    body: (block
+      (call
+        function: (attribute
+          object: (identifier)
+          attribute: (identifier))
+        arguments: (argument_list
+          (integer))))))
+
+================================================================================
+Function with var argument convention
+================================================================================
+
+fn process(var x: Int):
+    x = 10
+
+fn compute(var a: String, var b: Int):
+    a = "modified"
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (assignment
+        left: (identifier)
+        right: (integer))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier)))
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (assignment
+        left: (identifier)
+        right: (string
+          (string_start)
+          (string_content)
+          (string_end))))))
+
+================================================================================
+Function with out argument convention
+================================================================================
+
+fn init_value(out x: Int):
+    x = 42
+
+fn get_values(out a: String, out b: Int):
+    a = "result"
+    b = 100
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (assignment
+        left: (identifier)
+        right: (integer))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier)))
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (assignment
+        left: (identifier)
+        right: (string
+          (string_start)
+          (string_content)
+          (string_end)))
+      (assignment
+        left: (identifier)
+        right: (integer)))))
+
+================================================================================
+Function with deinit argument convention
+================================================================================
+
+fn cleanup(deinit x: Resource):
+    pass
+
+fn destroy(deinit a: Object, deinit b: Object):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (pass_statement)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier)))
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Function with ref argument convention
+================================================================================
+
+fn process(ref[lifetime] x: Int):
+    x = x + 1
+
+fn compute(ref[a] data: String):
+    data = data + "!"
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention
+          (identifier))
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (assignment
+        left: (identifier)
+        right: (binary_operator
+          left: (identifier)
+          right: (integer)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention
+          (identifier))
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (assignment
+        left: (identifier)
+        right: (binary_operator
+          left: (identifier)
+          right: (string
+            (string_start)
+            (string_content)
+            (string_end)))))))
+
+================================================================================
+Function with mixed argument conventions
+================================================================================
+
+fn process(read a: Int, mut b: Int, var c: String):
+    b = b + a
+    c = "result"
+
+fn complex(read x: Int, out y: Int, deinit z: Resource):
+    y = x * 2
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier)))
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier)))
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (assignment
+        left: (identifier)
+        right: (binary_operator
+          left: (identifier)
+          right: (identifier)))
+      (assignment
+        left: (identifier)
+        right: (string
+          (string_start)
+          (string_content)
+          (string_end)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier)))
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier)))
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (assignment
+        left: (identifier)
+        right: (binary_operator
+          left: (identifier)
+          right: (integer))))))
+
+================================================================================
+Method with self and argument conventions
+================================================================================
+
+struct MyStruct:
+    fn method(read self, mut x: Int):
+        x = x + 1
+    
+    fn update(mut self):
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    name: (identifier)
+    body: (block
+      (function_definition
+        name: (identifier)
+        parameters: (parameters
+          (self_parameter
+            (argument_convention))
+          (typed_parameter
+            (argument_convention)
+            (identifier)
+            type: (type
+              (identifier))))
+        body: (block
+          (assignment
+            left: (identifier)
+            right: (binary_operator
+              left: (identifier)
+              right: (integer)))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameters
+          (self_parameter
+            (argument_convention)))
+        body: (block
+          (pass_statement))))))
+
+================================================================================
+Function with default values and argument conventions
+================================================================================
+
+fn process(read x: Int = 5, mut y: String = "default"):
+    y = "modified"
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_default_parameter
+        (argument_convention)
+        name: (identifier)
+        type: (type
+          (identifier))
+        value: (integer))
+      (typed_default_parameter
+        (argument_convention)
+        name: (identifier)
+        type: (type
+          (identifier))
+        value: (string
+          (string_start)
+          (string_content)
+          (string_end))))
+    body: (block
+      (assignment
+        left: (identifier)
+        right: (string
+          (string_start)
+          (string_content)
+          (string_end))))))
+================================================================================
+Function with untyped raises
+================================================================================
+
+fn may_fail() raises -> Int:
+    return 1
+
+def can_error() raises -> None:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (integer))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    return_type: (type
+      (none))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Function with typed raises
+================================================================================
+
+fn may_fail() raises Error -> Int:
+    return 1
+
+fn can_throw() raises ValueError -> String:
+    return "test"
+
+fn generic_error() raises MyError[T] -> None:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    raises_type: (type
+      (identifier))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (integer))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    raises_type: (type
+      (identifier))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (string
+          (string_start)
+          (string_content)
+          (string_end)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    raises_type: (type
+      (generic_type
+        (identifier)
+        (type_parameter
+          (type
+            (identifier)))))
+    return_type: (type
+      (none))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Function with capturing and raises
+================================================================================
+
+fn with_capturing() capturing raises -> Int:
+    return 1
+
+fn capturing_typed() capturing raises Error -> None:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (integer))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    raises_type: (type
+      (identifier))
+    return_type: (type
+      (none))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Function with escaping and raises
+================================================================================
+
+fn with_escaping() escaping raises -> Int:
+    return 1
+
+fn escaping_typed() escaping raises IOError -> None:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (integer))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    raises_type: (type
+      (identifier))
+    return_type: (type
+      (none))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Function with capturing escaping raises
+================================================================================
+
+fn complex() capturing escaping raises -> Int:
+    return 1
+
+fn complex_typed() capturing escaping raises CustomError -> None:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (integer))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    raises_type: (type
+      (identifier))
+    return_type: (type
+      (none))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Function with parameters and typed raises
+================================================================================
+
+fn process(x: Int, y: String) raises ProcessError -> Bool:
+    return True
+
+fn convert(mut data: List[Int]) raises ConversionError -> String:
+    return "result"
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (identifier)
+        type: (type
+          (identifier)))
+      (typed_parameter
+        (identifier)
+        type: (type
+          (identifier))))
+    raises_type: (type
+      (identifier))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (true))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (generic_type
+            (identifier)
+            (type_parameter
+              (type
+                (identifier)))))))
+    raises_type: (type
+      (identifier))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))))

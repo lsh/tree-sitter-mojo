@@ -999,7 +999,7 @@ async with a as b:
       (with_item
         value: (as_pattern
           (identifier)
-          alias: (as_pattern_target
+          comptime: (as_pattern_target
             (identifier)))))
     body: (block
       (for_statement
@@ -1115,9 +1115,7 @@ y: type[int] = int
   (assignment
     (identifier)
     (type
-      (generic_type
+      (subscript
         (identifier)
-        (type_parameter
-          (type
-            (identifier)))))
+        (identifier)))
     (identifier)))

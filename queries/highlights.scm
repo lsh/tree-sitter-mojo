@@ -116,9 +116,8 @@
 ] @operator
 
 [
-  "__disable_del"
   "as"
-  "alias"
+  "comptime"
   "assert"
   "async"
   "await"
@@ -129,6 +128,7 @@
   "continue"
   "def"
   "del"
+  "deinit"
   "elif"
   "else"
   "escaping"

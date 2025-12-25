@@ -672,6 +672,7 @@ module.exports = grammar({
 
     with_item: ($) => prec.dynamic(1, seq(field("value", $.expression))),
 
+
     decorator: ($) => seq("@", $.expression, $._newline),
 
     _suite: ($) =>
@@ -863,6 +864,7 @@ module.exports = grammar({
       prec(
         PREC.typed_parameter,
         seq(
+          optional($.argument_convention),
           field("name", $.identifier),
           ":",
           field("type", $.type),
@@ -1313,6 +1315,7 @@ module.exports = grammar({
         seq(
           optional("async"),
           "for",
+          optional($.argument_convention),
           field("left", $._left_hand_side),
           "in",
           field("right", commaSep1($._expression_within_for_in_clause)),

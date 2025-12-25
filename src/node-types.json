@@ -1769,6 +1769,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "argument_convention",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3342,6 +3352,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "argument_convention",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3839,10 +3859,6 @@
   },
   {
     "type": "__comptime_assert",
-    "named": false
-  },
-  {
-    "type": "__disable_del",
     "named": false
   },
   {
