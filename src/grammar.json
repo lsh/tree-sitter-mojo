@@ -3799,6 +3799,22 @@
       "members": [
         {
           "type": "STRING",
+          "value": "borrowed"
+        },
+        {
+          "type": "STRING",
+          "value": "inout"
+        },
+        {
+          "type": "STRING",
+          "value": "owned"
+        },
+        {
+          "type": "STRING",
+          "value": "out"
+        },
+        {
+          "type": "STRING",
           "value": "read"
         },
         {
@@ -3808,10 +3824,6 @@
         {
           "type": "STRING",
           "value": "var"
-        },
-        {
-          "type": "STRING",
-          "value": "out"
         },
         {
           "type": "STRING",

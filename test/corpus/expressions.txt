@@ -1115,7 +1115,9 @@ y: type[int] = int
   (assignment
     (identifier)
     (type
-      (subscript
+      (generic_type
         (identifier)
-        (identifier)))
+        (type_parameter
+          (type
+            (identifier)))))
     (identifier)))
