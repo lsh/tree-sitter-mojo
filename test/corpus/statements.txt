@@ -2522,6 +2522,7 @@ fn process(read x: Int = 5, mut y: String = "default"):
           (string_start)
           (string_content)
           (string_end))))))
+
 ================================================================================
 Function with untyped raises
 ================================================================================
@@ -2750,3 +2751,258 @@ fn convert(mut data: List[Int]) raises ConversionError -> String:
           (string_start)
           (string_content)
           (string_end))))))
+
+================================================================================
+Function with unified clause - single variable
+================================================================================
+
+fn foo() unified {read a} -> String:
+    return "test"
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    (unified_clause
+      (argument_convention)
+      (identifier))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))))
+
+================================================================================
+Function with unified clause - multiple variables
+================================================================================
+
+fn foo() unified {read a, mut b, var c} -> None:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    (unified_clause
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier))
+    return_type: (type
+      (none))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Function with unified clause - trailing comma
+================================================================================
+
+fn bar() unified {mut x, read y,} -> Int:
+    return 0
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    (unified_clause
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (integer)))))
+
+================================================================================
+Function with unified clause and typed raises
+================================================================================
+
+fn foo() unified {read a, mut b} raises ValueError -> String:
+    return "test"
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    (unified_clause
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier))
+    raises_type: (type
+      (identifier))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))))
+
+================================================================================
+Function with unified clause and capturing raises
+================================================================================
+
+fn process() unified {mut data} capturing raises -> None:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    (unified_clause
+      (argument_convention)
+      (identifier))
+    return_type: (type
+      (none))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Function with unified clause, parameters, and effects
+================================================================================
+
+fn process(x: Int, y: String) unified {read config, mut state} escaping raises Error -> Bool:
+    return true
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (identifier)
+        type: (type
+          (identifier)))
+      (typed_parameter
+        (identifier)
+        type: (type
+          (identifier))))
+    (unified_clause
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier))
+    raises_type: (type
+      (identifier))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (identifier)))))
+
+================================================================================
+Function with unified clause - all convention types
+================================================================================
+
+fn test() unified {read a, mut b, var c, out d, deinit e} -> None:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    (unified_clause
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier))
+    return_type: (type
+      (none))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Async function with unified clause
+================================================================================
+
+async fn fetch() unified {mut client} raises IOError -> String:
+    return "data"
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    (unified_clause
+      (argument_convention)
+      (identifier))
+    raises_type: (type
+      (identifier))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))))
+
+================================================================================
+Function with unified clause - no return type
+================================================================================
+
+fn process() unified {mut state}:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    (unified_clause
+      (argument_convention)
+      (identifier))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Function with unified clause and ref convention
+================================================================================
+
+fn update() unified {ref[lifetime] data} -> None:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    (unified_clause
+      (argument_convention
+        (identifier))
+      (identifier))
+    return_type: (type
+      (none))
+    body: (block
+      (pass_statement))))

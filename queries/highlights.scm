@@ -161,6 +161,7 @@
   "yield"
   "match"
   "case"
+  "where"
 ] @keyword
 
 (mlir_type "!" @punctuation.special (#set! "priority" 110))
