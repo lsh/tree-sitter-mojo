@@ -724,10 +724,10 @@ Lists
       (identifier)))
   (list
     (attribute
-      (subscript
-        (list_splat
-          (identifier))
-        (identifier))
+      (list_splat
+        (subscript
+          (identifier)
+          (identifier)))
       (identifier)))
   (list
     (call

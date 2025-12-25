@@ -999,7 +999,7 @@ async with a as b:
       (with_item
         value: (as_pattern
           (identifier)
-          alias: (as_pattern_target
+          comptime: (as_pattern_target
             (identifier)))))
     body: (block
       (for_statement

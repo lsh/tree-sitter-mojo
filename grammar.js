@@ -186,7 +186,7 @@ module.exports = grammar({
       ),
 
     aliased_import: ($) =>
-      seq(field("name", $.dotted_name), "as", field("alias", $.identifier)),
+      seq(field("name", $.dotted_name), "as", field("comptime", $.identifier)),
 
     wildcard_import: (_) => "*",
 
@@ -672,6 +672,8 @@ module.exports = grammar({
 
     with_item: ($) => prec.dynamic(1, seq(field("value", $.expression))),
 
+
+
     decorator: ($) => seq("@", $.expression, $._newline),
 
     _suite: ($) =>
@@ -817,10 +819,13 @@ module.exports = grammar({
     _ref_convention: ($) => seq("ref", "[", $.expression, "]"),
     argument_convention: ($) =>
       choice(
+        "borrowed",
+        "inout",
+        "owned",
+        "out",
         "read",
         "mut",
         "var",
-        "out",
         "deinit",
         $._ref_convention,
       ),
@@ -863,6 +868,7 @@ module.exports = grammar({
       prec(
         PREC.typed_parameter,
         seq(
+          optional($.argument_convention),
           field("name", $.identifier),
           ":",
           field("type", $.type),
@@ -890,7 +896,7 @@ module.exports = grammar({
         seq(
           $.expression,
           "as",
-          field("alias", alias($.expression, $.as_pattern_target)),
+          field("comptime", alias($.expression, $.as_pattern_target)),
         ),
       ),
 
@@ -1060,7 +1066,7 @@ module.exports = grammar({
 
     assignment: ($) =>
       seq(
-        optional(choice("var", "alias", "__disable_del")),
+        optional(choice("var", "comptime", "ref")),
         field("left", $._left_hand_side),
         choice(
           seq("=", field("right", $._right_hand_side)),
@@ -1313,6 +1319,7 @@ module.exports = grammar({
         seq(
           optional("async"),
           "for",
+          optional($.argument_convention),
           field("left", $._left_hand_side),
           "in",
           field("right", commaSep1($._expression_within_for_in_clause)),

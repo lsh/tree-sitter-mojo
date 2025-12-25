@@ -371,7 +371,7 @@
         },
         {
           "type": "FIELD",
-          "name": "alias",
+          "name": "comptime",
           "content": {
             "type": "SYMBOL",
             "name": "identifier"
@@ -3799,6 +3799,22 @@
       "members": [
         {
           "type": "STRING",
+          "value": "borrowed"
+        },
+        {
+          "type": "STRING",
+          "value": "inout"
+        },
+        {
+          "type": "STRING",
+          "value": "owned"
+        },
+        {
+          "type": "STRING",
+          "value": "out"
+        },
+        {
+          "type": "STRING",
           "value": "read"
         },
         {
@@ -3808,10 +3824,6 @@
         {
           "type": "STRING",
           "value": "var"
-        },
-        {
-          "type": "STRING",
-          "value": "out"
         },
         {
           "type": "STRING",
@@ -4025,6 +4037,18 @@
         "type": "SEQ",
         "members": [
           {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "argument_convention"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
             "type": "FIELD",
             "name": "name",
             "content": {
@@ -4135,7 +4159,7 @@
           },
           {
             "type": "FIELD",
-            "name": "alias",
+            "name": "comptime",
             "content": {
               "type": "ALIAS",
               "content": {
@@ -5106,11 +5130,11 @@
                 },
                 {
                   "type": "STRING",
-                  "value": "alias"
+                  "value": "comptime"
                 },
                 {
                   "type": "STRING",
-                  "value": "__disable_del"
+                  "value": "ref"
                 }
               ]
             },
@@ -6693,6 +6717,18 @@
           {
             "type": "STRING",
             "value": "for"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "argument_convention"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
           {
             "type": "FIELD",

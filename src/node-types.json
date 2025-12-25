@@ -373,7 +373,7 @@
     "type": "aliased_import",
     "named": true,
     "fields": {
-      "alias": {
+      "comptime": {
         "multiple": false,
         "required": true,
         "types": [
@@ -445,7 +445,7 @@
     "type": "as_pattern",
     "named": true,
     "fields": {
-      "alias": {
+      "comptime": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1769,6 +1769,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "argument_convention",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3342,6 +3352,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "argument_convention",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3842,10 +3862,6 @@
     "named": false
   },
   {
-    "type": "__disable_del",
-    "named": false
-  },
-  {
     "type": "__future__",
     "named": false
   },
@@ -3855,10 +3871,6 @@
   },
   {
     "type": "`",
-    "named": false
-  },
-  {
-    "type": "alias",
     "named": false
   },
   {
@@ -3879,6 +3891,10 @@
   },
   {
     "type": "await",
+    "named": false
+  },
+  {
+    "type": "borrowed",
     "named": false
   },
   {
@@ -4007,6 +4023,10 @@
     "named": false
   },
   {
+    "type": "inout",
+    "named": false
+  },
+  {
     "type": "integer",
     "named": true
   },
@@ -4049,6 +4069,10 @@
   },
   {
     "type": "out",
+    "named": false
+  },
+  {
+    "type": "owned",
     "named": false
   },
   {
