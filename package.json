@@ -2,6 +2,7 @@
   "name": "tree-sitter-mojo",
   "version": "0.25.0",
   "description": "Mojo grammar for tree-sitter",
+  "type": "module",
   "repository": "github:lsh/tree-sitter-mojo",
   "license": "MIT",
   "author": {
@@ -40,7 +41,7 @@
     "eslint": "^9.35.0",
     "eslint-config-treesitter": "^1.0.2",
     "prebuildify": "^6.0.1",
-    "tree-sitter-cli": "^0.25.9"
+    "tree-sitter-cli": "^0.26.9"
   },
   "peerDependencies": {
     "tree-sitter": "^0.25.0"
@@ -61,8 +62,7 @@
     {
       "scope": "source.mojo",
       "file-types": [
-        "mojo",
-        "🔥"
+        "mojo"
       ],
       "injection-regex": "mojo",
       "highlights": "queries/highlights.scm",
