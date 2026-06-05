@@ -36,7 +36,7 @@ const PREC = {
 const SEMICOLON = ";";
 const SELF = "self";
 
-module.exports = grammar({
+export default grammar({
   name: "mojo",
 
   extras: ($) => [
@@ -1462,7 +1462,9 @@ module.exports = grammar({
   },
 });
 
-module.exports.PREC = PREC;
+export {
+  PREC
+};
 
 /**
  * Creates a rule to match one or more of the rules separated by a comma
