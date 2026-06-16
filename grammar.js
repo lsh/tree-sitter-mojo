@@ -1366,11 +1366,26 @@ module.exports = grammar({
       prec(1, $.expression),
       $.splat_type,
       $.generic_type,
+      $.called_type,
       $.union_type,
       $.constrained_type,
       $.member_type,
       $.function_type,
     ),
+
+    // A parametric instantiation that is immediately called, used in type
+    // position, e.g. `Device[get_device_spec[0]()]`. The generic-type reading
+    // would otherwise consume `Name[...]` and strand the trailing `()`. A
+    // trailing member-call chain (`get_device_spec[0]()._mlir_target()`) and a
+    // dotted parametric base (`TypeList.splat[...]()`) are also supported.
+    called_type: ($) => prec.right(PREC.call, seq(
+      choice(
+        $.generic_type,
+        seq($.member_type, optional($.type_parameter)),
+      ),
+      $.argument_list,
+      repeat(seq('.', $.identifier, optional($.type_parameter), optional($.argument_list))),
+    )),
     // A callable type literal, e.g. `def(Int) raises -> Bool` or
     // `def() capturing -> Path`, usable anywhere a type is expected.
     function_type: ($) => prec.right(seq(
@@ -1391,7 +1406,17 @@ module.exports = grammar({
         field('return_type', $.type),
       )),
     )),
-    splat_type: ($) => prec(1, seq(choice('*', '**'), $.identifier)),
+    splat_type: ($) => prec.right(1, seq(
+      choice('*', '**'),
+      choice(
+        $.identifier,
+        $.attribute,
+        $.subscript,
+        $.generic_type,
+        $.member_type,
+        $.called_type,
+      ),
+    )),
     generic_type: ($) => prec(1, seq(
       choice(
         $.identifier,

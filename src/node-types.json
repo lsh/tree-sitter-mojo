@@ -985,6 +985,37 @@
     }
   },
   {
+    "type": "called_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "argument_list",
+          "named": true
+        },
+        {
+          "type": "generic_type",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "member_type",
+          "named": true
+        },
+        {
+          "type": "type_parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "capture_list",
     "named": true,
     "fields": {},
@@ -3313,7 +3344,27 @@
       "required": true,
       "types": [
         {
+          "type": "attribute",
+          "named": true
+        },
+        {
+          "type": "called_type",
+          "named": true
+        },
+        {
+          "type": "generic_type",
+          "named": true
+        },
+        {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "member_type",
+          "named": true
+        },
+        {
+          "type": "subscript",
           "named": true
         }
       ]
@@ -3626,6 +3677,10 @@
       "multiple": false,
       "required": false,
       "types": [
+        {
+          "type": "called_type",
+          "named": true
+        },
         {
           "type": "constrained_type",
           "named": true

@@ -912,3 +912,90 @@ def write_string() {read encoded_bytes, mut writer} -> Int:
       (identifier))
     (block
       (pass_statement))))
+
+================================================================================
+Call on a parametric type in type position
+================================================================================
+
+struct S:
+    def device(self) -> ArcPointer[Device[get_device_spec[0]()]]:
+        pass
+
+    def info(self) -> Info[get_device_spec[0]()._mlir_target()]:
+        pass
+
+    def coord(self) -> Coord[*TypeList.splat[Trait=CoordLike, rank]()]:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    (identifier)
+    (block
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (type
+          (generic_type
+            (identifier)
+            (type_parameter
+              (type
+                (generic_type
+                  (identifier)
+                  (type_parameter
+                    (type
+                      (called_type
+                        (generic_type
+                          (identifier)
+                          (type_parameter
+                            (type
+                              (integer))))
+                        (argument_list)))))))))
+        (block
+          (pass_statement)))
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (type
+          (generic_type
+            (identifier)
+            (type_parameter
+              (type
+                (called_type
+                  (generic_type
+                    (identifier)
+                    (type_parameter
+                      (type
+                        (integer))))
+                  (argument_list)
+                  (identifier)
+                  (argument_list))))))
+        (block
+          (pass_statement)))
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (type
+          (generic_type
+            (identifier)
+            (type_parameter
+              (type
+                (called_type
+                  (member_type
+                    (type
+                      (splat_type
+                        (identifier)))
+                    (identifier))
+                  (type_parameter
+                    (type
+                      (identifier))
+                    (identifier)
+                    (type
+                      (identifier)))
+                  (argument_list))))))
+        (block
+          (pass_statement))))))
