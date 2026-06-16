@@ -2555,6 +2555,29 @@
     }
   },
   {
+    "type": "intersection_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "function_type",
+          "named": true
+        },
+        {
+          "type": "generic_type",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "is not",
     "named": false,
     "fields": {}
@@ -3829,6 +3852,10 @@
         },
         {
           "type": "generic_type",
+          "named": true
+        },
+        {
+          "type": "intersection_type",
           "named": true
         },
         {

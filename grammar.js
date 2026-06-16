@@ -92,6 +92,10 @@ module.exports = grammar({
     // A backtick (string) binding name may begin an assignment or, bare, be an
     // expression statement, e.g. ``` `6bit` = x ``` vs ``` `6bit` ```.
     [$.primary_expression, $.assignment],
+    // `A & B` may be a `binary_operator` (expressions) or an `intersection_type`
+    // (e.g. when an operand is a `function_type`).
+    [$.primary_expression, $._intersection_operand],
+    [$.list_splat_pattern, $.primary_expression, $._intersection_operand],
   ],
 
   supertypes: ($) => [
@@ -1404,6 +1408,7 @@ module.exports = grammar({
       $.generic_type,
       $.called_type,
       $.union_type,
+      $.intersection_type,
       $.constrained_type,
       $.member_type,
       $.function_type,
@@ -1468,6 +1473,20 @@ module.exports = grammar({
       $.type_parameter,
     )),
     union_type: ($) => prec.left(seq($.type, '|', $.type)),
+    // The `&` intersection/conjunction type operator combining trait/types with
+    // a callable type, e.g. `Copyable & RegisterPassable & def() -> None`. A
+    // trailing `function_type` is required, so a plain `A & B` of identifiers
+    // still parses as a `binary_operator`; only the presence of a `def` operand
+    // selects the intersection reading.
+    intersection_type: ($) =>
+      prec.left(PREC.bitwise_and, seq(
+        $._intersection_operand,
+        repeat(seq('&', $._intersection_operand)),
+        '&',
+        $.function_type,
+      )),
+
+    _intersection_operand: ($) => choice($.identifier, $.generic_type),
     constrained_type: ($) => prec.right(seq($.type, ':', $.type)),
     member_type: ($) => seq($.type, '.', $.identifier),
 

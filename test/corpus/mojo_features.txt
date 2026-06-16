@@ -1257,3 +1257,35 @@ fn f():
           (string_start)
           (string_content)
           (string_end))))))
+
+================================================================================
+Intersection type operator
+================================================================================
+
+fn stencil[
+    MapFnType: Copyable & RegisterPassable & def(Int) -> Int,
+]():
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (type_parameter
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (intersection_type
+              (identifier)
+              (identifier)
+              (function_type
+                (type
+                  (identifier))
+                (type
+                  (identifier))))))))
+    (parameters)
+    (block
+      (pass_statement))))

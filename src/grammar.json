@@ -6679,6 +6679,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "intersection_type"
+        },
+        {
+          "type": "SYMBOL",
           "name": "constrained_type"
         },
         {
@@ -7066,6 +7070,56 @@
           }
         ]
       }
+    },
+    "intersection_type": {
+      "type": "PREC_LEFT",
+      "value": 15,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_intersection_operand"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "&"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_intersection_operand"
+                }
+              ]
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "&"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "function_type"
+          }
+        ]
+      }
+    },
+    "_intersection_operand": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "generic_type"
+        }
+      ]
     },
     "constrained_type": {
       "type": "PREC_RIGHT",
@@ -8806,6 +8860,15 @@
     [
       "primary_expression",
       "assignment"
+    ],
+    [
+      "primary_expression",
+      "_intersection_operand"
+    ],
+    [
+      "list_splat_pattern",
+      "primary_expression",
+      "_intersection_operand"
     ]
   ],
   "precedences": [],
