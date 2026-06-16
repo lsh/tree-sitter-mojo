@@ -810,3 +810,69 @@ def fetch() raises HALError:
       (identifier))
     (block
       (pass_statement))))
+
+================================================================================
+Reserved keywords as identifiers
+================================================================================
+
+struct F:
+    def read(self) -> String:
+        return UInt(read)
+
+fn check() -> Bool:
+    return is_gpu() and mut == False
+
+fn g[read: Bool, mut: Bool]():
+    if read:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    (identifier)
+    (block
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (type
+          (identifier))
+        (block
+          (return_statement
+            (call
+              (identifier)
+              (argument_list
+                (identifier))))))))
+  (function_definition
+    (identifier)
+    (parameters)
+    (type
+      (identifier))
+    (block
+      (return_statement
+        (boolean_operator
+          (call
+            (identifier)
+            (argument_list))
+          (comparison_operator
+            (identifier)
+            (false))))))
+  (function_definition
+    (identifier)
+    (type_parameter
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (identifier))))
+      (identifier)
+      (type
+        (identifier)))
+    (parameters)
+    (block
+      (if_statement
+        (identifier)
+        (block
+          (pass_statement))))))

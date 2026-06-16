@@ -50,9 +50,12 @@ const PYTHON_KEYWORDS = [
 // Mojo-specific keywords. The argument-convention soft keywords `mut`/`out`
 // are reserved globally, but specific rules (type_parameter, keyword_argument,
 // subscript) explicitly re-admit them as identifiers where they appear as
-// ordinary names, e.g. `mut: Bool` or `Origin[mut=mut]`.
+// ordinary names, e.g. `mut: Bool` or `Origin[mut=mut]`. `read` is deliberately
+// not reserved: it is still keyword-extracted from `argument_convention`, so
+// `read x` conventions parse, but it remains usable as an ordinary identifier
+// (e.g. a method `def read(self)` or `UInt(read)`) without reserving it.
 const MOJO_KEYWORDS = [
-  'var', 'comptime', 'ref', 'read', 'deinit', 'unified', 'where',
+  'var', 'comptime', 'ref', 'deinit', 'unified', 'where',
   'mut', 'out',
   // Function-effect keywords. Reserved so they are not mistaken for a typed
   // `raises` error type, e.g. in `fn() raises capturing -> None`.
@@ -1639,6 +1642,8 @@ module.exports = grammar({
           -3,
           alias(choice("print", "exec", "async", "await"), $.identifier),
         ),
+        // `mut`/`out` used as ordinary names or values, e.g. `mut == False`.
+        prec(-3, alias(choice("mut", "out"), $.identifier)),
         alias(choice("type", "match"), $.identifier),
       ),
 

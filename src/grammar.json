@@ -8285,6 +8285,28 @@
           }
         },
         {
+          "type": "PREC",
+          "value": -3,
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "mut"
+                },
+                {
+                  "type": "STRING",
+                  "value": "out"
+                }
+              ]
+            },
+            "named": true,
+            "value": "identifier"
+          }
+        },
+        {
           "type": "ALIAS",
           "content": {
             "type": "CHOICE",
@@ -8707,10 +8729,6 @@
       {
         "type": "STRING",
         "value": "ref"
-      },
-      {
-        "type": "STRING",
-        "value": "read"
       },
       {
         "type": "STRING",
