@@ -292,7 +292,20 @@ module.exports = grammar({
       $.decorated_definition,
       $.match_statement,
       $.comptime_statement,
+      $.mlir_region,
     ),
+
+    // An MLIR region declaration, e.g.
+    //   __mlir_region await_body(hdl: __mlir_type.`!co.routine`):
+    //       body(hdl)
+    mlir_region: ($) =>
+      seq(
+        "__mlir_region",
+        field("name", $.identifier),
+        field("parameters", $.parameters),
+        ":",
+        field("body", $._suite),
+      ),
 
     // A compile-time control-flow statement, e.g. `comptime if ...:` or
     // `comptime for ... in ...:`.
@@ -1354,50 +1367,19 @@ module.exports = grammar({
 
     // Literals
 
+    // MLIR type interop. A type is a plain dotted member
+    // (`__mlir_type.index`), a backtick-quoted MLIR type fragment
+    // (``__mlir_type.`!co.routine` ``), or a bracketed parametric type that
+    // interpolates expressions between backtick fragments
+    // (``__mlir_type[`!pop.array<`, size, `>`] ``). Backtick fragments are
+    // lexed as (string) tokens, so arbitrary MLIR syntax inside them is opaque.
     mlir_type: ($) =>
-      seq(
-        "__mlir_type",
-        choice(
-          seq(".`", $._mlir_type, "`"),
-          seq(
-            "[",
-            commaSep1(
-              choice(
-                seq("`", $._mlir_type, "`"),
-                alias($.identifier, $.type),
-                seq("`", choice("<", ">", ","), "`"),
-              ),
-            ),
-            optional(","),
-            "]",
-          ),
-        ),
-      ),
-
-    _mlir_type: ($) =>
-      prec.left(
+      prec.right(
         seq(
-          optional(">"),
+          "__mlir_type",
           choice(
-            $._mlir_type_def,
-            seq(
-              "(",
-              repeat(seq($._mlir_type_def, optional(","))),
-              ")",
-              "->",
-              $._mlir_type_def,
-            ),
-          ),
-          optional(choice(seq("<", $._mlir_type, ">"), "<")),
-        ),
-      ),
-    _mlir_type_def: ($) =>
-      prec.left(
-        seq(
-          optional(":"),
-          choice(
-            seq("!", sep1(alias($.identifier, $.type), ".")),
-            alias($.identifier, $.type),
+            seq(".", choice(alias($.identifier, $.type), $.string)),
+            seq("[", commaSep1($.expression), optional(","), "]"),
           ),
         ),
       ),

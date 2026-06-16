@@ -112,7 +112,6 @@
   "or"
   "is not"
   "not in"
-  "!"
 ] @operator
 
 [
@@ -164,17 +163,7 @@
   "where"
 ] @keyword
 
-(mlir_type "!" @punctuation.special (#set! "priority" 110))
-(mlir_type ">" @punctuation.special (#set! "priority" 110))
-(mlir_type "<" @punctuation.special (#set! "priority" 110))
-(mlir_type "->" @punctuation.special (#set! "priority" 110))
-(mlir_type "(" @punctuation.special (#set! "priority" 110))
-(mlir_type ")" @punctuation.special (#set! "priority" 110))
 (mlir_type "." @punctuation.special (#set! "priority" 110))
-(mlir_type ":" @punctuation.special (#set! "priority" 110))
-(mlir_type "+" @punctuation.special (#set! "priority" 110))
-(mlir_type "-" @punctuation.special (#set! "priority" 110))
-(mlir_type "*" @punctuation.special (#set! "priority" 110))
 (mlir_type "," @punctuation (#set! "priority" 110))
 (mlir_type) @type
 ; (argument_convention) @keyword

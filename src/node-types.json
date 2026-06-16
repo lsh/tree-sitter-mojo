@@ -32,6 +32,10 @@
         "named": true
       },
       {
+        "type": "mlir_region",
+        "named": true
+      },
+      {
         "type": "trait_definition",
         "named": true
       },
@@ -2699,13 +2703,57 @@
     }
   },
   {
+    "type": "mlir_region",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "mlir_type",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
         {
           "type": "type",
           "named": true
@@ -4024,10 +4072,6 @@
     }
   },
   {
-    "type": "!",
-    "named": false
-  },
-  {
     "type": "!=",
     "named": false
   },
@@ -4097,10 +4141,6 @@
   },
   {
     "type": ".",
-    "named": false
-  },
-  {
-    "type": ".`",
     "named": false
   },
   {
@@ -4216,11 +4256,11 @@
     "named": false
   },
   {
-    "type": "__mlir_type",
+    "type": "__mlir_region",
     "named": false
   },
   {
-    "type": "`",
+    "type": "__mlir_type",
     "named": false
   },
   {

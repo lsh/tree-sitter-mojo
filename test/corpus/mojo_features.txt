@@ -503,3 +503,112 @@ def collect(var *contexts: DeviceContext):
     body: (block
       (pass_statement))))
 
+================================================================================
+MLIR interop
+================================================================================
+
+fn ptr() -> __mlir_type.`!llvm.ptr<7>`:
+    pass
+
+struct S:
+    comptime POPArray = __mlir_type[`!pop.array<`, size, `>`]
+
+    fn cast(self, x: __mlir_type.index) -> Int:
+        return __mlir_op.`pop.cast`[_type=__mlir_type.index](x)
+
+    fn suspend():
+        __mlir_region await_body(hdl: __mlir_type.`!co.routine`):
+            body(hdl)
+        __mlir_op.`co.suspend`[_region="await_body".value]()
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (type
+      (mlir_type
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))
+    (block
+      (pass_statement)))
+  (class_definition
+    (identifier)
+    (block
+      (assignment
+        (identifier)
+        (mlir_type
+          (string
+            (string_start)
+            (string_content)
+            (string_end))
+          (identifier)
+          (string
+            (string_start)
+            (string_content)
+            (string_end))))
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter)
+          (typed_parameter
+            (identifier)
+            (type
+              (mlir_type
+                (type)))))
+        (type
+          (identifier))
+        (block
+          (return_statement
+            (call
+              (subscript
+                (attribute
+                  (identifier)
+                  (string_start)
+                  (string_content)
+                  (string_end))
+                (keyword_argument
+                  (identifier)
+                  (mlir_type
+                    (type))))
+              (argument_list
+                (identifier))))))
+      (function_definition
+        (identifier)
+        (parameters)
+        (block
+          (mlir_region
+            (identifier)
+            (parameters
+              (typed_parameter
+                (identifier)
+                (type
+                  (mlir_type
+                    (string
+                      (string_start)
+                      (string_content)
+                      (string_end))))))
+            (block
+              (call
+                (identifier)
+                (argument_list
+                  (identifier)))))
+          (call
+            (subscript
+              (attribute
+                (identifier)
+                (string_start)
+                (string_content)
+                (string_end))
+              (keyword_argument
+                (identifier)
+                (attribute
+                  (string
+                    (string_start)
+                    (string_content)
+                    (string_end))
+                  (identifier))))
+            (argument_list)))))))
