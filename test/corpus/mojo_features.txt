@@ -876,3 +876,39 @@ fn g[read: Bool, mut: Bool]():
         (identifier)
         (block
           (pass_statement))))))
+
+================================================================================
+Capture conventions binding names
+================================================================================
+
+def f() {read x, mut y}:
+    pass
+
+def write_string() {read encoded_bytes, mut writer} -> Int:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (result_convention
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier))
+    (block
+      (pass_statement)))
+  (function_definition
+    (identifier)
+    (parameters)
+    (result_convention
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier))
+    (type
+      (identifier))
+    (block
+      (pass_statement))))

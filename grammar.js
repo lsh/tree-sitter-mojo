@@ -457,10 +457,16 @@ module.exports = grammar({
       field('body', $._suite),
     ),
 
-    // A brace-delimited result convention preceding the return type, e.g.
-    // `def f(...) {read} -> T:`.
+    // A brace-delimited capture/result convention preceding the return type,
+    // e.g. `def f(...) {read} -> T:`. Each convention may bind a name, as in
+    // `def f() {read x, mut y}:`.
     result_convention: ($) =>
-      seq("{", commaSep1($.argument_convention), optional(","), "}"),
+      seq(
+        "{",
+        commaSep1(seq($.argument_convention, optional($.identifier))),
+        optional(","),
+        "}",
+      ),
 
     // A function's effect qualifiers, e.g. `raises`, `capturing`, `thin`, or
     // combinations like `raises capturing`. `raises` may carry an optional
