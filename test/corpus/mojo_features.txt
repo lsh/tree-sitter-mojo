@@ -782,3 +782,31 @@ fn g():
             (identifier)
             (slice
               (identifier))))))))
+
+================================================================================
+Typed raises without a return type
+================================================================================
+
+def advance() raises StopIteration:
+    pass
+
+def fetch() raises HALError:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (type
+      (identifier))
+    (block
+      (pass_statement)))
+  (function_definition
+    (identifier)
+    (parameters)
+    (type
+      (identifier))
+    (block
+      (pass_statement))))

@@ -1929,33 +1929,34 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "PREC_RIGHT",
-            "value": 0,
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "raises"
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "FIELD",
-                      "name": "raises_type",
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "raises"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "raises_type",
+                    "content": {
+                      "type": "ALIAS",
                       "content": {
                         "type": "SYMBOL",
-                        "name": "type"
-                      }
-                    },
-                    {
-                      "type": "BLANK"
+                        "name": "_raises_type"
+                      },
+                      "named": true,
+                      "value": "type"
                     }
-                  ]
-                }
-              ]
-            }
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
           },
           {
             "type": "SEQ",
@@ -1993,6 +1994,31 @@
           }
         ]
       }
+    },
+    "_raises_type": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "generic_type"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "union_type"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "member_type"
+        }
+      ]
     },
     "capture_list": {
       "type": "PREC",
@@ -8454,6 +8480,10 @@
     [
       "_collection_elements",
       "struct_literal"
+    ],
+    [
+      "_raises_type",
+      "type"
     ]
   ],
   "precedences": [],

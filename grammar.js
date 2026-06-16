@@ -85,6 +85,7 @@ module.exports = grammar({
     [$.type_parameter, $.list],
     [$.parameterized_alias_statement, $.primary_expression],
     [$._collection_elements, $.struct_literal],
+    [$._raises_type, $.type],
   ],
 
   supertypes: ($) => [
@@ -463,11 +464,22 @@ module.exports = grammar({
     // error type, bound greedily so a following `->`/`:`/`|`/`.` is treated as
     // part of the type when present.
     _function_effects: ($) => repeat1(choice(
-      prec.right(seq('raises', optional(field('raises_type', $.type)))),
+      // A typed `raises` carries an optional error type. The error type is an
+      // expression-level type (parametric `Errors[X]`, unioned `A | B`, dotted
+      // `mod.Err`) but never a bare `constrained_type`, whose `:` would
+      // otherwise swallow the function body colon in `def f() raises HALError:`.
+      seq('raises', optional(field('raises_type', alias($._raises_type, $.type)))),
       // `capturing`/`escaping` may carry an origin list, e.g. `capturing[_]`.
       seq(choice('capturing', 'escaping'), optional($.capture_list)),
       'thin',
     )),
+
+    _raises_type: ($) => choice(
+      prec(1, $.expression),
+      $.generic_type,
+      $.union_type,
+      $.member_type,
+    ),
 
     // The origin list is bound tighter than a trailing subscript so that the
     // `[_]` in `def() capturing[_] -> None` is part of the effect.
