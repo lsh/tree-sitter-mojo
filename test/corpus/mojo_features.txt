@@ -612,3 +612,58 @@ struct S:
                     (string_end))
                   (identifier))))
             (argument_list)))))))
+
+================================================================================
+Parameterized callable types
+================================================================================
+
+comptime F = def[width: Int, alignment: Int = 1](Coord) -> None
+comptime G = def[dtype: DType, width: SIMDSize, //](Int) capturing[_] -> None
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (function_type
+      (type_parameter
+        (type
+          (constrained_type
+            (type
+              (identifier))
+            (type
+              (identifier))))
+        (type
+          (constrained_type
+            (type
+              (identifier))
+            (type
+              (identifier))))
+        (integer))
+      (type
+        (identifier))
+      (type
+        (none))))
+  (assignment
+    (identifier)
+    (function_type
+      (type_parameter
+        (type
+          (constrained_type
+            (type
+              (identifier))
+            (type
+              (identifier))))
+        (type
+          (constrained_type
+            (type
+              (identifier))
+            (type
+              (identifier))))
+        (infer_separator))
+      (type
+        (identifier))
+      (capture_list
+        (wildcard_origin))
+      (type
+        (none)))))

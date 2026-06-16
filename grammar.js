@@ -1323,6 +1323,9 @@ module.exports = grammar({
     // `def() capturing -> Path`, usable anywhere a type is expected.
     function_type: ($) => prec.right(seq(
       'def',
+      // A callable type may carry a compile-time parameter clause before its
+      // value parameters, e.g. `def[width: Int, alignment: Int = 1](Coord)`.
+      field('type_parameters', optional($.type_parameter)),
       // A callable type's parameters are types (optionally named or variadic),
       // e.g. `def(Int, OpaquePointer[X]) -> None`.
       '(',
