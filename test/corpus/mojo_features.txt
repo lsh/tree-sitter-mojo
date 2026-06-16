@@ -1127,3 +1127,25 @@ comptime F = def(mut Bencher, T) raises capturing[_] -> None
         (wildcard_origin))
       (type
         (none)))))
+
+================================================================================
+Relative import statement
+================================================================================
+
+import .warp
+import ..pkg.mod
+
+--------------------------------------------------------------------------------
+
+(module
+  (import_statement
+    (relative_import
+      (import_prefix)
+      (dotted_name
+        (identifier))))
+  (import_statement
+    (relative_import
+      (import_prefix)
+      (dotted_name
+        (identifier)
+        (identifier)))))

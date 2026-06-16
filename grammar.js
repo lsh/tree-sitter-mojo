@@ -207,7 +207,12 @@ module.exports = grammar({
 
     _import_list: ($) =>
       seq(
-        commaSep1(field("name", choice($.dotted_name, $.aliased_import))),
+        commaSep1(field("name", choice(
+          $.dotted_name,
+          // A relative import using `import`, e.g. `import .warp`.
+          $.relative_import,
+          $.aliased_import,
+        ))),
         optional(","),
       ),
 

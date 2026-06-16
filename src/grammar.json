@@ -308,6 +308,10 @@
                   },
                   {
                     "type": "SYMBOL",
+                    "name": "relative_import"
+                  },
+                  {
+                    "type": "SYMBOL",
                     "name": "aliased_import"
                   }
                 ]
@@ -331,6 +335,10 @@
                         {
                           "type": "SYMBOL",
                           "name": "dotted_name"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "relative_import"
                         },
                         {
                           "type": "SYMBOL",

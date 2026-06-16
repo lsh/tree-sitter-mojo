@@ -2244,6 +2244,10 @@
           {
             "type": "dotted_name",
             "named": true
+          },
+          {
+            "type": "relative_import",
+            "named": true
           }
         ]
       }
@@ -2397,6 +2401,10 @@
           {
             "type": "dotted_name",
             "named": true
+          },
+          {
+            "type": "relative_import",
+            "named": true
           }
         ]
       }
@@ -2431,6 +2439,10 @@
           },
           {
             "type": "dotted_name",
+            "named": true
+          },
+          {
+            "type": "relative_import",
             "named": true
           }
         ]
