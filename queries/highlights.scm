@@ -112,7 +112,6 @@
   "or"
   "is not"
   "not in"
-  "!"
 ] @operator
 
 [
@@ -164,17 +163,13 @@
   "where"
 ] @keyword
 
-(mlir_type "!" @punctuation.special (#set! "priority" 110))
-(mlir_type ">" @punctuation.special (#set! "priority" 110))
-(mlir_type "<" @punctuation.special (#set! "priority" 110))
-(mlir_type "->" @punctuation.special (#set! "priority" 110))
-(mlir_type "(" @punctuation.special (#set! "priority" 110))
-(mlir_type ")" @punctuation.special (#set! "priority" 110))
 (mlir_type "." @punctuation.special (#set! "priority" 110))
-(mlir_type ":" @punctuation.special (#set! "priority" 110))
-(mlir_type "+" @punctuation.special (#set! "priority" 110))
-(mlir_type "-" @punctuation.special (#set! "priority" 110))
-(mlir_type "*" @punctuation.special (#set! "priority" 110))
 (mlir_type "," @punctuation (#set! "priority" 110))
 (mlir_type) @type
+
+; MLIR backtick fragments: the interior is tokenized so types, literals and
+; operators inside the backticks are highlighted individually.
+(mlir_fragment (type) @type (#set! "priority" 110))
+(mlir_fragment (integer) @number (#set! "priority" 110))
+(mlir_fragment (mlir_punctuation) @operator (#set! "priority" 110))
 ; (argument_convention) @keyword

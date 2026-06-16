@@ -1,0 +1,1342 @@
+================================================================================
+Function with bare raises (no return type)
+================================================================================
+
+def flush() raises:
+    pass
+
+def cleanup() raises:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (pass_statement)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Function effect qualifiers
+================================================================================
+
+def a() capturing:
+    pass
+
+def b() thin -> None:
+    pass
+
+def c() raises capturing[_] -> Int:
+    return 1
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (pass_statement)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    return_type: (type
+      (none))
+    body: (block
+      (pass_statement)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    (capture_list
+      (wildcard_origin))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (integer)))))
+
+================================================================================
+Transfer operator
+================================================================================
+
+def consume(owned x: String) -> String:
+    return x^
+
+def use():
+    foo(bar^, baz)
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (transfer_expression
+          value: (identifier)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (call
+        function: (identifier)
+        arguments: (argument_list
+          (transfer_expression
+            value: (identifier))
+          (identifier))))))
+
+================================================================================
+Comptime control-flow statements
+================================================================================
+
+def pick():
+    comptime if is_gpu():
+        pass
+    comptime for i in range(4):
+        pass
+    comptime assert not is_gpu(), "unsupported"
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (comptime_statement
+        (if_statement
+          condition: (call
+            function: (identifier)
+            arguments: (argument_list))
+          consequence: (block
+            (pass_statement))))
+      (comptime_statement
+        (for_statement
+          left: (identifier)
+          right: (call
+            function: (identifier)
+            arguments: (argument_list
+              (integer)))
+          body: (block
+            (pass_statement))))
+      (assert_statement
+        (not_operator
+          argument: (call
+            function: (identifier)
+            arguments: (argument_list)))
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))))
+
+================================================================================
+Type parameters with infer marker and defaults
+================================================================================
+
+struct Buffer[dtype: DType, //, size: Int = 4](Copyable):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    name: (identifier)
+    type_parameters: (type_parameter
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (identifier))))
+      (infer_separator)
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (identifier))))
+      default: (integer))
+    superclasses: (argument_list
+      (identifier))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Convention keywords as parameter names
+================================================================================
+
+def span[mut: Bool, origin: Origin[mut=mut], //](ref[origin] self):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    type_parameters: (type_parameter
+      (identifier)
+      type: (type
+        (identifier))
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (generic_type
+              (identifier)
+              (type_parameter
+                (identifier)
+                default: (identifier))))))
+      (infer_separator))
+    parameters: (parameters
+      (self_parameter
+        (argument_convention
+          (identifier))))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Empty parametric brackets
+================================================================================
+
+comptime S = _CString[]
+
+def make() -> Buffer[]:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    left: (identifier)
+    right: (subscript
+      value: (identifier)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    return_type: (type
+      (generic_type
+        (identifier)
+        (type_parameter)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Subscript with keyword arguments and bare conventions
+================================================================================
+
+comptime P = UnsafePointer[Int, mut=True]
+
+def cast(self):
+    return self.ptr.unsafe_cast[mut]()
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    left: (identifier)
+    right: (subscript
+      value: (identifier)
+      subscript: (identifier)
+      subscript: (keyword_argument
+        name: (identifier)
+        value: (true))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (self_parameter))
+    body: (block
+      (return_statement
+        (call
+          function: (subscript
+            value: (attribute
+              object: (attribute
+                object: (identifier)
+                attribute: (identifier))
+              attribute: (identifier))
+            subscript: (identifier))
+          arguments: (argument_list))))))
+
+================================================================================
+Parameterized comptime alias
+================================================================================
+
+comptime Ptr[
+    mut: Bool,
+    //,
+    origin: Origin[mut=mut] = UntrackedOrigin[mut=mut],
+] = _CPointer[_Cpp, origin]
+
+--------------------------------------------------------------------------------
+
+(module
+  (parameterized_alias_statement
+    name: (identifier)
+    type_parameters: (type_parameter
+      (identifier)
+      type: (type
+        (identifier))
+      (infer_separator)
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (generic_type
+              (identifier)
+              (type_parameter
+                (identifier)
+                default: (identifier))))))
+      default: (subscript
+        value: (identifier)
+        subscript: (keyword_argument
+          name: (identifier)
+          value: (identifier))))
+    value: (subscript
+      value: (identifier)
+      subscript: (identifier)
+      subscript: (identifier))))
+
+================================================================================
+Result convention
+================================================================================
+
+def to_buffer(p: Int) {read} -> DeviceBuffer:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (identifier)
+        type: (type
+          (identifier))))
+    (result_convention
+      (argument_convention))
+    return_type: (type
+      (identifier))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Callable type literals
+================================================================================
+
+comptime Variant1 = Variant[Bool, def() capturing -> Path]
+
+def run(func: def(Int) raises -> Bool):
+    pass
+
+comptime Cb = def(Self) raises capturing[_] -> None
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    left: (identifier)
+    right: (subscript
+      value: (identifier)
+      subscript: (identifier)
+      subscript: (function_type
+        return_type: (type
+          (identifier)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (identifier)
+        type: (type
+          (function_type
+            parameter: (type
+              (identifier))
+            return_type: (type
+              (identifier))))))
+    body: (block
+      (pass_statement)))
+  (assignment
+    left: (identifier)
+    right: (function_type
+      parameter: (type
+        (identifier))
+      (capture_list
+        (wildcard_origin))
+      return_type: (type
+        (none)))))
+
+================================================================================
+Typed self parameter
+================================================================================
+
+struct Buffer:
+    def __setitem__(self: Buffer[Self.dtype], idx: Int):
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    name: (identifier)
+    body: (block
+      (function_definition
+        name: (identifier)
+        parameters: (parameters
+          (self_parameter
+            type: (type
+              (generic_type
+                (identifier)
+                (type_parameter
+                  (type
+                    (attribute
+                      object: (identifier)
+                      attribute: (identifier)))))))
+          (typed_parameter
+            (identifier)
+            type: (type
+              (identifier))))
+        body: (block
+          (pass_statement))))))
+
+================================================================================
+Struct literal
+================================================================================
+
+def make() -> Self:
+    return {ptr = self._ptr, length = len(self)}
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (struct_literal
+          (struct_literal_field
+            name: (identifier)
+            value: (attribute
+              object: (identifier)
+              attribute: (identifier)))
+          (struct_literal_field
+            name: (identifier)
+            value: (call
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))))))
+
+================================================================================
+Struct literal with positional and named fields
+================================================================================
+
+def build():
+    return {ctx, function_name = info.name}
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (return_statement
+        (struct_literal
+          (identifier)
+          (struct_literal_field
+            name: (identifier)
+            value: (attribute
+              object: (identifier)
+              attribute: (identifier))))))))
+
+================================================================================
+Bare ref and variadic conventions
+================================================================================
+
+def init(out self, ref buffer: DeviceBuffer):
+    pass
+
+def collect(var *contexts: DeviceContext):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (self_parameter
+        (argument_convention))
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (pass_statement)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (list_splat_pattern
+          (identifier))
+        type: (type
+          (identifier))))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+MLIR interop
+================================================================================
+
+fn ptr() -> __mlir_type.`!llvm.ptr<7>`:
+    pass
+
+struct S:
+    comptime POPArray = __mlir_type[`!pop.array<`, size, `>`]
+
+    fn cast(self, x: __mlir_type.index) -> Int:
+        return __mlir_op.`pop.cast`[_type=__mlir_type.index](x)
+
+    fn suspend():
+        __mlir_region await_body(hdl: __mlir_type.`!co.routine`):
+            body(hdl)
+        __mlir_op.`co.suspend`[_region="await_body".value]()
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (type
+      (mlir_type
+        (mlir_fragment
+          (mlir_punctuation)
+          (type)
+          (mlir_punctuation)
+          (type)
+          (mlir_punctuation)
+          (integer)
+          (mlir_punctuation))))
+    (block
+      (pass_statement)))
+  (class_definition
+    (identifier)
+    (block
+      (assignment
+        (identifier)
+        (mlir_type
+          (string
+            (string_start)
+            (string_content)
+            (string_end))
+          (identifier)
+          (string
+            (string_start)
+            (string_content)
+            (string_end))))
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter)
+          (typed_parameter
+            (identifier)
+            (type
+              (mlir_type
+                (type)))))
+        (type
+          (identifier))
+        (block
+          (return_statement
+            (call
+              (subscript
+                (attribute
+                  (identifier)
+                  (mlir_fragment
+                    (type)
+                    (mlir_punctuation)
+                    (type)))
+                (keyword_argument
+                  (identifier)
+                  (mlir_type
+                    (type))))
+              (argument_list
+                (identifier))))))
+      (function_definition
+        (identifier)
+        (parameters)
+        (block
+          (mlir_region
+            (identifier)
+            (parameters
+              (typed_parameter
+                (identifier)
+                (type
+                  (mlir_type
+                    (mlir_fragment
+                      (mlir_punctuation)
+                      (type)
+                      (mlir_punctuation)
+                      (type))))))
+            (block
+              (call
+                (identifier)
+                (argument_list
+                  (identifier)))))
+          (call
+            (subscript
+              (attribute
+                (identifier)
+                (mlir_fragment
+                  (type)
+                  (mlir_punctuation)
+                  (type)))
+              (keyword_argument
+                (identifier)
+                (attribute
+                  (string
+                    (string_start)
+                    (string_content)
+                    (string_end))
+                  (identifier))))
+            (argument_list)))))))
+
+================================================================================
+Parameterized callable types
+================================================================================
+
+comptime F = def[width: Int, alignment: Int = 1](Coord) -> None
+comptime G = def[dtype: DType, width: SIMDSize, //](Int) capturing[_] -> None
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (function_type
+      (type_parameter
+        (type
+          (constrained_type
+            (type
+              (identifier))
+            (type
+              (identifier))))
+        (type
+          (constrained_type
+            (type
+              (identifier))
+            (type
+              (identifier))))
+        (integer))
+      (type
+        (identifier))
+      (type
+        (none))))
+  (assignment
+    (identifier)
+    (function_type
+      (type_parameter
+        (type
+          (constrained_type
+            (type
+              (identifier))
+            (type
+              (identifier))))
+        (type
+          (constrained_type
+            (type
+              (identifier))
+            (type
+              (identifier))))
+        (infer_separator))
+      (type
+        (identifier))
+      (capture_list
+        (wildcard_origin))
+      (type
+        (none)))))
+
+================================================================================
+Parameterized alias with a type bound
+================================================================================
+
+struct S:
+    comptime It[m: Bool, //, o: Origin[mut=m]]: Iterator = Self
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    (identifier)
+    (block
+      (parameterized_alias_statement
+        (identifier)
+        (type_parameter
+          (type
+            (constrained_type
+              (type
+                (identifier))
+              (type
+                (identifier))))
+          (infer_separator)
+          (type
+            (constrained_type
+              (type
+                (identifier))
+              (type
+                (generic_type
+                  (identifier)
+                  (type_parameter
+                    (identifier)
+                    (identifier)))))))
+        (type
+          (identifier))
+        (identifier)))))
+
+================================================================================
+Where clause in a superclass list
+================================================================================
+
+struct Tuple[*element_types: Movable](
+    Copyable where AllCopyable[*element_types],
+    Defaultable,
+    Equatable where AllEquatable[*element_types],
+):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    (identifier)
+    (type_parameter
+      (type
+        (constrained_type
+          (type
+            (splat_type
+              (identifier)))
+          (type
+            (identifier)))))
+    (argument_list
+      (identifier)
+      (where_clause
+        (subscript
+          (identifier)
+          (list_splat
+            (identifier))))
+      (identifier)
+      (identifier)
+      (where_clause
+        (subscript
+          (identifier)
+          (list_splat
+            (identifier)))))
+    (block
+      (pass_statement))))
+
+================================================================================
+Subscript keyword argument with a slice value
+================================================================================
+
+fn f():
+    return x[byte=1:user_end]
+
+fn g():
+    return s[byte=:parameter_list_start]
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (return_statement
+        (subscript
+          (identifier)
+          (keyword_argument
+            (identifier)
+            (slice
+              (integer)
+              (identifier)))))))
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (return_statement
+        (subscript
+          (identifier)
+          (keyword_argument
+            (identifier)
+            (slice
+              (identifier))))))))
+
+================================================================================
+Typed raises without a return type
+================================================================================
+
+def advance() raises StopIteration:
+    pass
+
+def fetch() raises HALError:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (type
+      (identifier))
+    (block
+      (pass_statement)))
+  (function_definition
+    (identifier)
+    (parameters)
+    (type
+      (identifier))
+    (block
+      (pass_statement))))
+
+================================================================================
+Reserved keywords as identifiers
+================================================================================
+
+struct F:
+    def read(self) -> String:
+        return UInt(read)
+
+fn check() -> Bool:
+    return is_gpu() and mut == False
+
+fn g[read: Bool, mut: Bool]():
+    if read:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    (identifier)
+    (block
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (type
+          (identifier))
+        (block
+          (return_statement
+            (call
+              (identifier)
+              (argument_list
+                (identifier))))))))
+  (function_definition
+    (identifier)
+    (parameters)
+    (type
+      (identifier))
+    (block
+      (return_statement
+        (boolean_operator
+          (call
+            (identifier)
+            (argument_list))
+          (comparison_operator
+            (identifier)
+            (false))))))
+  (function_definition
+    (identifier)
+    (type_parameter
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (identifier))))
+      (identifier)
+      (type
+        (identifier)))
+    (parameters)
+    (block
+      (if_statement
+        (identifier)
+        (block
+          (pass_statement))))))
+
+================================================================================
+Capture conventions binding names
+================================================================================
+
+def f() {read x, mut y}:
+    pass
+
+def write_string() {read encoded_bytes, mut writer} -> Int:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (result_convention
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier))
+    (block
+      (pass_statement)))
+  (function_definition
+    (identifier)
+    (parameters)
+    (result_convention
+      (argument_convention)
+      (identifier)
+      (argument_convention)
+      (identifier))
+    (type
+      (identifier))
+    (block
+      (pass_statement))))
+
+================================================================================
+Call on a parametric type in type position
+================================================================================
+
+struct S:
+    def device(self) -> ArcPointer[Device[get_device_spec[0]()]]:
+        pass
+
+    def info(self) -> Info[get_device_spec[0]()._mlir_target()]:
+        pass
+
+    def coord(self) -> Coord[*TypeList.splat[Trait=CoordLike, rank]()]:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    (identifier)
+    (block
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (type
+          (generic_type
+            (identifier)
+            (type_parameter
+              (type
+                (generic_type
+                  (identifier)
+                  (type_parameter
+                    (type
+                      (called_type
+                        (generic_type
+                          (identifier)
+                          (type_parameter
+                            (type
+                              (integer))))
+                        (argument_list)))))))))
+        (block
+          (pass_statement)))
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (type
+          (generic_type
+            (identifier)
+            (type_parameter
+              (type
+                (called_type
+                  (generic_type
+                    (identifier)
+                    (type_parameter
+                      (type
+                        (integer))))
+                  (argument_list)
+                  (identifier)
+                  (argument_list))))))
+        (block
+          (pass_statement)))
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (type
+          (generic_type
+            (identifier)
+            (type_parameter
+              (type
+                (called_type
+                  (member_type
+                    (type
+                      (splat_type
+                        (identifier)))
+                    (identifier))
+                  (type_parameter
+                    (type
+                      (identifier))
+                    (identifier)
+                    (type
+                      (identifier)))
+                  (argument_list))))))
+        (block
+          (pass_statement))))))
+
+================================================================================
+Backtick identifiers as binding names
+================================================================================
+
+fn f():
+    var `6bit` = shuffled & mask
+    return g(`6bit`)
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (assignment
+        (string
+          (string_start)
+          (string_content)
+          (string_end))
+        (binary_operator
+          (identifier)
+          (identifier)))
+      (return_statement
+        (call
+          (identifier)
+          (argument_list
+            (string
+              (string_start)
+              (string_content)
+              (string_end))))))))
+
+================================================================================
+Call result as an assignment target
+================================================================================
+
+fn f():
+    self.get(i) = pack_bits(x)
+    node[].right() = other[].left()
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (assignment
+        (call
+          (attribute
+            (identifier)
+            (identifier))
+          (argument_list
+            (identifier)))
+        (call
+          (identifier)
+          (argument_list
+            (identifier))))
+      (assignment
+        (call
+          (attribute
+            (subscript
+              (identifier))
+            (identifier))
+          (argument_list))
+        (call
+          (attribute
+            (subscript
+              (identifier))
+            (identifier))
+          (argument_list))))))
+
+================================================================================
+Extension declaration
+================================================================================
+
+__extension List:
+    fn first(self):
+        pass
+
+__extension SIMD[T, n]:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (extension_definition
+    (identifier)
+    (block
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (block
+          (pass_statement)))))
+  (extension_definition
+    (generic_type
+      (identifier)
+      (type_parameter
+        (type
+          (identifier))
+        (type
+          (identifier))))
+    (block
+      (pass_statement))))
+
+================================================================================
+Argument conventions on callable-type parameters
+================================================================================
+
+comptime F = def(mut Bencher, T) raises capturing[_] -> None
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (function_type
+      (argument_convention)
+      (type
+        (identifier))
+      (type
+        (identifier))
+      (capture_list
+        (wildcard_origin))
+      (type
+        (none)))))
+
+================================================================================
+Relative import statement
+================================================================================
+
+import .warp
+import ..pkg.mod
+
+--------------------------------------------------------------------------------
+
+(module
+  (import_statement
+    (relative_import
+      (import_prefix)
+      (dotted_name
+        (identifier))))
+  (import_statement
+    (relative_import
+      (import_prefix)
+      (dotted_name
+        (identifier)
+        (identifier)))))
+
+================================================================================
+Convention on a for loop variable
+================================================================================
+
+fn f():
+    for var arg in argv:
+        pass
+    for ref report in self.reports:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (for_statement
+        (argument_convention)
+        (identifier)
+        (identifier)
+        (block
+          (pass_statement)))
+      (for_statement
+        (argument_convention)
+        (identifier)
+        (attribute
+          (identifier)
+          (identifier))
+        (block
+          (pass_statement))))))
+
+================================================================================
+abi function qualifier
+================================================================================
+
+def f() abi("C"):
+    pass
+
+comptime Cb = def(PyObjectPtr) thin abi("C") -> PyObjectPtr
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (abi_specifier
+      (string
+        (string_start)
+        (string_content)
+        (string_end)))
+    (block
+      (pass_statement)))
+  (assignment
+    (identifier)
+    (function_type
+      (type
+        (identifier))
+      (abi_specifier
+        (string
+          (string_start)
+          (string_content)
+          (string_end)))
+      (type
+        (identifier)))))
+
+================================================================================
+Comptime parenthesized expression
+================================================================================
+
+fn f():
+    result[i] = comptime (StaticString(raw[i]))
+    comptime assert (
+        flags & VISIBLE
+    ) != 0, "msg"
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (assignment
+        (subscript
+          (identifier)
+          (identifier))
+        (comptime_expression
+          (parenthesized_expression
+            (call
+              (identifier)
+              (argument_list
+                (subscript
+                  (identifier)
+                  (identifier)))))))
+      (assert_statement
+        (comparison_operator
+          (parenthesized_expression
+            (binary_operator
+              (identifier)
+              (identifier)))
+          (integer))
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))))
+
+================================================================================
+Intersection type operator
+================================================================================
+
+fn stencil[
+    MapFnType: Copyable & RegisterPassable & def(Int) -> Int,
+]():
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (type_parameter
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (intersection_type
+              (identifier)
+              (identifier)
+              (function_type
+                (type
+                  (identifier))
+                (type
+                  (identifier))))))))
+    (parameters)
+    (block
+      (pass_statement))))
+
+================================================================================
+Decorator on a comptime alias
+================================================================================
+
+@deprecated(use=ImplicitlyDeletable)
+comptime ImplicitlyDestructible = ImplicitlyDeletable
+
+--------------------------------------------------------------------------------
+
+(module
+  (decorated_definition
+    (decorator
+      (call
+        (identifier)
+        (argument_list
+          (keyword_argument
+            (identifier)
+            (identifier)))))
+    (assignment
+      (identifier)
+      (identifier))))
+
+================================================================================
+Multi-argument ref convention
+================================================================================
+
+fn f(ref[origin, address_space] self) -> Int:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (self_parameter
+        (argument_convention
+          (identifier)
+          (identifier))))
+    (type
+      (identifier))
+    (block
+      (pass_statement))))
