@@ -540,11 +540,37 @@ module.exports = grammar({
       choice('class', 'struct'),
       field('name', $.identifier),
       field('type_parameters', optional($.type_parameter)),
-      field('superclasses', optional($.argument_list)),
+      field(
+        'superclasses',
+        optional(alias($.superclass_list, $.argument_list)),
+      ),
       ':',
       field('body', $._suite),
     ),
-    
+
+    // A struct conformance list, like an argument list except each entry may
+    // carry `where` constraints, e.g. `Copyable where conforms_to(T, Copyable)`.
+    superclass_list: ($) =>
+      seq(
+        '(',
+        optional(
+          commaSep1(
+            seq(
+              choice(
+                $.expression,
+                $.list_splat,
+                $.dictionary_splat,
+                alias($.parenthesized_list_splat, $.parenthesized_expression),
+                $.keyword_argument,
+              ),
+              repeat($.where_clause),
+            ),
+          ),
+        ),
+        optional(','),
+        ')',
+      ),
+
     // The `[...]` parameter clause of a function, struct, or alias, also reused
     // for generic-type instantiation. Empty brackets are permitted.
     type_parameter: ($) => seq(

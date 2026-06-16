@@ -704,3 +704,44 @@ struct S:
         (type
           (identifier))
         (identifier)))))
+
+================================================================================
+Where clause in a superclass list
+================================================================================
+
+struct Tuple[*element_types: Movable](
+    Copyable where AllCopyable[*element_types],
+    Defaultable,
+    Equatable where AllEquatable[*element_types],
+):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    (identifier)
+    (type_parameter
+      (type
+        (constrained_type
+          (type
+            (splat_type
+              (identifier)))
+          (type
+            (identifier)))))
+    (argument_list
+      (identifier)
+      (where_clause
+        (subscript
+          (identifier)
+          (list_splat
+            (identifier))))
+      (identifier)
+      (identifier)
+      (where_clause
+        (subscript
+          (identifier)
+          (list_splat
+            (identifier)))))
+    (block
+      (pass_statement))))

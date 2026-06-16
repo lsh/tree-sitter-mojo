@@ -457,6 +457,10 @@
         {
           "type": "parenthesized_expression",
           "named": true
+        },
+        {
+          "type": "where_clause",
+          "named": true
         }
       ]
     }
