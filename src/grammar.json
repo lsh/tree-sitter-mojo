@@ -6405,21 +6405,12 @@
                 }
               },
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "string_start"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "string_content"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "string_end"
-                  }
-                ]
+                "type": "FIELD",
+                "name": "attribute",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "mlir_fragment"
+                }
               }
             ]
           }
@@ -7345,6 +7336,26 @@
         }
       ]
     },
+    "mlir_fragment": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "`"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^`]*"
+          },
+          {
+            "type": "STRING",
+            "value": "`"
+          }
+        ]
+      }
+    },
     "mlir_type": {
       "type": "PREC_RIGHT",
       "value": 0,
@@ -7379,7 +7390,7 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "string"
+                        "name": "mlir_fragment"
                       }
                     ]
                   }

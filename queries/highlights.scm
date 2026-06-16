@@ -166,4 +166,5 @@
 (mlir_type "." @punctuation.special (#set! "priority" 110))
 (mlir_type "," @punctuation (#set! "priority" 110))
 (mlir_type) @type
+(mlir_fragment) @type (#set! "priority" 110)
 ; (argument_convention) @keyword

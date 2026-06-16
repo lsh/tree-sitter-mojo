@@ -615,7 +615,7 @@
     "fields": {
       "attribute": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "comptime",
@@ -627,6 +627,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "mlir_fragment",
             "named": true
           },
           {
@@ -669,24 +673,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "string_content",
-          "named": true
-        },
-        {
-          "type": "string_end",
-          "named": true
-        },
-        {
-          "type": "string_start",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -2965,7 +2951,7 @@
           "named": true
         },
         {
-          "type": "string",
+          "type": "mlir_fragment",
           "named": true
         },
         {
@@ -4700,6 +4686,10 @@
   {
     "type": "match",
     "named": false
+  },
+  {
+    "type": "mlir_fragment",
+    "named": true
   },
   {
     "type": "mut",

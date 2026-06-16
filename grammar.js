@@ -1358,7 +1358,9 @@ module.exports = grammar({
               'unified',
               'where',
             )),
-            seq($.string_start, $.string_content, $.string_end),
+            // A backtick-quoted MLIR member, e.g. the `pop.cast` in
+            // ``__mlir_op.`pop.cast` ``.
+            field("attribute", $.mlir_fragment),
           ),
         ),
       ),
@@ -1529,6 +1531,11 @@ module.exports = grammar({
 
     // Literals
 
+    // A backtick-quoted MLIR fragment lexed as a single opaque token, e.g.
+    // `pop.cast`, `!co.routine` or `0:index`. Kept distinct from a string so it
+    // can be highlighted as MLIR.
+    mlir_fragment: (_) => token(seq("`", /[^`]*/, "`")),
+
     // MLIR type interop. A type is a plain dotted member
     // (`__mlir_type.index`), a backtick-quoted MLIR type fragment
     // (``__mlir_type.`!co.routine` ``), or a bracketed parametric type that
@@ -1540,7 +1547,7 @@ module.exports = grammar({
         seq(
           "__mlir_type",
           choice(
-            seq(".", choice(alias($.identifier, $.type), $.string)),
+            seq(".", choice(alias($.identifier, $.type), $.mlir_fragment)),
             seq("[", commaSep1($.expression), optional(","), "]"),
           ),
         ),
