@@ -4235,6 +4235,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "transfer_expression"
+        },
+        {
+          "type": "SYMBOL",
           "name": "attribute"
         },
         {
@@ -4312,6 +4316,27 @@
           "name": "mlir_type"
         }
       ]
+    },
+    "transfer_expression": {
+      "type": "PREC",
+      "value": 22,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "SYMBOL",
+              "name": "primary_expression"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "^"
+          }
+        ]
+      }
     },
     "not_operator": {
       "type": "PREC",
@@ -7568,6 +7593,20 @@
     [
       "match_statement",
       "primary_expression"
+    ],
+    [
+      "transfer_expression",
+      "binary_operator"
+    ],
+    [
+      "transfer_expression",
+      "binary_operator",
+      "unary_operator"
+    ],
+    [
+      "transfer_expression",
+      "binary_operator",
+      "await"
     ]
   ],
   "precedences": [],

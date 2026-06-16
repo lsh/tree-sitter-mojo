@@ -61,3 +61,41 @@ def c() raises capturing[_] -> Int:
       (return_statement
         (integer)))))
 
+================================================================================
+Transfer operator
+================================================================================
+
+def consume(owned x: String) -> String:
+    return x^
+
+def use():
+    foo(bar^, baz)
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (transfer_expression
+          value: (identifier)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (call
+        function: (identifier)
+        arguments: (argument_list
+          (transfer_expression
+            value: (identifier))
+          (identifier))))))
+

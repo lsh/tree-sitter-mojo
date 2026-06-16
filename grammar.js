@@ -79,6 +79,9 @@ module.exports = grammar({
     [$.print_statement, $.primary_expression],
     [$.type_alias_statement, $.primary_expression],
     [$.match_statement, $.primary_expression],
+    [$.transfer_expression, $.binary_operator],
+    [$.transfer_expression, $.binary_operator, $.unary_operator],
+    [$.transfer_expression, $.binary_operator, $.await],
   ],
 
   supertypes: ($) => [
@@ -949,6 +952,7 @@ module.exports = grammar({
         $.false,
         $.none,
         $.unary_operator,
+        $.transfer_expression,
         $.attribute,
         choice(prec.dynamic(-1, $.subscript), prec.dynamic(1, $.call)),
         $.list,
@@ -964,6 +968,10 @@ module.exports = grammar({
         alias($.list_splat_pattern, $.list_splat),
         $.mlir_type,
       ),
+
+    // The postfix transfer/consume operator, e.g. `result^`.
+    transfer_expression: ($) =>
+      prec(PREC.call, seq(field("value", $.primary_expression), "^")),
 
     not_operator: ($) =>
       prec(PREC.not, seq("not", field("argument", $.expression))),

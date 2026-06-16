@@ -356,6 +356,10 @@
         "named": true
       },
       {
+        "type": "transfer_expression",
+        "named": true
+      },
+      {
         "type": "true",
         "named": true
       },
@@ -3160,6 +3164,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "transfer_expression",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "primary_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
