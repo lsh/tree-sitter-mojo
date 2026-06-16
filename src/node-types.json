@@ -541,6 +541,10 @@
             "named": true
           },
           {
+            "type": "function_type",
+            "named": true
+          },
+          {
             "type": "pattern_list",
             "named": true
           },
@@ -736,6 +740,10 @@
           },
           {
             "type": "expression_list",
+            "named": true
+          },
+          {
+            "type": "function_type",
             "named": true
           },
           {
@@ -2045,6 +2053,60 @@
     }
   },
   {
+    "type": "function_type",
+    "named": true,
+    "fields": {
+      "parameter": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      },
+      "raises_type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "capture_list",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "result_convention",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "future_import_statement",
     "named": true,
     "fields": {
@@ -2772,6 +2834,10 @@
           "named": true
         },
         {
+          "type": "function_type",
+          "named": true
+        },
+        {
           "type": "keyword_argument",
           "named": true
         },
@@ -2828,6 +2894,10 @@
           },
           {
             "type": "expression_list",
+            "named": true
+          },
+          {
+            "type": "function_type",
             "named": true
           },
           {
@@ -3213,6 +3283,10 @@
             "named": true
           },
           {
+            "type": "function_type",
+            "named": true
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -3418,6 +3492,10 @@
         },
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "function_type",
           "named": true
         },
         {

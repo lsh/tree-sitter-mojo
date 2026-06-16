@@ -612,6 +612,8 @@ module.exports = grammar({
           $.dictionary_splat,
           alias($.parenthesized_list_splat, $.parenthesized_expression),
           $.keyword_argument,
+          // A callable type argument, e.g. `val.isa[def() -> Path]()`.
+          $.function_type,
         ),
       )),
       optional(','),
@@ -1203,6 +1205,8 @@ module.exports = grammar({
         $.augmented_assignment,
         $.pattern_list,
         $.yield,
+        // A callable type as the value, e.g. `comptime F = def() -> None`.
+        $.function_type,
       ),
 
     yield: ($) =>
@@ -1250,6 +1254,8 @@ module.exports = grammar({
               $.expression,
               $.slice,
               $.keyword_argument,
+              // A callable type argument, e.g. `Variant[def() -> Path]`.
+              $.function_type,
               // A bare convention keyword used as a parameter argument, e.g.
               // the `mut` in `unsafe_mut_cast[mut]`.
               alias(choice("mut", "out"), $.identifier),
@@ -1287,7 +1293,25 @@ module.exports = grammar({
       $.union_type,
       $.constrained_type,
       $.member_type,
+      $.function_type,
     ),
+    // A callable type literal, e.g. `def(Int) raises -> Bool` or
+    // `def() capturing -> Path`, usable anywhere a type is expected.
+    function_type: ($) => prec.right(seq(
+      'def',
+      // A callable type's parameters are types (optionally named or variadic),
+      // e.g. `def(Int, OpaquePointer[X]) -> None`.
+      '(',
+      optional(seq(commaSep1(field('parameter', $.type)), optional(','))),
+      ')',
+      optional($._function_effects),
+      optional($.result_convention),
+      optional(seq(
+        '->',
+        optional($._ref_convention),
+        field('return_type', $.type),
+      )),
+    )),
     splat_type: ($) => prec(1, seq(choice('*', '**'), $.identifier)),
     generic_type: ($) => prec(1, seq(
       choice(

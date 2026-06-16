@@ -335,3 +335,48 @@ def to_buffer(p: Int) {read} -> DeviceBuffer:
     body: (block
       (pass_statement))))
 
+================================================================================
+Callable type literals
+================================================================================
+
+comptime Variant1 = Variant[Bool, def() capturing -> Path]
+
+def run(func: def(Int) raises -> Bool):
+    pass
+
+comptime Cb = def(Self) raises capturing[_] -> None
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    left: (identifier)
+    right: (subscript
+      value: (identifier)
+      subscript: (identifier)
+      subscript: (function_type
+        return_type: (type
+          (identifier)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (identifier)
+        type: (type
+          (function_type
+            parameter: (type
+              (identifier))
+            return_type: (type
+              (identifier))))))
+    body: (block
+      (pass_statement)))
+  (assignment
+    left: (identifier)
+    right: (function_type
+      parameter: (type
+        (identifier))
+      (capture_list
+        (wildcard_origin))
+      return_type: (type
+        (none)))))
+
