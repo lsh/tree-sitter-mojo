@@ -84,6 +84,7 @@ module.exports = grammar({
     [$.transfer_expression, $.binary_operator, $.await],
     [$.type_parameter, $.list],
     [$.parameterized_alias_statement, $.primary_expression],
+    [$._collection_elements, $.struct_literal],
   ],
 
   supertypes: ($) => [
@@ -1025,6 +1026,7 @@ module.exports = grammar({
         $.dictionary_comprehension,
         $.set,
         $.set_comprehension,
+        $.struct_literal,
         $.tuple,
         $.parenthesized_expression,
         $.generator_expression,
@@ -1412,6 +1414,23 @@ module.exports = grammar({
 
     pair: ($) =>
       seq(field("key", $.expression), ":", field("value", $.expression)),
+
+    // A struct/initializer literal, e.g. `{ ptr = p, length = n }` or
+    // `{ ctx, name = value }` mixing positional and named fields.
+    struct_literal: ($) =>
+      prec.dynamic(-1, seq(
+        "{",
+        commaSep1(choice($.struct_literal_field, $.expression)),
+        optional(","),
+        "}",
+      )),
+
+    struct_literal_field: ($) =>
+      seq(
+        field("name", choice($.identifier, $.keyword_identifier)),
+        "=",
+        field("value", $.expression),
+      ),
 
     list_comprehension: ($) =>
       seq("[", field("body", $.expression), $._comprehension_clauses, "]"),

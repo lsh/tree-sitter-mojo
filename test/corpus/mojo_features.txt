@@ -413,3 +413,56 @@ struct Buffer:
         body: (block
           (pass_statement))))))
 
+================================================================================
+Struct literal
+================================================================================
+
+def make() -> Self:
+    return {ptr = self._ptr, length = len(self)}
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (struct_literal
+          (struct_literal_field
+            name: (identifier)
+            value: (attribute
+              object: (identifier)
+              attribute: (identifier)))
+          (struct_literal_field
+            name: (identifier)
+            value: (call
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))))))
+
+================================================================================
+Struct literal with positional and named fields
+================================================================================
+
+def build():
+    return {ctx, function_name = info.name}
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (return_statement
+        (struct_literal
+          (identifier)
+          (struct_literal_field
+            name: (identifier)
+            value: (attribute
+              object: (identifier)
+              attribute: (identifier))))))))
+
