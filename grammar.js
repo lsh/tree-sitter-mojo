@@ -519,6 +519,13 @@ module.exports = grammar({
           $.infer_separator,
           $.keyword_separator,
           $.positional_separator,
+          // Argument-convention soft keywords (`mut`, `out`) used as parameter
+          // names or arguments, e.g. `mut: Bool`, `mut=mut`, or a bare `mut`.
+          seq(
+            alias(choice('mut', 'out'), $.identifier),
+            optional(seq(':', field('type', $.type))),
+            optional(seq('=', field('default', $._type_parameter_default))),
+          ),
           seq(
             $.type,
             optional(seq('=', field('default', $._type_parameter_default))),
@@ -1266,9 +1273,19 @@ module.exports = grammar({
 
     keyword_argument: ($) =>
       seq(
-        field("name", choice($.identifier, $.keyword_identifier)),
+        field("name", choice(
+          $.identifier,
+          $.keyword_identifier,
+          // Argument-convention soft keywords used as parameter names, e.g.
+          // the `mut` in `Origin[mut=True]`.
+          alias(choice("mut", "out"), $.identifier),
+        )),
         "=",
-        field("value", $.expression),
+        field("value", choice(
+          $.expression,
+          // A convention keyword used as the argument value, e.g. `mut=mut`.
+          alias(choice("mut", "out"), $.identifier),
+        )),
       ),
 
     // Literals

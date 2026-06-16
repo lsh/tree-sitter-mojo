@@ -175,3 +175,37 @@ struct Buffer[dtype: DType, //, size: Int = 4](Copyable):
     body: (block
       (pass_statement))))
 
+================================================================================
+Convention keywords as parameter names
+================================================================================
+
+def span[mut: Bool, origin: Origin[mut=mut], //](ref[origin] self):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    type_parameters: (type_parameter
+      (identifier)
+      type: (type
+        (identifier))
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (generic_type
+              (identifier)
+              (type_parameter
+                (identifier)
+                default: (identifier))))))
+      (infer_separator))
+    parameters: (parameters
+      (self_parameter
+        (argument_convention
+          (identifier))))
+    body: (block
+      (pass_statement))))
+

@@ -2292,6 +2292,79 @@
                           "type": "SEQ",
                           "members": [
                             {
+                              "type": "ALIAS",
+                              "content": {
+                                "type": "CHOICE",
+                                "members": [
+                                  {
+                                    "type": "STRING",
+                                    "value": "mut"
+                                  },
+                                  {
+                                    "type": "STRING",
+                                    "value": "out"
+                                  }
+                                ]
+                              },
+                              "named": true,
+                              "value": "identifier"
+                            },
+                            {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SEQ",
+                                  "members": [
+                                    {
+                                      "type": "STRING",
+                                      "value": ":"
+                                    },
+                                    {
+                                      "type": "FIELD",
+                                      "name": "type",
+                                      "content": {
+                                        "type": "SYMBOL",
+                                        "name": "type"
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "BLANK"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SEQ",
+                                  "members": [
+                                    {
+                                      "type": "STRING",
+                                      "value": "="
+                                    },
+                                    {
+                                      "type": "FIELD",
+                                      "name": "default",
+                                      "content": {
+                                        "type": "SYMBOL",
+                                        "name": "_type_parameter_default"
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "BLANK"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "SEQ",
+                          "members": [
+                            {
                               "type": "SYMBOL",
                               "name": "type"
                             },
@@ -2354,6 +2427,79 @@
                               {
                                 "type": "SYMBOL",
                                 "name": "positional_separator"
+                              },
+                              {
+                                "type": "SEQ",
+                                "members": [
+                                  {
+                                    "type": "ALIAS",
+                                    "content": {
+                                      "type": "CHOICE",
+                                      "members": [
+                                        {
+                                          "type": "STRING",
+                                          "value": "mut"
+                                        },
+                                        {
+                                          "type": "STRING",
+                                          "value": "out"
+                                        }
+                                      ]
+                                    },
+                                    "named": true,
+                                    "value": "identifier"
+                                  },
+                                  {
+                                    "type": "CHOICE",
+                                    "members": [
+                                      {
+                                        "type": "SEQ",
+                                        "members": [
+                                          {
+                                            "type": "STRING",
+                                            "value": ":"
+                                          },
+                                          {
+                                            "type": "FIELD",
+                                            "name": "type",
+                                            "content": {
+                                              "type": "SYMBOL",
+                                              "name": "type"
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "type": "BLANK"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "CHOICE",
+                                    "members": [
+                                      {
+                                        "type": "SEQ",
+                                        "members": [
+                                          {
+                                            "type": "STRING",
+                                            "value": "="
+                                          },
+                                          {
+                                            "type": "FIELD",
+                                            "name": "default",
+                                            "content": {
+                                              "type": "SYMBOL",
+                                              "name": "_type_parameter_default"
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "type": "BLANK"
+                                      }
+                                    ]
+                                  }
+                                ]
                               },
                               {
                                 "type": "SEQ",
@@ -6045,6 +6191,24 @@
               {
                 "type": "SYMBOL",
                 "name": "keyword_identifier"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "mut"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "out"
+                    }
+                  ]
+                },
+                "named": true,
+                "value": "identifier"
               }
             ]
           }
@@ -6057,8 +6221,31 @@
           "type": "FIELD",
           "name": "value",
           "content": {
-            "type": "SYMBOL",
-            "name": "expression"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "mut"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "out"
+                    }
+                  ]
+                },
+                "named": true,
+                "value": "identifier"
+              }
+            ]
           }
         }
       ]
