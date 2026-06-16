@@ -921,7 +921,12 @@ module.exports = grammar({
 
     where_clause: ($) => seq("where", $.expression),
 
-    self_parameter: ($) => seq(optional($.argument_convention), SELF),
+    self_parameter: ($) =>
+      prec.right(seq(
+        optional($.argument_convention),
+        SELF,
+        optional(seq(":", field("type", $.type))),
+      )),
 
     typed_parameter: ($) =>
       prec(

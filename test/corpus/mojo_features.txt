@@ -380,3 +380,36 @@ comptime Cb = def(Self) raises capturing[_] -> None
       return_type: (type
         (none)))))
 
+================================================================================
+Typed self parameter
+================================================================================
+
+struct Buffer:
+    def __setitem__(self: Buffer[Self.dtype], idx: Int):
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    name: (identifier)
+    body: (block
+      (function_definition
+        name: (identifier)
+        parameters: (parameters
+          (self_parameter
+            type: (type
+              (generic_type
+                (identifier)
+                (type_parameter
+                  (type
+                    (attribute
+                      object: (identifier)
+                      attribute: (identifier)))))))
+          (typed_parameter
+            (identifier)
+            type: (type
+              (identifier))))
+        body: (block
+          (pass_statement))))))
+
