@@ -22,3 +22,42 @@ def cleanup() raises:
     body: (block
       (pass_statement))))
 
+================================================================================
+Function effect qualifiers
+================================================================================
+
+def a() capturing:
+    pass
+
+def b() thin -> None:
+    pass
+
+def c() raises capturing[_] -> Int:
+    return 1
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (pass_statement)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    return_type: (type
+      (none))
+    body: (block
+      (pass_statement)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    (capture_list
+      (wildcard_origin))
+    return_type: (type
+      (identifier))
+    body: (block
+      (return_statement
+        (integer)))))
+

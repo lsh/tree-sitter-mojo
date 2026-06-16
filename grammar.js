@@ -36,6 +36,29 @@ const PREC = {
 const SEMICOLON = ";";
 const SELF = "self";
 
+const PYTHON_KEYWORDS = [
+  // https://docs.python.org/3/reference/lexical_analysis.html#keywords
+  'False', 'await', 'else', 'import', 'pass',
+  'None', 'break', 'except', 'in', 'raise',
+  'True', 'class', 'finally', 'is', 'return',
+  'and', 'continue', 'for', 'lambda', 'try',
+  'as', 'def', 'from', 'nonlocal', 'while',
+  'assert', 'del', 'global', 'not', 'with',
+  'async', 'elif', 'if', 'or', 'yield',
+];
+
+// Mojo-specific keywords. The argument-convention soft keywords `mut`/`out`
+// are reserved globally, but specific rules (type_parameter, keyword_argument,
+// subscript) explicitly re-admit them as identifiers where they appear as
+// ordinary names, e.g. `mut: Bool` or `Origin[mut=mut]`.
+const MOJO_KEYWORDS = [
+  'var', 'comptime', 'ref', 'read', 'deinit', 'unified', 'where',
+  'mut', 'out',
+  // Function-effect keywords. Reserved so they are not mistaken for a typed
+  // `raises` error type, e.g. in `fn() raises capturing -> None`.
+  'capturing', 'escaping', 'thin',
+];
+
 module.exports = grammar({
   name: "mojo",
 
@@ -56,7 +79,6 @@ module.exports = grammar({
     [$.print_statement, $.primary_expression],
     [$.type_alias_statement, $.primary_expression],
     [$.match_statement, $.primary_expression],
-    [$._function_effects, $.constrained_type],
   ],
 
   supertypes: ($) => [
@@ -103,18 +125,7 @@ module.exports = grammar({
   ],
 
   reserved: {
-    global: _ => [
-      // https://docs.python.org/3/reference/lexical_analysis.html#keywords
-      'False', 'await', 'else', 'import', 'pass',
-      'None', 'break', 'except', 'in', 'raise',
-      'True', 'class', 'finally', 'is', 'return',
-      'and', 'continue', 'for', 'lambda', 'try',
-      'as', 'def', 'from', 'nonlocal', 'while',
-      'assert', 'del', 'global', 'not', 'with',
-      'async', 'elif', 'if', 'or', 'yield',
-      // Mojo-specific keywords
-      'var', 'comptime', 'ref', 'read', 'mut', 'out', 'deinit', 'unified', 'where',
-    ],
+    global: _ => [...PYTHON_KEYWORDS, ...MOJO_KEYWORDS],
   },
 
   word: ($) => $.identifier,
@@ -412,17 +423,24 @@ module.exports = grammar({
       field('body', $._suite),
     ),
 
-    _function_effects: ($) => choice(
-      seq('raises', optional(field('raises_type', $.type))),
-      seq('capturing', 'raises', optional(field('raises_type', $.type))),
-      seq('escaping', 'raises', optional(field('raises_type', $.type))),
-      seq('capturing', 'escaping', 'raises', optional(field('raises_type', $.type))),
-      seq('escaping', 'capturing', 'raises', optional(field('raises_type', $.type))),
-      'capturing',
-      'escaping',
-      seq('capturing', 'escaping'),
-      seq('escaping', 'capturing'),
-    ),
+    // A function's effect qualifiers, e.g. `raises`, `capturing`, `thin`, or
+    // combinations like `raises capturing`. `raises` may carry an optional
+    // error type, bound greedily so a following `->`/`:`/`|`/`.` is treated as
+    // part of the type when present.
+    _function_effects: ($) => repeat1(choice(
+      prec.right(seq('raises', optional(field('raises_type', $.type)))),
+      // `capturing`/`escaping` may carry an origin list, e.g. `capturing[_]`.
+      seq(choice('capturing', 'escaping'), optional($.capture_list)),
+      'thin',
+    )),
+
+    // The origin list is bound tighter than a trailing subscript so that the
+    // `[_]` in `def() capturing[_] -> None` is part of the effect.
+    capture_list: ($) =>
+      prec(PREC.call + 1,
+        seq('[', commaSep1(choice($.expression, $.wildcard_origin)), optional(','), ']')),
+
+    wildcard_origin: (_) => '_',
 
     parameters: ($) => seq(
       '(',
