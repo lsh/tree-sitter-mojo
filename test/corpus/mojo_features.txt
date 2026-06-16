@@ -209,3 +209,65 @@ def span[mut: Bool, origin: Origin[mut=mut], //](ref[origin] self):
     body: (block
       (pass_statement))))
 
+================================================================================
+Empty parametric brackets
+================================================================================
+
+comptime S = _CString[]
+
+def make() -> Buffer[]:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    left: (identifier)
+    right: (subscript
+      value: (identifier)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    return_type: (type
+      (generic_type
+        (identifier)
+        (type_parameter)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Subscript with keyword arguments and bare conventions
+================================================================================
+
+comptime P = UnsafePointer[Int, mut=True]
+
+def cast(self):
+    return self.ptr.unsafe_cast[mut]()
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    left: (identifier)
+    right: (subscript
+      value: (identifier)
+      subscript: (identifier)
+      subscript: (keyword_argument
+        name: (identifier)
+        value: (true))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (self_parameter))
+    body: (block
+      (return_statement
+        (call
+          function: (subscript
+            value: (attribute
+              object: (attribute
+                object: (identifier)
+                attribute: (identifier))
+              attribute: (identifier))
+            subscript: (identifier))
+          arguments: (argument_list))))))
+

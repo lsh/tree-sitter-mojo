@@ -3127,10 +3127,18 @@
     "fields": {
       "subscript": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "keyword_argument",
             "named": true
           },
           {

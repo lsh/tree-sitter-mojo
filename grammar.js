@@ -1225,8 +1225,19 @@ module.exports = grammar({
         seq(
           field("value", $.primary_expression),
           "[",
-          commaSep1(field("subscript", choice($.expression, $.slice))),
-          optional(","),
+          // Empty brackets are allowed for parametric instantiation, e.g.
+          // `_CString[]`, where every parameter is inferred or defaulted.
+          optional(seq(
+            commaSep1(field("subscript", choice(
+              $.expression,
+              $.slice,
+              $.keyword_argument,
+              // A bare convention keyword used as a parameter argument, e.g.
+              // the `mut` in `unsafe_mut_cast[mut]`.
+              alias(choice("mut", "out"), $.identifier),
+            ))),
+            optional(","),
+          )),
           "]",
         ),
       ),
