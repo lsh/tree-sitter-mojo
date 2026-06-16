@@ -7337,24 +7337,47 @@
       ]
     },
     "mlir_fragment": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "`"
-          },
-          {
-            "type": "PATTERN",
-            "value": "[^`]*"
-          },
-          {
-            "type": "STRING",
-            "value": "`"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_mlir_backtick"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_mlir_ident"
+                },
+                "named": true,
+                "value": "type"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_mlir_number"
+                },
+                "named": true,
+                "value": "integer"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "mlir_punctuation"
+              }
+            ]
           }
-        ]
-      }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_mlir_backtick"
+        }
+      ]
     },
     "mlir_type": {
       "type": "PREC_RIGHT",
@@ -8990,6 +9013,22 @@
     {
       "type": "STRING",
       "value": "except"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_mlir_backtick"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_mlir_ident"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_mlir_number"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "mlir_punctuation"
     }
   ],
   "inline": [

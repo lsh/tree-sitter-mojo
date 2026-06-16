@@ -130,6 +130,13 @@ module.exports = grammar({
     ")",
     "}",
     "except",
+
+    // MLIR backtick-fragment interior tokens (see scanner.c). The interior of a
+    // backtick MLIR fragment is tokenized into pieces so it highlights as MLIR.
+    $._mlir_backtick,
+    $._mlir_ident,
+    $._mlir_number,
+    $.mlir_punctuation,
   ],
 
   inline: ($) => [
@@ -1531,10 +1538,21 @@ module.exports = grammar({
 
     // Literals
 
-    // A backtick-quoted MLIR fragment lexed as a single opaque token, e.g.
-    // `pop.cast`, `!co.routine` or `0:index`. Kept distinct from a string so it
-    // can be highlighted as MLIR.
-    mlir_fragment: (_) => token(seq("`", /[^`]*/, "`")),
+    // A backtick-quoted MLIR fragment whose interior is tokenized by the
+    // external scanner (see scanner.c) into typed identifiers, numbers and
+    // punctuation, e.g. `pop.cast`, `!co.routine`, `0:index` or
+    // `#kgen.dtype.constant<ui8> : !kgen.dtype`. This lets the interior be
+    // highlighted as MLIR rather than as an opaque string.
+    mlir_fragment: ($) =>
+      seq(
+        $._mlir_backtick,
+        repeat(choice(
+          alias($._mlir_ident, $.type),
+          alias($._mlir_number, $.integer),
+          $.mlir_punctuation,
+        )),
+        $._mlir_backtick,
+      ),
 
     // MLIR type interop. A type is a plain dotted member
     // (`__mlir_type.index`), a backtick-quoted MLIR type fragment

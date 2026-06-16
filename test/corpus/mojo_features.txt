@@ -529,7 +529,14 @@ struct S:
     (parameters)
     (type
       (mlir_type
-        (mlir_fragment)))
+        (mlir_fragment
+          (mlir_punctuation)
+          (type)
+          (mlir_punctuation)
+          (type)
+          (mlir_punctuation)
+          (integer)
+          (mlir_punctuation))))
     (block
       (pass_statement)))
   (class_definition
@@ -564,7 +571,10 @@ struct S:
               (subscript
                 (attribute
                   (identifier)
-                  (mlir_fragment))
+                  (mlir_fragment
+                    (type)
+                    (mlir_punctuation)
+                    (type)))
                 (keyword_argument
                   (identifier)
                   (mlir_type
@@ -582,7 +592,11 @@ struct S:
                 (identifier)
                 (type
                   (mlir_type
-                    (mlir_fragment)))))
+                    (mlir_fragment
+                      (mlir_punctuation)
+                      (type)
+                      (mlir_punctuation)
+                      (type))))))
             (block
               (call
                 (identifier)
@@ -592,7 +606,10 @@ struct S:
             (subscript
               (attribute
                 (identifier)
-                (mlir_fragment))
+                (mlir_fragment
+                  (type)
+                  (mlir_punctuation)
+                  (type)))
               (keyword_argument
                 (identifier)
                 (attribute

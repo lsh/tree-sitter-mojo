@@ -2903,6 +2903,29 @@
     }
   },
   {
+    "type": "mlir_fragment",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "mlir_punctuation",
+          "named": true
+        },
+        {
+          "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "mlir_region",
     "named": true,
     "fields": {
@@ -4688,7 +4711,7 @@
     "named": false
   },
   {
-    "type": "mlir_fragment",
+    "type": "mlir_punctuation",
     "named": true
   },
   {
