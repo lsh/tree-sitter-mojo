@@ -139,6 +139,10 @@
         {
           "type": "SYMBOL",
           "name": "type_alias_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "parameterized_alias_statement"
         }
       ]
     },
@@ -2182,6 +2186,47 @@
             "content": {
               "type": "SYMBOL",
               "name": "type"
+            }
+          }
+        ]
+      }
+    },
+    "parameterized_alias_statement": {
+      "type": "PREC_DYNAMIC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "comptime"
+          },
+          {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "SYMBOL",
+              "name": "identifier"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "type_parameters",
+            "content": {
+              "type": "SYMBOL",
+              "name": "type_parameter"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "="
+          },
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_right_hand_side"
             }
           }
         ]
@@ -8025,6 +8070,10 @@
     [
       "type_parameter",
       "list"
+    ],
+    [
+      "parameterized_alias_statement",
+      "primary_expression"
     ]
   ],
   "precedences": [],

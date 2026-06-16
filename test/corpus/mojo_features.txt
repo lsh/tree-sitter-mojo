@@ -271,3 +271,43 @@ def cast(self):
             subscript: (identifier))
           arguments: (argument_list))))))
 
+================================================================================
+Parameterized comptime alias
+================================================================================
+
+comptime Ptr[
+    mut: Bool,
+    //,
+    origin: Origin[mut=mut] = UntrackedOrigin[mut=mut],
+] = _CPointer[_Cpp, origin]
+
+--------------------------------------------------------------------------------
+
+(module
+  (parameterized_alias_statement
+    name: (identifier)
+    type_parameters: (type_parameter
+      (identifier)
+      type: (type
+        (identifier))
+      (infer_separator)
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (generic_type
+              (identifier)
+              (type_parameter
+                (identifier)
+                default: (identifier))))))
+      default: (subscript
+        value: (identifier)
+        subscript: (keyword_argument
+          name: (identifier)
+          value: (identifier))))
+    value: (subscript
+      value: (identifier)
+      subscript: (identifier)
+      subscript: (identifier))))
+

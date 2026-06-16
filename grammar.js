@@ -83,6 +83,7 @@ module.exports = grammar({
     [$.transfer_expression, $.binary_operator, $.unary_operator],
     [$.transfer_expression, $.binary_operator, $.await],
     [$.type_parameter, $.list],
+    [$.parameterized_alias_statement, $.primary_expression],
   ],
 
   supertypes: ($) => [
@@ -167,6 +168,7 @@ module.exports = grammar({
         $.nonlocal_statement,
         $.exec_statement,
         $.type_alias_statement,
+        $.parameterized_alias_statement,
       ),
 
     import_statement: ($) => seq("import", $._import_list),
@@ -499,6 +501,16 @@ module.exports = grammar({
       field('left', $.type),
       '=',
       field('right', $.type),
+    )),
+
+    // A parameterized compile-time alias, e.g.
+    //   comptime Ptr[mut: Bool, //, origin: Origin[mut=mut] = Default] = Value
+    parameterized_alias_statement: ($) => prec.dynamic(1, seq(
+      'comptime',
+      field('name', $.identifier),
+      field('type_parameters', $.type_parameter),
+      '=',
+      field('value', $._right_hand_side),
     )),
 
     class_definition: ($) => seq(
