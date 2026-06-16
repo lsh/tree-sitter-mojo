@@ -523,6 +523,10 @@
         "required": true,
         "types": [
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "pattern",
             "named": true
           },
@@ -670,6 +674,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "call",
+            "named": true
+          },
           {
             "type": "pattern",
             "named": true
@@ -1859,6 +1867,10 @@
         "required": true,
         "types": [
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "pattern",
             "named": true
           },
@@ -1926,6 +1938,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "call",
+            "named": true
+          },
           {
             "type": "pattern",
             "named": true

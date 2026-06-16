@@ -1031,3 +1031,43 @@ fn f():
               (string_start)
               (string_content)
               (string_end))))))))
+
+================================================================================
+Call result as an assignment target
+================================================================================
+
+fn f():
+    self.get(i) = pack_bits(x)
+    node[].right() = other[].left()
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (assignment
+        (call
+          (attribute
+            (identifier)
+            (identifier))
+          (argument_list
+            (identifier)))
+        (call
+          (identifier)
+          (argument_list
+            (identifier))))
+      (assignment
+        (call
+          (attribute
+            (subscript
+              (identifier))
+            (identifier))
+          (argument_list))
+        (call
+          (attribute
+            (subscript
+              (identifier))
+            (identifier))
+          (argument_list))))))

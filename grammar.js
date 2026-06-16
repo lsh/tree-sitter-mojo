@@ -1267,8 +1267,10 @@ module.exports = grammar({
       ),
 
     // A backtick-quoted (raw) identifier used as a binding name lexes as a
-    // (string), e.g. ``var `6bit` = ...`` or ``comptime `\x1e` = ...``.
-    _left_hand_side: ($) => choice($.pattern, $.pattern_list, $.string),
+    // (string), e.g. ``var `6bit` = ...`` or ``comptime `\x1e` = ...``. A call
+    // result may also be an assignment target, e.g. `self.get(i) = x` or
+    // `node[].right() = other`.
+    _left_hand_side: ($) => choice($.pattern, $.pattern_list, $.string, $.call),
 
     pattern_list: ($) =>
       seq(
