@@ -1,0 +1,24 @@
+================================================================================
+Function with bare raises (no return type)
+================================================================================
+
+def flush() raises:
+    pass
+
+def cleanup() raises:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (pass_statement)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (pass_statement))))
+

@@ -56,6 +56,7 @@ module.exports = grammar({
     [$.print_statement, $.primary_expression],
     [$.type_alias_statement, $.primary_expression],
     [$.match_statement, $.primary_expression],
+    [$._function_effects, $.constrained_type],
   ],
 
   supertypes: ($) => [
@@ -398,14 +399,13 @@ module.exports = grammar({
       field('type_parameters', optional($.type_parameter)),
       field('parameters', $.parameters),
       optional($.unified_clause),
+      optional($._function_effects),
       optional(
         seq(
-          optional($._function_effects),
-          seq(
-            '->',
-            optional($._ref_convention),
-            field('return_type', $.type),
-          )),
+          '->',
+          optional($._ref_convention),
+          field('return_type', $.type),
+        ),
       ),
       repeat($.where_clause),
       ':',
