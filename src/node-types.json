@@ -1461,15 +1461,23 @@
     "named": true,
     "fields": {
       "definition": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
+          {
+            "type": "assignment",
+            "named": true
+          },
           {
             "type": "class_definition",
             "named": true
           },
           {
             "type": "function_definition",
+            "named": true
+          },
+          {
+            "type": "parameterized_alias_statement",
             "named": true
           },
           {

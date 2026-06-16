@@ -1289,3 +1289,25 @@ fn stencil[
     (parameters)
     (block
       (pass_statement))))
+
+================================================================================
+Decorator on a comptime alias
+================================================================================
+
+@deprecated(use=ImplicitlyDeletable)
+comptime ImplicitlyDestructible = ImplicitlyDeletable
+
+--------------------------------------------------------------------------------
+
+(module
+  (decorated_definition
+    (decorator
+      (call
+        (identifier)
+        (argument_list
+          (keyword_argument
+            (identifier)
+            (identifier)))))
+    (assignment
+      (identifier)
+      (identifier))))

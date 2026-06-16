@@ -717,6 +717,11 @@ module.exports = grammar({
         $.class_definition,
         $.function_definition,
         $.trait_definition,
+        // A decorated comptime alias, e.g.
+        //   @deprecated(use=ImplicitlyDeletable)
+        //   comptime X = ImplicitlyDeletable
+        seq($.assignment, $._newline),
+        seq($.parameterized_alias_statement, $._newline),
       )),
     ),
 
