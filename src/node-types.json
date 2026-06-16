@@ -2004,6 +2004,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "argument_convention",
+          "named": true
+        }
+      ]
     }
   },
   {

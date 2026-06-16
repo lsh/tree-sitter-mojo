@@ -1149,3 +1149,35 @@ import ..pkg.mod
       (dotted_name
         (identifier)
         (identifier)))))
+
+================================================================================
+Convention on a for loop variable
+================================================================================
+
+fn f():
+    for var arg in argv:
+        pass
+    for ref report in self.reports:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (for_statement
+        (argument_convention)
+        (identifier)
+        (identifier)
+        (block
+          (pass_statement)))
+      (for_statement
+        (argument_convention)
+        (identifier)
+        (attribute
+          (identifier)
+          (identifier))
+        (block
+          (pass_statement))))))

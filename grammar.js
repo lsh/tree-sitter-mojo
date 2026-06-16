@@ -761,6 +761,9 @@ module.exports = grammar({
       seq(
         optional("async"),
         "for",
+        // The loop variable may carry a convention, e.g. `for var arg in ...`
+        // or `for ref item in ...`.
+        optional($.argument_convention),
         field("left", $._left_hand_side),
         "in",
         field("right", $._expressions),
