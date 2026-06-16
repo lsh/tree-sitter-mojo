@@ -82,6 +82,7 @@ module.exports = grammar({
     [$.transfer_expression, $.binary_operator],
     [$.transfer_expression, $.binary_operator, $.unary_operator],
     [$.transfer_expression, $.binary_operator, $.await],
+    [$.type_parameter, $.list],
   ],
 
   supertypes: ($) => [
@@ -509,12 +510,34 @@ module.exports = grammar({
       field('body', $._suite),
     ),
     
+    // The `[...]` parameter clause of a function, struct, or alias, also reused
+    // for generic-type instantiation. Empty brackets are permitted.
     type_parameter: ($) => seq(
       '[',
-      commaSep1(seq($.type, repeat($.where_clause))),
-      optional(','),
+      optional(seq(
+        commaSep1(choice(
+          $.infer_separator,
+          $.keyword_separator,
+          $.positional_separator,
+          seq(
+            $.type,
+            optional(seq('=', field('default', $._type_parameter_default))),
+            repeat($.where_clause),
+          ),
+        )),
+        optional(','),
+      )),
       ']',
     ),
+
+    // A type-parameter default may be any expression (covering parametric
+    // instantiations and call chains like `Target[x].options()`), or a bare
+    // convention keyword such as `mut` referencing an origin parameter.
+    _type_parameter_default: ($) =>
+      choice($.expression, alias(choice('mut', 'out'), $.identifier)),
+
+    // The `//` marker separating infer-only parameters from explicit ones.
+    infer_separator: (_) => '//',
 
     trait_definition: ($) => seq(
       'trait',

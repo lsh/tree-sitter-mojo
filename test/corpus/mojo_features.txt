@@ -143,3 +143,35 @@ def pick():
           (string_content)
           (string_end))))))
 
+================================================================================
+Type parameters with infer marker and defaults
+================================================================================
+
+struct Buffer[dtype: DType, //, size: Int = 4](Copyable):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    name: (identifier)
+    type_parameters: (type_parameter
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (identifier))))
+      (infer_separator)
+      (type
+        (constrained_type
+          (type
+            (identifier))
+          (type
+            (identifier))))
+      default: (integer))
+    superclasses: (argument_list
+      (identifier))
+    body: (block
+      (pass_statement))))
+
