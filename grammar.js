@@ -1126,7 +1126,13 @@ module.exports = grammar({
         $.ellipsis,
         alias($.list_splat_pattern, $.list_splat),
         $.mlir_type,
+        $.comptime_expression,
       ),
+
+    // `comptime` applied to a parenthesized expression in value position, e.g.
+    // `result[i] = comptime (StaticString(raw[i]))`.
+    comptime_expression: ($) =>
+      prec(PREC.call, seq("comptime", $.parenthesized_expression)),
 
     // The postfix transfer/consume operator, e.g. `result^`.
     transfer_expression: ($) =>

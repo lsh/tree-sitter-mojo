@@ -1216,3 +1216,44 @@ comptime Cb = def(PyObjectPtr) thin abi("C") -> PyObjectPtr
           (string_end)))
       (type
         (identifier)))))
+
+================================================================================
+Comptime parenthesized expression
+================================================================================
+
+fn f():
+    result[i] = comptime (StaticString(raw[i]))
+    comptime assert (
+        flags & VISIBLE
+    ) != 0, "msg"
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (assignment
+        (subscript
+          (identifier)
+          (identifier))
+        (comptime_expression
+          (parenthesized_expression
+            (call
+              (identifier)
+              (argument_list
+                (subscript
+                  (identifier)
+                  (identifier)))))))
+      (assert_statement
+        (comparison_operator
+          (parenthesized_expression
+            (binary_operator
+              (identifier)
+              (identifier)))
+          (integer))
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))))

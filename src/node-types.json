@@ -296,6 +296,10 @@
         "named": true
       },
       {
+        "type": "comptime_expression",
+        "named": true
+      },
+      {
         "type": "concatenated_string",
         "named": true
       },
@@ -1359,6 +1363,21 @@
       "types": [
         {
           "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "comptime_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "parenthesized_expression",
           "named": true
         }
       ]

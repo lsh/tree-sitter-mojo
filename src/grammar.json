@@ -5138,8 +5138,29 @@
         {
           "type": "SYMBOL",
           "name": "mlir_type"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "comptime_expression"
         }
       ]
+    },
+    "comptime_expression": {
+      "type": "PREC",
+      "value": 22,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "comptime"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "parenthesized_expression"
+          }
+        ]
+      }
     },
     "transfer_expression": {
       "type": "PREC",
