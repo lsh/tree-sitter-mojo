@@ -529,6 +529,9 @@ module.exports = grammar({
       'comptime',
       field('name', $.identifier),
       field('type_parameters', $.type_parameter),
+      // An optional trait/type bound on the alias, e.g.
+      //   comptime It[...]: Iterator = Self
+      optional(seq(':', field('type', $.type))),
       '=',
       field('value', $._right_hand_side),
     )),

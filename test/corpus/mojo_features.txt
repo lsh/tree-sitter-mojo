@@ -667,3 +667,40 @@ comptime G = def[dtype: DType, width: SIMDSize, //](Int) capturing[_] -> None
         (wildcard_origin))
       (type
         (none)))))
+
+================================================================================
+Parameterized alias with a type bound
+================================================================================
+
+struct S:
+    comptime It[m: Bool, //, o: Origin[mut=m]]: Iterator = Self
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    (identifier)
+    (block
+      (parameterized_alias_statement
+        (identifier)
+        (type_parameter
+          (type
+            (constrained_type
+              (type
+                (identifier))
+              (type
+                (identifier))))
+          (infer_separator)
+          (type
+            (constrained_type
+              (type
+                (identifier))
+              (type
+                (generic_type
+                  (identifier)
+                  (type_parameter
+                    (identifier)
+                    (identifier)))))))
+        (type
+          (identifier))
+        (identifier)))))
