@@ -99,3 +99,47 @@ def use():
             value: (identifier))
           (identifier))))))
 
+================================================================================
+Comptime control-flow statements
+================================================================================
+
+def pick():
+    comptime if is_gpu():
+        pass
+    comptime for i in range(4):
+        pass
+    comptime assert not is_gpu(), "unsupported"
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (comptime_statement
+        (if_statement
+          condition: (call
+            function: (identifier)
+            arguments: (argument_list))
+          consequence: (block
+            (pass_statement))))
+      (comptime_statement
+        (for_statement
+          left: (identifier)
+          right: (call
+            function: (identifier)
+            arguments: (argument_list
+              (integer)))
+          body: (block
+            (pass_statement))))
+      (assert_statement
+        (not_operator
+          argument: (call
+            function: (identifier)
+            arguments: (argument_list)))
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))))
+

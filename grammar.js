@@ -231,7 +231,8 @@ module.exports = grammar({
 
     chevron: ($) => seq(">>", $.expression),
 
-    assert_statement: ($) => seq("assert", commaSep1($.expression)),
+    assert_statement: ($) =>
+      seq(optional("comptime"), "assert", commaSep1($.expression)),
 
     comptime_assert_statement: ($) => seq("__comptime_assert", $.expression),
 
@@ -286,6 +287,14 @@ module.exports = grammar({
       $.trait_definition,
       $.decorated_definition,
       $.match_statement,
+      $.comptime_statement,
+    ),
+
+    // A compile-time control-flow statement, e.g. `comptime if ...:` or
+    // `comptime for ... in ...:`.
+    comptime_statement: ($) => seq(
+      'comptime',
+      choice($.if_statement, $.for_statement, $.while_statement),
     ),
 
     if_statement: ($) => seq(

@@ -516,6 +516,18 @@
       "type": "SEQ",
       "members": [
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "comptime"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "STRING",
           "value": "assert"
         },
@@ -844,6 +856,36 @@
         {
           "type": "SYMBOL",
           "name": "match_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "comptime_statement"
+        }
+      ]
+    },
+    "comptime_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "comptime"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "if_statement"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "for_statement"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "while_statement"
+            }
+          ]
         }
       ]
     },
