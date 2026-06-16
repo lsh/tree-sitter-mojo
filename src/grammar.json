@@ -6029,6 +6029,10 @@
         {
           "type": "SYMBOL",
           "name": "pattern_list"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "string"
         }
       ]
     },
@@ -8652,6 +8656,10 @@
     [
       "_raises_type",
       "type"
+    ],
+    [
+      "primary_expression",
+      "assignment"
     ]
   ],
   "precedences": [],

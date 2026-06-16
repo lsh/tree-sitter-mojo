@@ -529,6 +529,10 @@
           {
             "type": "pattern_list",
             "named": true
+          },
+          {
+            "type": "string",
+            "named": true
           }
         ]
       },
@@ -672,6 +676,10 @@
           },
           {
             "type": "pattern_list",
+            "named": true
+          },
+          {
+            "type": "string",
             "named": true
           }
         ]
@@ -1857,6 +1865,10 @@
           {
             "type": "pattern_list",
             "named": true
+          },
+          {
+            "type": "string",
+            "named": true
           }
         ]
       },
@@ -1920,6 +1932,10 @@
           },
           {
             "type": "pattern_list",
+            "named": true
+          },
+          {
+            "type": "string",
             "named": true
           }
         ]

@@ -89,6 +89,9 @@ module.exports = grammar({
     [$.parameterized_alias_statement, $.primary_expression],
     [$._collection_elements, $.struct_literal],
     [$._raises_type, $.type],
+    // A backtick (string) binding name may begin an assignment or, bare, be an
+    // expression statement, e.g. ``` `6bit` = x ``` vs ``` `6bit` ```.
+    [$.primary_expression, $.assignment],
   ],
 
   supertypes: ($) => [
@@ -1263,7 +1266,9 @@ module.exports = grammar({
         field("right", $._right_hand_side),
       ),
 
-    _left_hand_side: ($) => choice($.pattern, $.pattern_list),
+    // A backtick-quoted (raw) identifier used as a binding name lexes as a
+    // (string), e.g. ``var `6bit` = ...`` or ``comptime `\x1e` = ...``.
+    _left_hand_side: ($) => choice($.pattern, $.pattern_list, $.string),
 
     pattern_list: ($) =>
       seq(
