@@ -1307,6 +1307,8 @@ module.exports = grammar({
               $.expression,
               $.slice,
               $.keyword_argument,
+              // A keyword argument whose value is a slice, e.g. `x[byte=1:n]`.
+              alias($.slice_keyword_argument, $.keyword_argument),
               // A callable type argument, e.g. `Variant[def() -> Path]`.
               $.function_type,
               // A bare convention keyword used as a parameter argument, e.g.
@@ -1379,6 +1381,18 @@ module.exports = grammar({
     union_type: ($) => prec.left(seq($.type, '|', $.type)),
     constrained_type: ($) => prec.right(seq($.type, ':', $.type)),
     member_type: ($) => seq($.type, '.', $.identifier),
+
+    // A subscript keyword argument whose value is a slice, e.g. `x[byte=1:n]`.
+    slice_keyword_argument: ($) =>
+      seq(
+        field("name", choice(
+          $.identifier,
+          $.keyword_identifier,
+          alias(choice("mut", "out"), $.identifier),
+        )),
+        "=",
+        field("value", $.slice),
+      ),
 
     keyword_argument: ($) =>
       seq(

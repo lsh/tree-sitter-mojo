@@ -2419,6 +2419,10 @@
           {
             "type": "identifier",
             "named": true
+          },
+          {
+            "type": "slice",
+            "named": true
           }
         ]
       }

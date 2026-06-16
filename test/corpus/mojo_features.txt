@@ -745,3 +745,40 @@ struct Tuple[*element_types: Movable](
             (identifier)))))
     (block
       (pass_statement))))
+
+================================================================================
+Subscript keyword argument with a slice value
+================================================================================
+
+fn f():
+    return x[byte=1:user_end]
+
+fn g():
+    return s[byte=:parameter_list_start]
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (return_statement
+        (subscript
+          (identifier)
+          (keyword_argument
+            (identifier)
+            (slice
+              (integer)
+              (identifier)))))))
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (return_statement
+        (subscript
+          (identifier)
+          (keyword_argument
+            (identifier)
+            (slice
+              (identifier))))))))

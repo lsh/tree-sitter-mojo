@@ -6237,6 +6237,15 @@
                               "name": "keyword_argument"
                             },
                             {
+                              "type": "ALIAS",
+                              "content": {
+                                "type": "SYMBOL",
+                                "name": "slice_keyword_argument"
+                              },
+                              "named": true,
+                              "value": "keyword_argument"
+                            },
+                            {
                               "type": "SYMBOL",
                               "name": "function_type"
                             },
@@ -6287,6 +6296,15 @@
                                   {
                                     "type": "SYMBOL",
                                     "name": "keyword_argument"
+                                  },
+                                  {
+                                    "type": "ALIAS",
+                                    "content": {
+                                      "type": "SYMBOL",
+                                      "name": "slice_keyword_argument"
+                                    },
+                                    "named": true,
+                                    "value": "keyword_argument"
                                   },
                                   {
                                     "type": "SYMBOL",
@@ -6762,6 +6780,58 @@
         {
           "type": "SYMBOL",
           "name": "identifier"
+        }
+      ]
+    },
+    "slice_keyword_argument": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "keyword_identifier"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "mut"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "out"
+                    }
+                  ]
+                },
+                "named": true,
+                "value": "identifier"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "slice"
+          }
         }
       ]
     },
