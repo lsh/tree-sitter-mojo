@@ -2030,6 +2030,10 @@
           "named": true
         },
         {
+          "type": "result_convention",
+          "named": true
+        },
+        {
           "type": "unified_clause",
           "named": true
         },
@@ -2994,6 +2998,21 @@
         },
         {
           "type": "import_prefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "result_convention",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "argument_convention",
           "named": true
         }
       ]

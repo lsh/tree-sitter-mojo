@@ -311,3 +311,27 @@ comptime Ptr[
       subscript: (identifier)
       subscript: (identifier))))
 
+================================================================================
+Result convention
+================================================================================
+
+def to_buffer(p: Int) {read} -> DeviceBuffer:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (identifier)
+        type: (type
+          (identifier))))
+    (result_convention
+      (argument_convention))
+    return_type: (type
+      (identifier))
+    body: (block
+      (pass_statement))))
+

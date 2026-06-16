@@ -426,6 +426,7 @@ module.exports = grammar({
       field('parameters', $.parameters),
       optional($.unified_clause),
       optional($._function_effects),
+      optional($.result_convention),
       optional(
         seq(
           '->',
@@ -437,6 +438,11 @@ module.exports = grammar({
       ':',
       field('body', $._suite),
     ),
+
+    // A brace-delimited result convention preceding the return type, e.g.
+    // `def f(...) {read} -> T:`.
+    result_convention: ($) =>
+      seq("{", commaSep1($.argument_convention), optional(","), "}"),
 
     // A function's effect qualifiers, e.g. `raises`, `capturing`, `thin`, or
     // combinations like `raises capturing`. `raises` may carry an optional
