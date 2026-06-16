@@ -897,7 +897,7 @@ module.exports = grammar({
 
     list_pattern: ($) => seq("[", optional($._patterns), "]"),
 
-    _ref_convention: ($) => seq("ref", "[", $.expression, "]"),
+    _ref_convention: ($) => prec(1, seq("ref", "[", $.expression, "]")),
     argument_convention: ($) =>
       choice(
         "borrowed",
@@ -908,6 +908,7 @@ module.exports = grammar({
         "mut",
         "var",
         "deinit",
+        "ref",
         $._ref_convention,
       ),
 
@@ -933,10 +934,13 @@ module.exports = grammar({
       prec(
         PREC.typed_parameter,
         seq(
-          choice(
-            seq(optional($.argument_convention), $.identifier),
-            $.list_splat_pattern,
-            $.dictionary_splat_pattern,
+          seq(
+            optional($.argument_convention),
+            choice(
+              $.identifier,
+              $.list_splat_pattern,
+              $.dictionary_splat_pattern,
+            ),
           ),
           ":",
           field("type", $.type),

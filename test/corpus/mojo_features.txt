@@ -466,3 +466,40 @@ def build():
               object: (identifier)
               attribute: (identifier))))))))
 
+================================================================================
+Bare ref and variadic conventions
+================================================================================
+
+def init(out self, ref buffer: DeviceBuffer):
+    pass
+
+def collect(var *contexts: DeviceContext):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (self_parameter
+        (argument_convention))
+      (typed_parameter
+        (argument_convention)
+        (identifier)
+        type: (type
+          (identifier))))
+    body: (block
+      (pass_statement)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (typed_parameter
+        (argument_convention)
+        (list_splat_pattern
+          (identifier))
+        type: (type
+          (identifier))))
+    body: (block
+      (pass_statement))))
+

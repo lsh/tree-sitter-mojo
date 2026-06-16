@@ -4159,25 +4159,29 @@
       ]
     },
     "_ref_convention": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "ref"
-        },
-        {
-          "type": "STRING",
-          "value": "["
-        },
-        {
-          "type": "SYMBOL",
-          "name": "expression"
-        },
-        {
-          "type": "STRING",
-          "value": "]"
-        }
-      ]
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "ref"
+          },
+          {
+            "type": "STRING",
+            "value": "["
+          },
+          {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          {
+            "type": "STRING",
+            "value": "]"
+          }
+        ]
+      }
     },
     "argument_convention": {
       "type": "CHOICE",
@@ -4213,6 +4217,10 @@
         {
           "type": "STRING",
           "value": "deinit"
+        },
+        {
+          "type": "STRING",
+          "value": "ref"
         },
         {
           "type": "SYMBOL",
@@ -4362,36 +4370,36 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
+            "type": "SEQ",
             "members": [
               {
-                "type": "SEQ",
+                "type": "CHOICE",
                 "members": [
                   {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "argument_convention"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
+                    "type": "SYMBOL",
+                    "name": "argument_convention"
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "identifier"
+                    "type": "BLANK"
                   }
                 ]
               },
               {
-                "type": "SYMBOL",
-                "name": "list_splat_pattern"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "dictionary_splat_pattern"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "list_splat_pattern"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "dictionary_splat_pattern"
+                  }
+                ]
               }
             ]
           },
