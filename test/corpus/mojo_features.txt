@@ -1311,3 +1311,25 @@ comptime ImplicitlyDestructible = ImplicitlyDeletable
     (assignment
       (identifier)
       (identifier))))
+
+================================================================================
+Multi-argument ref convention
+================================================================================
+
+fn f(ref[origin, address_space] self) -> Int:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (self_parameter
+        (argument_convention
+          (identifier)
+          (identifier))))
+    (type
+      (identifier))
+    (block
+      (pass_statement))))

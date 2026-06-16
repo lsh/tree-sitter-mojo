@@ -995,7 +995,10 @@ module.exports = grammar({
 
     list_pattern: ($) => seq("[", optional($._patterns), "]"),
 
-    _ref_convention: ($) => prec(1, seq("ref", "[", $.expression, "]")),
+    // The `ref` origin convention, optionally carrying one or more arguments,
+    // e.g. `ref[origin]` or `ref[origin, address_space]`.
+    _ref_convention: ($) =>
+      prec(1, seq("ref", "[", commaSep1($.expression), optional(","), "]")),
     argument_convention: ($) =>
       choice(
         "borrowed",
