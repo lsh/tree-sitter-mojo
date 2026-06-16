@@ -1105,3 +1105,25 @@ __extension SIMD[T, n]:
           (identifier))))
     (block
       (pass_statement))))
+
+================================================================================
+Argument conventions on callable-type parameters
+================================================================================
+
+comptime F = def(mut Bencher, T) raises capturing[_] -> None
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (function_type
+      (argument_convention)
+      (type
+        (identifier))
+      (type
+        (identifier))
+      (capture_list
+        (wildcard_origin))
+      (type
+        (none)))))

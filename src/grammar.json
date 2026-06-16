@@ -6748,12 +6748,29 @@
                     "type": "SEQ",
                     "members": [
                       {
-                        "type": "FIELD",
-                        "name": "parameter",
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "type"
-                        }
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "argument_convention"
+                              },
+                              {
+                                "type": "BLANK"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "FIELD",
+                            "name": "parameter",
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "type"
+                            }
+                          }
+                        ]
                       },
                       {
                         "type": "REPEAT",
@@ -6765,12 +6782,29 @@
                               "value": ","
                             },
                             {
-                              "type": "FIELD",
-                              "name": "parameter",
-                              "content": {
-                                "type": "SYMBOL",
-                                "name": "type"
-                              }
+                              "type": "SEQ",
+                              "members": [
+                                {
+                                  "type": "CHOICE",
+                                  "members": [
+                                    {
+                                      "type": "SYMBOL",
+                                      "name": "argument_convention"
+                                    },
+                                    {
+                                      "type": "BLANK"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "FIELD",
+                                  "name": "parameter",
+                                  "content": {
+                                    "type": "SYMBOL",
+                                    "name": "type"
+                                  }
+                                }
+                              ]
                             }
                           ]
                         }

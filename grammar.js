@@ -1412,9 +1412,16 @@ module.exports = grammar({
       // value parameters, e.g. `def[width: Int, alignment: Int = 1](Coord)`.
       field('type_parameters', optional($.type_parameter)),
       // A callable type's parameters are types (optionally named or variadic),
-      // e.g. `def(Int, OpaquePointer[X]) -> None`.
+      // e.g. `def(Int, OpaquePointer[X]) -> None`, and may carry an argument
+      // convention, e.g. `def(mut Bencher, T)`.
       '(',
-      optional(seq(commaSep1(field('parameter', $.type)), optional(','))),
+      optional(seq(
+        commaSep1(seq(
+          optional($.argument_convention),
+          field('parameter', $.type),
+        )),
+        optional(','),
+      )),
       ')',
       optional($._function_effects),
       optional($.result_convention),

@@ -2211,6 +2211,10 @@
       "required": false,
       "types": [
         {
+          "type": "argument_convention",
+          "named": true
+        },
+        {
           "type": "capture_list",
           "named": true
         },
