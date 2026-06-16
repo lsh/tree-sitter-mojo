@@ -500,7 +500,11 @@ module.exports = grammar({
       // `capturing`/`escaping` may carry an origin list, e.g. `capturing[_]`.
       seq(choice('capturing', 'escaping'), optional($.capture_list)),
       'thin',
+      // An ABI qualifier, e.g. `abi("C")`.
+      $.abi_specifier,
     )),
+
+    abi_specifier: ($) => seq('abi', '(', $.string, ')'),
 
     _raises_type: ($) => choice(
       prec(1, $.expression),

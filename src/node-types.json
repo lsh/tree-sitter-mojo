@@ -394,6 +394,21 @@
     ]
   },
   {
+    "type": "abi_specifier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "aliased_import",
     "named": true,
     "fields": {
@@ -2149,6 +2164,10 @@
       "required": false,
       "types": [
         {
+          "type": "abi_specifier",
+          "named": true
+        },
+        {
           "type": "capture_list",
           "named": true
         },
@@ -2220,6 +2239,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "abi_specifier",
+          "named": true
+        },
         {
           "type": "argument_convention",
           "named": true
@@ -4444,6 +4467,10 @@
   },
   {
     "type": "__mlir_type",
+    "named": false
+  },
+  {
+    "type": "abi",
     "named": false
   },
   {

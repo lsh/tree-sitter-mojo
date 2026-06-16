@@ -2087,9 +2087,34 @@
           {
             "type": "STRING",
             "value": "thin"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "abi_specifier"
           }
         ]
       }
+    },
+    "abi_specifier": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "abi"
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "string"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
     },
     "_raises_type": {
       "type": "CHOICE",
