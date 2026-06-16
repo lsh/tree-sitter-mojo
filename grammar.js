@@ -300,7 +300,18 @@ module.exports = grammar({
       $.match_statement,
       $.comptime_statement,
       $.mlir_region,
+      $.extension_definition,
     ),
+
+    // An extension declaration, e.g. `__extension List:` or
+    // `__extension List[T]:`.
+    extension_definition: ($) =>
+      seq(
+        "__extension",
+        field("name", choice($.identifier, $.generic_type)),
+        ":",
+        field("body", $._suite),
+      ),
 
     // An MLIR region declaration, e.g.
     //   __mlir_region await_body(hdl: __mlir_type.`!co.routine`):

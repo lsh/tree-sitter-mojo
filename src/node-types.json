@@ -16,6 +16,10 @@
         "named": true
       },
       {
+        "type": "extension_definition",
+        "named": true
+      },
+      {
         "type": "for_statement",
         "named": true
       },
@@ -1841,6 +1845,36 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "extension_definition",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "generic_type",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -4368,6 +4402,10 @@
   },
   {
     "type": "__comptime_assert",
+    "named": false
+  },
+  {
+    "type": "__extension",
     "named": false
   },
   {

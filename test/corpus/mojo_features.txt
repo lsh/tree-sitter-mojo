@@ -1071,3 +1071,37 @@ fn f():
               (identifier))
             (identifier))
           (argument_list))))))
+
+================================================================================
+Extension declaration
+================================================================================
+
+__extension List:
+    fn first(self):
+        pass
+
+__extension SIMD[T, n]:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (extension_definition
+    (identifier)
+    (block
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (block
+          (pass_statement)))))
+  (extension_definition
+    (generic_type
+      (identifier)
+      (type_parameter
+        (type
+          (identifier))
+        (type
+          (identifier))))
+    (block
+      (pass_statement))))
