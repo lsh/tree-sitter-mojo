@@ -16,4 +16,4 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     return exports;
 }
 
-NODE_API_MODULE(tree_sitter_python_binding, Init)
+NODE_API_MODULE(tree_sitter_mojo_binding, Init)

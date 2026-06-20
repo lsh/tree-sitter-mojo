@@ -3,7 +3,7 @@ $(error Windows is not supported)
 endif
 
 LANGUAGE_NAME := tree-sitter-mojo
-HOMEPAGE_URL := https://github.com/tree-sitter/tree-sitter-mojo
+HOMEPAGE_URL := https://github.com/lsh/tree-sitter-mojo
 VERSION := 0.25.0
 
 # repository
@@ -58,7 +58,7 @@ ifneq ($(STRIP),)
 	$(STRIP) $@
 endif
 
-$(LANGUAGE_NAME).pc: tree-sitter.pc.in
+$(LANGUAGE_NAME).pc: bindings/c/$(LANGUAGE_NAME).pc.in
 	sed -e 's|@HOMEPAGE_URL@|$(HOMEPAGE_URL)|' \
 		-e 's|@DATADIR@|$(DATADIR)|' \
 		-e 's|@INCLUDEDIR@|$(INCLUDEDIR)|' \
@@ -72,7 +72,7 @@ $(PARSER): $(SRC_DIR)/grammar.json
 
 install: all
 	install -d '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter '$(DESTDIR)$(PCLIBDIR)' '$(DESTDIR)$(LIBDIR)'
-	install -m644 tree-sitter.h '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter/$(LANGUAGE_NAME).h
+	install -m644 bindings/c/$(LANGUAGE_NAME).h '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter/$(LANGUAGE_NAME).h
 	install -m644 $(LANGUAGE_NAME).pc '$(DESTDIR)$(PCLIBDIR)'/
 	install -m644 lib$(LANGUAGE_NAME).a '$(DESTDIR)$(LIBDIR)'/
 	install -m755 lib$(LANGUAGE_NAME).$(SOEXT) '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).$(SOEXTVER)

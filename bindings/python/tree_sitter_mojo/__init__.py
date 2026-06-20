@@ -1,4 +1,4 @@
-"""Python grammar for tree-sitter"""
+"""Mojo grammar for tree-sitter"""
 
 from importlib.resources import files as _files
 
