@@ -65,8 +65,7 @@
         "🔥"
       ],
       "injection-regex": "mojo",
-      "highlights": "queries/highlights.scm",
-      "tags": "queries/tags.scm"
+      "highlights": "queries/highlights.scm"
     }
   ]
 }

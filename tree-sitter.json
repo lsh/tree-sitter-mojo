@@ -9,7 +9,6 @@
         "py"
       ],
       "highlights": "queries/highlights.scm",
-      "tags": "queries/tags.scm",
       "injection-regex": "py"
     }
   ],
