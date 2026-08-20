@@ -1,21 +1,23 @@
 {
   "grammars": [
     {
-      "name": "python",
-      "camelcase": "Python",
-      "scope": "source.python",
+      "name": "mojo",
+      "camelcase": "Mojo",
+      "scope": "source.mojo",
       "path": ".",
       "file-types": [
-        "py"
+        "mojo",
+        "🔥"
       ],
       "highlights": "queries/highlights.scm",
-      "injection-regex": "py"
+      "tags": "queries/tags.scm",
+      "injection-regex": "mojo"
     }
   ],
   "metadata": {
     "version": "0.25.0",
     "license": "MIT",
-    "description": "Python grammar for tree-sitter",
+    "description": "Mojo grammar for tree-sitter",
     "authors": [
       {
         "name": "Max Brunsfeld",
@@ -27,7 +29,7 @@
       }
     ],
     "links": {
-      "repository": "https://github.com/tree-sitter/tree-sitter-python"
+      "repository": "https://github.com/lsh/tree-sitter-mojo"
     }
   },
   "bindings": {

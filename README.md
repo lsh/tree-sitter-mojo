@@ -6,7 +6,5 @@ Mojo grammar for [tree-sitter][]. Forked from the [tree-sitter-python](https://g
 
 ## References
 
-- [Python 2 Grammar](https://docs.python.org/2/reference/grammar.html)
-- [Python 3 Grammar](https://docs.python.org/3/reference/grammar.html)
+- [Mojo manual](https://docs.modular.com/mojo/manual/)
 - [tree-sitter-python](https://github.com/tree-sitter/tree-sitter-python)
-
