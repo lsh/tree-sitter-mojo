@@ -305,27 +305,6 @@ exec("""exec _code_ in _globs_, _locs_""")
         (string_end)))))
 
 ================================================================================
-Async / await used as identifiers
-================================================================================
-
-async = 4
-await = 5
-print async, await
-
---------------------------------------------------------------------------------
-
-(module
-  (assignment
-    (identifier)
-    (integer))
-  (assignment
-    (identifier)
-    (integer))
-  (print_statement
-    (identifier)
-    (identifier)))
-
-================================================================================
 Calls with splats
 ================================================================================
 
@@ -638,11 +617,9 @@ tail_leaves: List[Leaf] = []
   (assignment
     (identifier)
     (type
-      (generic_type
+      (subscript
         (identifier)
-        (type_parameter
-          (type
-            (identifier)))))
+        (identifier)))
     (list)))
 
 ================================================================================
@@ -848,18 +825,26 @@ def example():
 lambdas
 ================================================================================
 
-lambda b, c: d("e" % f)
-lambda: True
-lambda a, b = c, *d, **e: a
+lambda (b: Int, c: Int): d("e" % f)
+lambda: 42
+lambda (a: Int, b: Int = 1, *d: Int, var **e: Int): a
 lambda (a, b): (a, b)
+lambda (mut count) raises {mut count} -> Int: count
+lambda [T: AnyType](x: T) raises -> T: x
 
 --------------------------------------------------------------------------------
 
 (module
   (lambda
-    (lambda_parameters
-      (identifier)
-      (identifier))
+    (parameters
+      (typed_parameter
+        (identifier)
+        (type
+          (identifier)))
+      (typed_parameter
+        (identifier)
+        (type
+          (identifier))))
     (call
       (identifier)
       (argument_list
@@ -870,26 +855,62 @@ lambda (a, b): (a, b)
             (string_end))
           (identifier)))))
   (lambda
-    (true))
+    (integer))
   (lambda
-    (lambda_parameters
-      (identifier)
-      (default_parameter
+    (parameters
+      (typed_parameter
         (identifier)
-        (identifier))
-      (list_splat_pattern
-        (identifier))
-      (dictionary_splat_pattern
-        (identifier)))
+        (type
+          (identifier)))
+      (typed_default_parameter
+        (identifier)
+        (type
+          (identifier))
+        (integer))
+      (typed_parameter
+        (list_splat_pattern
+          (identifier))
+        (type
+          (identifier)))
+      (typed_parameter
+        (argument_convention)
+        (dictionary_splat_pattern
+          (identifier))
+        (type
+          (identifier))))
     (identifier))
   (lambda
-    (lambda_parameters
-      (tuple_pattern
-        (identifier)
-        (identifier)))
+    (parameters
+      (identifier)
+      (identifier))
     (tuple
       (identifier)
-      (identifier))))
+      (identifier)))
+  (lambda
+    (parameters
+      (convention_parameter
+        (argument_convention)
+        (identifier)))
+    (capture_list
+      (named_capture
+        (identifier)))
+    (type
+      (identifier))
+    (identifier))
+  (lambda
+    (type_parameter
+      (constrained_parameter
+        (identifier)
+        (type
+          (identifier))))
+    (parameters
+      (typed_parameter
+        (identifier)
+        (type
+          (identifier))))
+    (type
+      (identifier))
+    (identifier)))
 
 ================================================================================
 Tuples with splats
@@ -984,35 +1005,6 @@ slice(1,1,1) if a else d
     (identifier)))
 
 ================================================================================
-Async context managers and iterators
-================================================================================
-
-async with a as b:
-  async for c in d:
-     [e async for f in g]
-
---------------------------------------------------------------------------------
-
-(module
-  (with_statement
-    (with_clause
-      (with_item
-        value: (as_pattern
-          (identifier)
-          comptime: (as_pattern_target
-            (identifier)))))
-    body: (block
-      (for_statement
-        left: (identifier)
-        right: (identifier)
-        body: (block
-          (list_comprehension
-            body: (identifier)
-            (for_in_clause
-              left: (identifier)
-              right: (identifier))))))))
-
-================================================================================
 Arbitrary indentation between brackets
 ================================================================================
 
@@ -1075,22 +1067,6 @@ w, x, y, z = 0, *a, c
       (identifier))))
 
 ================================================================================
-A function called match
-================================================================================
-
-match(r1, r2, r3)
-
---------------------------------------------------------------------------------
-
-(module
-  (call
-    (identifier)
-    (argument_list
-      (identifier)
-      (identifier)
-      (identifier))))
-
-================================================================================
 Type expressions
 ================================================================================
 
@@ -1103,21 +1079,322 @@ y: type[int] = int
   (assignment
     (identifier)
     (type
-      (union_type
-        (type
-          (generic_type
-            (identifier)
-            (type_parameter
-              (type
-                (identifier)))))
-        (type
-          (identifier)))))
+      (binary_operator
+        (subscript
+          (identifier)
+          (identifier))
+        (identifier))))
   (assignment
     (identifier)
     (type
-      (generic_type
+      (subscript
+        (identifier)
+        (identifier)))
+    (identifier)))
+
+================================================================================
+Callable types with variadic and separated parameters
+================================================================================
+
+comptime F = def(* args: * PyArgs, var ** kwargs: PythonObject) raises thin -> R
+comptime G = def(Int, Int, /) thin -> Int
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (function_type
+      (variadic_type_parameter
+        (identifier)
+        (type
+          (list_splat
+            (identifier))))
+      (argument_convention)
+      (variadic_type_parameter
+        (identifier)
+        (type
+          (identifier)))
+      (type
+        (identifier))))
+  (assignment
+    (identifier)
+    (function_type
+      (type
+        (identifier))
+      (type
+        (identifier))
+      (positional_separator)
+      (type
+        (identifier)))))
+
+================================================================================
+Parenthesized callable types
+================================================================================
+
+comptime H = (
+    def[
+        num_reductions: Int,
+    ] (a: Int) -> None
+)
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (parenthesized_expression
+      (function_type
+        (type_parameter
+          (constrained_parameter
+            (identifier)
+            (type
+              (identifier))))
+        (identifier)
+        (type
+          (identifier))
+        (type
+          (none))))))
+
+================================================================================
+Intersections with a parenthesized callable
+================================================================================
+
+def run(f: Some[ImplicitlyCopyable & (def() raises)]):
+    pass
+
+def enqueue(closure_type: (def() -> None) & DevicePassable & ImplicitlyCopyable):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (typed_parameter
+        (identifier)
+        (type
+          (subscript
+            (identifier)
+            (intersection_type
+              (identifier)
+              (parenthesized_expression
+                (function_type)))))))
+    (block
+      (pass_statement)))
+  (function_definition
+    (identifier)
+    (parameters
+      (typed_parameter
+        (identifier)
+        (type
+          (intersection_type
+            (parenthesized_expression
+              (function_type
+                (type
+                  (none))))
+            (binary_operator
+              (identifier)
+              (identifier))))))
+    (block
+      (pass_statement))))
+
+================================================================================
+Callable type as a subscript keyword argument
+================================================================================
+
+def f():
+    return __mlir_op.`co.resume`[_type=def(AnyCoroutine) thin -> None](handle)
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (return_statement
+        (call
+          (subscript
+            (attribute
+              (identifier)
+              (string
+                (string_start)
+                (string_content)
+                (string_end)))
+            (keyword_argument
+              (identifier)
+              (function_type
+                (type
+                  (identifier))
+                (type
+                  (none)))))
+          (argument_list
+            (identifier)))))))
+
+================================================================================
+Parametric call result used as a type
+================================================================================
+
+struct S:
+    def field_ref[idx: Int](ref s: Self.T) -> ref[s] _field_types_of[Self.T]()[idx]:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    (identifier)
+    (block
+      (function_definition
         (identifier)
         (type_parameter
-          (type
-            (identifier)))))
-    (identifier)))
+          (constrained_parameter
+            (identifier)
+            (type
+              (identifier))))
+        (parameters
+          (typed_parameter
+            (argument_convention)
+            (identifier)
+            (type
+              (attribute
+                (self_type)
+                (identifier)))))
+        (identifier)
+        (type
+          (subscript
+            (call
+              (subscript
+                (identifier)
+                (attribute
+                  (self_type)
+                  (identifier)))
+              (argument_list))
+            (identifier)))
+        (block
+          (pass_statement))))))
+
+================================================================================
+Arithmetic in a parameter position
+================================================================================
+
+def to_chars(decimal: Scalar) -> SIMD[.uint8, size_of[decimal.dtype]() * 2]:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (typed_parameter
+        (identifier)
+        (type
+          (identifier))))
+    (type
+      (subscript
+        (identifier)
+        (inferred_attribute
+          (identifier))
+        (binary_operator
+          (call
+            (subscript
+              (identifier)
+              (attribute
+                (identifier)
+                (identifier)))
+            (argument_list))
+          (integer))))
+    (block
+      (pass_statement))))
+
+================================================================================
+Parametric member types
+================================================================================
+
+def f():
+    var _square: CompTest[.int32].SquareMatrixType[10] = Matrix2D[
+        DType.int32, 10, 10
+    ]()
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (assignment
+        (identifier)
+        (type
+          (subscript
+            (attribute
+              (subscript
+                (identifier)
+                (inferred_attribute
+                  (identifier)))
+              (identifier))
+            (integer)))
+        (call
+          (identifier)
+          (parameter_list
+            (attribute
+              (identifier)
+              (identifier))
+            (integer)
+            (integer))
+          (argument_list))))))
+
+================================================================================
+Walrus targets
+================================================================================
+
+print(field.value := 1, field.overwrite())
+print(reference[0] := 1, reference.overwrite())
+print((a, b) := (1, 2), clobber(a))
+
+--------------------------------------------------------------------------------
+
+(module
+  (call
+    (identifier)
+    (argument_list
+      (named_expression
+        (attribute
+          (identifier)
+          (identifier))
+        (integer))
+      (call
+        (attribute
+          (identifier)
+          (identifier))
+        (argument_list))))
+  (call
+    (identifier)
+    (argument_list
+      (named_expression
+        (subscript
+          (identifier)
+          (integer))
+        (integer))
+      (call
+        (attribute
+          (identifier)
+          (identifier))
+        (argument_list))))
+  (call
+    (identifier)
+    (argument_list
+      (named_expression
+        (tuple
+          (identifier)
+          (identifier))
+        (tuple
+          (integer)
+          (integer)))
+      (call
+        (identifier)
+        (argument_list
+          (identifier))))))

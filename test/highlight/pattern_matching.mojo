@@ -1,4 +1,4 @@
-match command.split():
+__match command.split():
 # ^ keyword
     case ["quit"]:
     # ^ keyword
@@ -15,14 +15,14 @@ match command.split():
         current_room = current_room.neighbor(direction)
     # The rest of your commands go here
 
-match command.split():
+__match command.split():
 # ^ keyword
     case ["drop", *objects]:
     # ^ keyword
         for obj in objects:
             character.drop(obj, current_room)
 
-match command.split():
+__match command.split():
 # ^ keyword
     case ["quit"]: ... # Code omitted for brevity
     case ["go", direction]: pass
@@ -30,7 +30,7 @@ match command.split():
     case _:
         print(f"Sorry, I couldn't understand {command!r}")
 
-match command.split():
+__match command.split():
 # ^ keyword
     case ["north"] | ["go", "north"]:
     # ^ keyword
@@ -39,16 +39,16 @@ match command.split():
     # ^ keyword
         pass
 
-match = 2
+where = 2
 #   ^ variable
-match, a = 2, 3
+where, a = 2, 3
 #   ^ variable
-match: int = secret
-#   ^ variable
-x, match: str = 2, "hey, what's up?"
+total: Int = secret
+#  ^ variable
+x, where: str = 2, "hey, what's up?"
 # <- variable
 #   ^ variable
 
-if match := re.fullmatch(r"(-)?(\d+:)?\d?\d:\d\d(\.\d*)?", time, flags=re.ASCII):
-    # ^ variable
-    return match
+if result := re.fullmatch(r"(-)?(\d+:)?\d?\d:\d\d(\.\d*)?", time, flags=re.ASCII):
+    #  ^ variable
+    return result

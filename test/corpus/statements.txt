@@ -90,91 +90,6 @@ from ..a import b
       (identifier))))
 
 ================================================================================
-Future import statements
-================================================================================
-
-from __future__ import print_statement
-from __future__ import python4
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
---------------------------------------------------------------------------------
-
-(module
-  (future_import_statement
-    (dotted_name
-      (identifier)))
-  (future_import_statement
-    (dotted_name
-      (identifier)))
-  (future_import_statement
-    (dotted_name
-      (identifier))
-    (dotted_name
-      (identifier))
-    (dotted_name
-      (identifier))
-    (dotted_name
-      (identifier))))
-
-================================================================================
-Print statements
-================================================================================
-
-print a
-print b, c
-print 0 or 1, 1 or 0,
-print 0 or 1
-print not True
-
---------------------------------------------------------------------------------
-
-(module
-  (print_statement
-    (identifier))
-  (print_statement
-    (identifier)
-    (identifier))
-  (print_statement
-    (boolean_operator
-      (integer)
-      (integer))
-    (boolean_operator
-      (integer)
-      (integer)))
-  (print_statement
-    (boolean_operator
-      (integer)
-      (integer)))
-  (print_statement
-    (not_operator
-      (true))))
-
-================================================================================
-Print statements with redirection
-================================================================================
-
-print >> a
-print >> a, "b", "c"
-
---------------------------------------------------------------------------------
-
-(module
-  (print_statement
-    (chevron
-      (identifier)))
-  (print_statement
-    (chevron
-      (identifier))
-    (string
-      (string_start)
-      (string_content)
-      (string_end))
-    (string
-      (string_start)
-      (string_content)
-      (string_end))))
-
-================================================================================
 Assert statements
 ================================================================================
 
@@ -214,24 +129,6 @@ b + c
     (integer)
     (integer)
     (integer)))
-
-================================================================================
-Delete statements
-================================================================================
-
-del a[1], b[2]
-
---------------------------------------------------------------------------------
-
-(module
-  (delete_statement
-    (expression_list
-      (subscript
-        (identifier)
-        (integer))
-      (subscript
-        (identifier)
-        (integer)))))
 
 ================================================================================
 Control-flow statements
@@ -406,11 +303,11 @@ For statements
 ================================================================================
 
 for line, i in lines:
-  print line
+  print(line)
   for character, j in line:
-    print character
+    print(character)
 else:
-  print x
+  print(x)
 
 for x, in [(1,), (2,), (3,)]:
   x
@@ -424,20 +321,26 @@ for x, in [(1,), (2,), (3,)]:
       (identifier))
     right: (identifier)
     body: (block
-      (print_statement
-        argument: (identifier))
+      (call
+        function: (identifier)
+        arguments: (argument_list
+          (identifier)))
       (for_statement
         left: (pattern_list
           (identifier)
           (identifier))
         right: (identifier)
         body: (block
-          (print_statement
-            argument: (identifier)))))
+          (call
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))))
     alternative: (else_clause
       body: (block
-        (print_statement
-          argument: (identifier)))))
+        (call
+          function: (identifier)
+          arguments: (argument_list
+            (identifier))))))
   (for_statement
     left: (pattern_list
       (identifier))
@@ -529,15 +432,17 @@ finally:
   (try_statement
     body: (block
       (identifier))
-    (except_group_clause
-      (identifier)
+    (except_clause
+      (list_splat
+        (identifier))
       (block
         (identifier)))
-    (except_group_clause
-      (as_pattern
-        (identifier)
-        comptime: (as_pattern_target
-          (identifier)))
+    (except_clause
+      (list_splat
+        (as_pattern
+          (identifier)
+          comptime: (as_pattern_target
+            (identifier))))
       (block
         (identifier)))
     (else_clause
@@ -607,10 +512,9 @@ with e as f, g as h,:
           (as_pattern_target
             (identifier))))
       (with_item
-        (as_pattern
-          (identifier)
-          (as_pattern_target
-            (identifier)))))
+        (identifier)
+        (pattern_list
+          (identifier))))
     (block
       (identifier))))
 
@@ -692,11 +596,9 @@ async def d(a:str="default", b=c) -> None:
       (typed_parameter
         (identifier)
         type: (type
-          (generic_type
-            (identifier)
-            (type_parameter
-              (type
-                (identifier)))))))
+          (subscript
+            value: (identifier)
+            subscript: (identifier)))))
     return_type: (type
       (identifier))
     body: (block
@@ -756,13 +658,10 @@ def e((a,b)):
 def e(*list: str):
   pass
 
-def e(**list: str):
+def e(var **list: str):
   pass
 
-def f():
-  nonlocal a
-
-def g(h, i, /, j, *, k=100, **kwarg):
+def g(h, i, /, j, *, k=100, var **kwarg):
   return h,i,j,k,kwarg
 
 def h(*a):
@@ -802,18 +701,13 @@ def foo():
     name: (identifier)
     parameters: (parameters
       (typed_parameter
+        (argument_convention)
         (dictionary_splat_pattern
           (identifier))
         type: (type
           (identifier))))
     body: (block
       (pass_statement)))
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    body: (block
-      (nonlocal_statement
-        (identifier))))
   (function_definition
     name: (identifier)
     parameters: (parameters
@@ -825,8 +719,10 @@ def foo():
       (default_parameter
         name: (identifier)
         value: (integer))
-      (dictionary_splat_pattern
-        (identifier)))
+      (convention_parameter
+        (argument_convention)
+        (dictionary_splat_pattern
+          (identifier))))
     body: (block
       (return_statement
         (expression_list
@@ -867,13 +763,13 @@ def foo():
 Mojo Function Definitions
 ================================================================================
 
-fn e[IntableType: Intable](a: IntableType) -> Int:
+def e[IntableType: Intable](a: IntableType) -> Int:
   return int(a)
 
-fn e(*list: String):
+def e(*list: String):
   pass
 
-fn e(**list: String):
+def e(**list: String):
   pass
 
 --------------------------------------------------------------------------------
@@ -882,12 +778,10 @@ fn e(**list: String):
   (function_definition
     name: (identifier)
     type_parameters: (type_parameter
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier)))))
+      (constrained_parameter
+        name: (identifier)
+        type: (type
+          (identifier))))
     parameters: (parameters
       (typed_parameter
         (identifier)
@@ -933,7 +827,7 @@ Empty blocks
 def a(b, c):
 
 if d:
-  print e
+  e(d)
   while f():
 
 --------------------------------------------------------------------------------
@@ -952,8 +846,10 @@ if d:
   (if_statement
     condition: (identifier)
     consequence: (block
-      (print_statement
-        argument: (identifier))
+      (call
+        function: (identifier)
+        arguments: (argument_list
+          (identifier)))
       (while_statement
         condition: (call
           function: (identifier)
@@ -1130,21 +1026,21 @@ trait A:
   pass
 
 trait B:
-  fn func(self):
+  def func(self):
     ...
 
 trait C:
-  fn func1(inout self):
+  def func1(mut self):
     pass
 
-  fn func2(self, inout arg: Arg):
+  def func2(self, mut arg: Arg):
     pass
 
 trait D:
-  fn func1(inout self, owned existing: Self, /):
+  def func1(mut self, var existing: Self, /):
     pass
 
-  fn func2(owned self):
+  def func2(var self):
     pass
 
 --------------------------------------------------------------------------------
@@ -1196,7 +1092,7 @@ trait D:
             (argument_convention)
             (identifier)
             (type
-              (identifier)))
+              (self_type)))
           (positional_separator))
         (block
           (pass_statement)))
@@ -1216,21 +1112,21 @@ trait A(B, C):
   pass
 
 trait D(E):
-  fn func(self):
+  def func(self):
     ...
 
 trait F(G, H):
-  fn func1(inout self):
+  def func1(mut self):
     pass
 
-  fn func2(self, owned arg: Arg):
+  def func2(self, var arg: Arg):
     pass
 
 trait I(J, K, L):
-  fn func1(inout self, owned existing: Self, /):
+  def func1(mut self, var existing: Self, /):
     pass
 
-  fn func2(owned self):
+  def func2(var self):
     pass
 
 --------------------------------------------------------------------------------
@@ -1294,7 +1190,7 @@ trait I(J, K, L):
             (argument_convention)
             (identifier)
             (type
-              (identifier)))
+              (self_type)))
           (positional_separator))
         (block
           (pass_statement)))
@@ -1340,22 +1236,28 @@ raise RunTimeError('NO') from e
 Comments
 ================================================================================
 
-print a
+a(1)
 # hi
-print b # bye
-print c
+b(2) # bye
+c(3)
 
 --------------------------------------------------------------------------------
 
 (module
-  (print_statement
-    (identifier))
+  (call
+    (identifier)
+    (argument_list
+      (integer)))
   (comment)
-  (print_statement
-    (identifier))
+  (call
+    (identifier)
+    (argument_list
+      (integer)))
   (comment)
-  (print_statement
-    (identifier)))
+  (call
+    (identifier)
+    (argument_list
+      (integer))))
 
 ================================================================================
 Comments at different indentation levels
@@ -1455,74 +1357,15 @@ def a():
 Newline tokens followed by comments
 ================================================================================
 
-print "a"
+a = 1
   # We need to recognize the newline *preceding* this comment, because there's no newline after it
 --------------------------------------------------------------------------------
 
 (module
-  (print_statement
-    (string
-      (string_start)
-      (string_content)
-      (string_end)))
-  (comment))
-
-================================================================================
-Global statements
-================================================================================
-
-global a
-global a, b
-
---------------------------------------------------------------------------------
-
-(module
-  (global_statement
-    (identifier))
-  (global_statement
-    (identifier)
-    (identifier)))
-
-================================================================================
-Exec statements
-================================================================================
-
-exec '1+1'
-exec 'x+=1' in None
-exec 'x+=1' in a, b
-func = "print"
-exec func in {}
-
---------------------------------------------------------------------------------
-
-(module
-  (exec_statement
-    (string
-      (string_start)
-      (string_content)
-      (string_end)))
-  (exec_statement
-    (string
-      (string_start)
-      (string_content)
-      (string_end))
-    (none))
-  (exec_statement
-    (string
-      (string_start)
-      (string_content)
-      (string_end))
-    (identifier)
-    (identifier))
   (assignment
     (identifier)
-    (string
-      (string_start)
-      (string_content)
-      (string_end)))
-  (exec_statement
-    (identifier)
-    (dictionary)))
+    (integer))
+  (comment))
 
 ================================================================================
 Extra newlines
@@ -1613,125 +1456,11 @@ foo; bar;
   (identifier))
 
 ================================================================================
-Type Alias Statements
-================================================================================
-
-type Point = tuple[float, float]
-type Point[T] = tuple[T, T]
-type IntFunc[**P] = Callable[P, int]  # ParamSpec
-type LabeledTuple[*Ts] = tuple[str, *Ts]  # TypeVarTuple
-type HashableSequence[T: Hashable] = Sequence[T]  # TypeVar with bound
-type IntOrStrSequence[T: (int, str)] = Sequence[T]  # TypeVar with constraints
-
---------------------------------------------------------------------------------
-
-(module
-  (type_alias_statement
-    (type
-      (identifier))
-    (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier))
-          (type
-            (identifier))))))
-  (type_alias_statement
-    (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier)))))
-    (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier))
-          (type
-            (identifier))))))
-  (type_alias_statement
-    (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (splat_type
-              (identifier))))))
-    (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier))
-          (type
-            (identifier))))))
-  (comment)
-  (type_alias_statement
-    (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (splat_type
-              (identifier))))))
-    (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier))
-          (type
-            (splat_type
-              (identifier)))))))
-  (comment)
-  (type_alias_statement
-    (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (constrained_type
-              (type
-                (identifier))
-              (type
-                (identifier)))))))
-    (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier))))))
-  (comment)
-  (type_alias_statement
-    (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (constrained_type
-              (type
-                (identifier))
-              (type
-                (tuple
-                  (identifier)
-                  (identifier))))))))
-    (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier))))))
-  (comment))
-
-================================================================================
 Generic Function Definitions
 ================================================================================
 
-def more_generic[T, *Ts, **P]():
-    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]
+def more_generic[T: AnyType, *Ts: AnyType]():
+    comptime TA[T2: AnyType, *Ts2: AnyType] = Tuple[*Ts]
     return TA
 
 --------------------------------------------------------------------------------
@@ -1740,63 +1469,31 @@ def more_generic[T, *Ts, **P]():
   (function_definition
     (identifier)
     (type_parameter
-      (type
-        (identifier))
-      (type
-        (splat_type
+      (constrained_parameter
+        (identifier)
+        (type
           (identifier)))
-      (type
-        (splat_type
+      (constrained_parameter
+        (identifier)
+        (type
           (identifier))))
     (parameters)
     (block
-      (type_alias_statement
-        (type
-          (generic_type
+      (parameterized_alias_statement
+        (identifier)
+        (type_parameter
+          (constrained_parameter
             (identifier)
-            (type_parameter
-              (type
-                (identifier))
-              (type
-                (splat_type
-                  (identifier)))
-              (type
-                (splat_type
-                  (identifier))))))
-        (type
-          (generic_type
+            (type
+              (identifier)))
+          (constrained_parameter
             (identifier)
-            (type_parameter
-              (type
-                (generic_type
-                  (identifier)
-                  (type_parameter
-                    (type
-                      (identifier))
-                    (type
-                      (generic_type
-                        (identifier)
-                        (type_parameter
-                          (type
-                            (identifier))
-                          (type
-                            (splat_type
-                              (identifier)))))))))
-              (type
-                (generic_type
-                  (identifier)
-                  (type_parameter
-                    (type
-                      (identifier))
-                    (type
-                      (generic_type
-                        (identifier)
-                        (type_parameter
-                          (type
-                            (identifier))
-                          (type
-                            (splat_type
-                              (identifier)))))))))))))
+            (type
+              (identifier))))
+        (subscript
+          (identifier)
+          (list_splat
+            (identifier))))
       (return_statement
         (identifier)))))
 
@@ -1898,11 +1595,9 @@ var z: List[Int]
   (assignment
     (identifier)
     (type
-      (generic_type
+      (subscript
         (identifier)
-        (type_parameter
-          (type
-            (identifier)))))))
+        (identifier)))))
 
 ================================================================================
 Assignment with comptime and type annotation
@@ -2067,13 +1762,13 @@ z = x + y
       (identifier))))
 
 ================================================================================
-Function with read argument convention
+Function with imm argument convention
 ================================================================================
 
-fn process(read x: Int):
+def process(imm x: Int):
     print(x)
 
-fn compute(read a: String, read b: String):
+def compute(imm a: String, imm b: String):
     return a + b
 
 --------------------------------------------------------------------------------
@@ -2112,13 +1807,13 @@ fn compute(read a: String, read b: String):
           right: (identifier))))))
 
 ================================================================================
-Function with read argument convention
+Function with imm argument convention
 ================================================================================
 
-fn process(read x: Int):
+def process(imm x: Int):
     print(x)
 
-fn compute(read a: String, read b: String):
+def compute(imm a: String, imm b: String):
     return a + b
 
 --------------------------------------------------------------------------------
@@ -2160,10 +1855,10 @@ fn compute(read a: String, read b: String):
 Function with mut argument convention
 ================================================================================
 
-fn modify(mut x: Int):
+def modify(mut x: Int):
     x = x + 1
 
-fn update(mut data: List[Int]):
+def update(mut data: List[Int]):
     data.append(5)
 
 --------------------------------------------------------------------------------
@@ -2190,11 +1885,9 @@ fn update(mut data: List[Int]):
         (argument_convention)
         (identifier)
         type: (type
-          (generic_type
-            (identifier)
-            (type_parameter
-              (type
-                (identifier)))))))
+          (subscript
+            value: (identifier)
+            subscript: (identifier)))))
     body: (block
       (call
         function: (attribute
@@ -2207,10 +1900,10 @@ fn update(mut data: List[Int]):
 Function with var argument convention
 ================================================================================
 
-fn process(var x: Int):
+def process(var x: Int):
     x = 10
 
-fn compute(var a: String, var b: Int):
+def compute(var a: String, var b: Int):
     a = "modified"
 
 --------------------------------------------------------------------------------
@@ -2253,10 +1946,10 @@ fn compute(var a: String, var b: Int):
 Function with out argument convention
 ================================================================================
 
-fn init_value(out x: Int):
+def init_value(out x: Int):
     x = 42
 
-fn get_values(out a: String, out b: Int):
+def get_values(out a: String, out b: Int):
     a = "result"
     b = 100
 
@@ -2303,10 +1996,10 @@ fn get_values(out a: String, out b: Int):
 Function with deinit argument convention
 ================================================================================
 
-fn cleanup(deinit x: Resource):
+def cleanup(deinit x: Resource):
     pass
 
-fn destroy(deinit a: Object, deinit b: Object):
+def destroy(deinit a: Object, deinit b: Object):
     pass
 
 --------------------------------------------------------------------------------
@@ -2342,10 +2035,10 @@ fn destroy(deinit a: Object, deinit b: Object):
 Function with ref argument convention
 ================================================================================
 
-fn process(ref[lifetime] x: Int):
+def process(ref[lifetime] x: Int):
     x = x + 1
 
-fn compute(ref[a] data: String):
+def compute(ref[a] data: String):
     data = data + "!"
 
 --------------------------------------------------------------------------------
@@ -2389,11 +2082,11 @@ fn compute(ref[a] data: String):
 Function with mixed argument conventions
 ================================================================================
 
-fn process(read a: Int, mut b: Int, var c: String):
+def process(imm a: Int, mut b: Int, var c: String):
     b = b + a
     c = "result"
 
-fn complex(read x: Int, out y: Int, deinit z: Resource):
+def complex(imm x: Int, out y: Int, deinit z: Resource):
     y = x * 2
 
 --------------------------------------------------------------------------------
@@ -2459,10 +2152,10 @@ Method with self and argument conventions
 ================================================================================
 
 struct MyStruct:
-    fn method(read self, mut x: Int):
+    def method(imm self, mut x: Int):
         x = x + 1
     
-    fn update(mut self):
+    def update(mut self):
         pass
 
 --------------------------------------------------------------------------------
@@ -2499,7 +2192,7 @@ struct MyStruct:
 Function with default values and argument conventions
 ================================================================================
 
-fn process(read x: Int = 5, mut y: String = "default"):
+def process(imm x: Int = 5, mut y: String = "default"):
     y = "modified"
 
 --------------------------------------------------------------------------------
@@ -2535,7 +2228,7 @@ fn process(read x: Int = 5, mut y: String = "default"):
 Function with untyped raises
 ================================================================================
 
-fn may_fail() raises -> Int:
+def may_fail() raises -> Int:
     return 1
 
 def can_error() raises -> None:
@@ -2564,13 +2257,13 @@ def can_error() raises -> None:
 Function with typed raises
 ================================================================================
 
-fn may_fail() raises Error -> Int:
+def may_fail() raises Error -> Int:
     return 1
 
-fn can_throw() raises ValueError -> String:
+def can_throw() raises ValueError -> String:
     return "test"
 
-fn generic_error() raises MyError[T] -> None:
+def generic_error() raises MyError[T] -> None:
     pass
 
 --------------------------------------------------------------------------------
@@ -2603,11 +2296,9 @@ fn generic_error() raises MyError[T] -> None:
     name: (identifier)
     parameters: (parameters)
     raises_type: (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier)))))
+      (subscript
+        value: (identifier)
+        subscript: (identifier)))
     return_type: (type
       (none))
     body: (block
@@ -2617,72 +2308,10 @@ fn generic_error() raises MyError[T] -> None:
 Function with capturing and raises
 ================================================================================
 
-fn with_capturing() capturing raises -> Int:
+def with_capturing() capturing raises -> Int:
     return 1
 
-fn capturing_typed() capturing raises Error -> None:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    return_type: (type
-      (identifier))
-    body: (block
-      (return_statement
-        (integer))))
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    raises_type: (type
-      (identifier))
-    return_type: (type
-      (none))
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Function with escaping and raises
-================================================================================
-
-fn with_escaping() escaping raises -> Int:
-    return 1
-
-fn escaping_typed() escaping raises IOError -> None:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    return_type: (type
-      (identifier))
-    body: (block
-      (return_statement
-        (integer))))
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    raises_type: (type
-      (identifier))
-    return_type: (type
-      (none))
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Function with capturing escaping raises
-================================================================================
-
-fn complex() capturing escaping raises -> Int:
-    return 1
-
-fn complex_typed() capturing escaping raises CustomError -> None:
+def capturing_typed() capturing raises Error -> None:
     pass
 
 --------------------------------------------------------------------------------
@@ -2710,10 +2339,10 @@ fn complex_typed() capturing escaping raises CustomError -> None:
 Function with parameters and typed raises
 ================================================================================
 
-fn process(x: Int, y: String) raises ProcessError -> Bool:
+def process(x: Int, y: String) raises ProcessError -> Bool:
     return True
 
-fn convert(mut data: List[Int]) raises ConversionError -> String:
+def convert(mut data: List[Int]) raises ConversionError -> String:
     return "result"
 
 --------------------------------------------------------------------------------
@@ -2744,11 +2373,9 @@ fn convert(mut data: List[Int]) raises ConversionError -> String:
         (argument_convention)
         (identifier)
         type: (type
-          (generic_type
-            (identifier)
-            (type_parameter
-              (type
-                (identifier)))))))
+          (subscript
+            value: (identifier)
+            subscript: (identifier)))))
     raises_type: (type
       (identifier))
     return_type: (type
@@ -2759,267 +2386,12 @@ fn convert(mut data: List[Int]) raises ConversionError -> String:
           (string_start)
           (string_content)
           (string_end))))))
-
-================================================================================
-Function with unified clause - single variable
-================================================================================
-
-fn foo() unified {read a} -> String:
-    return "test"
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    (unified_clause
-      (argument_convention)
-      (identifier))
-    return_type: (type
-      (identifier))
-    body: (block
-      (return_statement
-        (string
-          (string_start)
-          (string_content)
-          (string_end))))))
-
-================================================================================
-Function with unified clause - multiple variables
-================================================================================
-
-fn foo() unified {read a, mut b, var c} -> None:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    (unified_clause
-      (argument_convention)
-      (identifier)
-      (argument_convention)
-      (identifier)
-      (argument_convention)
-      (identifier))
-    return_type: (type
-      (none))
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Function with unified clause - trailing comma
-================================================================================
-
-fn bar() unified {mut x, read y,} -> Int:
-    return 0
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    (unified_clause
-      (argument_convention)
-      (identifier)
-      (argument_convention)
-      (identifier))
-    return_type: (type
-      (identifier))
-    body: (block
-      (return_statement
-        (integer)))))
-
-================================================================================
-Function with unified clause and typed raises
-================================================================================
-
-fn foo() unified {read a, mut b} raises ValueError -> String:
-    return "test"
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    (unified_clause
-      (argument_convention)
-      (identifier)
-      (argument_convention)
-      (identifier))
-    raises_type: (type
-      (identifier))
-    return_type: (type
-      (identifier))
-    body: (block
-      (return_statement
-        (string
-          (string_start)
-          (string_content)
-          (string_end))))))
-
-================================================================================
-Function with unified clause and capturing raises
-================================================================================
-
-fn process() unified {mut data} capturing raises -> None:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    (unified_clause
-      (argument_convention)
-      (identifier))
-    return_type: (type
-      (none))
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Function with unified clause, parameters, and effects
-================================================================================
-
-fn process(x: Int, y: String) unified {read config, mut state} escaping raises Error -> Bool:
-    return true
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters
-      (typed_parameter
-        (identifier)
-        type: (type
-          (identifier)))
-      (typed_parameter
-        (identifier)
-        type: (type
-          (identifier))))
-    (unified_clause
-      (argument_convention)
-      (identifier)
-      (argument_convention)
-      (identifier))
-    raises_type: (type
-      (identifier))
-    return_type: (type
-      (identifier))
-    body: (block
-      (return_statement
-        (identifier)))))
-
-================================================================================
-Function with unified clause - all convention types
-================================================================================
-
-fn test() unified {read a, mut b, var c, out d, deinit e} -> None:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    (unified_clause
-      (argument_convention)
-      (identifier)
-      (argument_convention)
-      (identifier)
-      (argument_convention)
-      (identifier)
-      (argument_convention)
-      (identifier)
-      (argument_convention)
-      (identifier))
-    return_type: (type
-      (none))
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Async function with unified clause
-================================================================================
-
-async fn fetch() unified {mut client} raises IOError -> String:
-    return "data"
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    (unified_clause
-      (argument_convention)
-      (identifier))
-    raises_type: (type
-      (identifier))
-    return_type: (type
-      (identifier))
-    body: (block
-      (return_statement
-        (string
-          (string_start)
-          (string_content)
-          (string_end))))))
-
-================================================================================
-Function with unified clause - no return type
-================================================================================
-
-fn process() unified {mut state}:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    (unified_clause
-      (argument_convention)
-      (identifier))
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Function with unified clause and ref convention
-================================================================================
-
-fn update() unified {ref[lifetime] data} -> None:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    (unified_clause
-      (argument_convention
-        (identifier))
-      (identifier))
-    return_type: (type
-      (none))
-    body: (block
-      (pass_statement))))
 
 ================================================================================
 Function with single where clause
 ================================================================================
 
-fn test() -> Int where x == y:
+def test() -> Int where x == y:
     return 1
 
 --------------------------------------------------------------------------------
@@ -3042,7 +2414,7 @@ fn test() -> Int where x == y:
 Function with multiple where clauses
 ================================================================================
 
-fn copy(dst: UnsafePointer, src: UnsafePointer) raises -> Int where src.address_space == dst.address_space where src.mut:
+def copy(dst: UnsafePointer, src: UnsafePointer) raises -> Int where src.address_space == dst.address_space where src.mut:
     pass
 
 --------------------------------------------------------------------------------
@@ -3071,7 +2443,8 @@ fn copy(dst: UnsafePointer, src: UnsafePointer) raises -> Int where src.address_
           attribute: (identifier))))
     (where_clause
       (attribute
-        object: (identifier)))
+        object: (identifier)
+        attribute: (identifier)))
     body: (block
       (pass_statement))))
 
@@ -3079,7 +2452,7 @@ fn copy(dst: UnsafePointer, src: UnsafePointer) raises -> Int where src.address_
 Function with where clause - simple condition
 ================================================================================
 
-fn process[T](value: T) -> T where T.is_copyable:
+def process[T](value: T) -> T where T.is_copyable:
     return value
 
 --------------------------------------------------------------------------------
@@ -3109,8 +2482,10 @@ fn process[T](value: T) -> T where T.is_copyable:
 Function with where clause and unified closure
 ================================================================================
 
-fn foo() unified {read x} -> Int where x > 0:
-    return x
+def outer() -> Int:
+    def foo() {imm x} -> Int where x > 0:
+        return x
+    return foo()
 
 --------------------------------------------------------------------------------
 
@@ -3118,24 +2493,34 @@ fn foo() unified {read x} -> Int where x > 0:
   (function_definition
     name: (identifier)
     parameters: (parameters)
-    (unified_clause
-      (argument_convention)
-      (identifier))
     return_type: (type
       (identifier))
-    (where_clause
-      (comparison_operator
-        (identifier)
-        (integer)))
     body: (block
+      (function_definition
+        name: (identifier)
+        parameters: (parameters)
+        (capture_list
+          (named_capture
+            name: (identifier)))
+        return_type: (type
+          (identifier))
+        (where_clause
+          (comparison_operator
+            (identifier)
+            (integer)))
+        body: (block
+          (return_statement
+            (identifier))))
       (return_statement
-        (identifier)))))
+        (call
+          function: (identifier)
+          arguments: (argument_list))))))
 
 ================================================================================
 Function with where clause and typed raises
 ================================================================================
 
-fn validate(x: Int) raises ValueError -> Bool where x >= 0 where x < 100:
+def validate(x: Int) raises ValueError -> Bool where x >= 0 where x < 100:
     return true
 
 --------------------------------------------------------------------------------
@@ -3168,7 +2553,7 @@ fn validate(x: Int) raises ValueError -> Bool where x >= 0 where x < 100:
 Function with where clause - complex expression
 ================================================================================
 
-fn compute(a: Int, b: Int) -> Int where a + b < 100 where a > b:
+def compute(a: Int, b: Int) -> Int where a + b < 100 where a > b:
     return a + b
 
 --------------------------------------------------------------------------------
@@ -3207,7 +2592,7 @@ fn compute(a: Int, b: Int) -> Int where a + b < 100 where a > b:
 Async function with where clause
 ================================================================================
 
-async fn fetch[T](url: String) -> T where T.is_json_decodable:
+async def fetch[T](url: String) -> T where T.is_json_decodable:
     pass
 
 --------------------------------------------------------------------------------
@@ -3236,7 +2621,7 @@ async fn fetch[T](url: String) -> T where T.is_json_decodable:
 Function with where clause - no return type
 ================================================================================
 
-fn log(msg: String) where msg.len > 0:
+def log(msg: String) where msg.len > 0:
     pass
 
 --------------------------------------------------------------------------------
@@ -3262,7 +2647,7 @@ fn log(msg: String) where msg.len > 0:
 Function with where clause using keyword as attribute
 ================================================================================
 
-fn check(x: Pointer) -> Bool where x.var where x.ref:
+def check(x: Pointer) -> Bool where x.var where x.ref:
     return true
 
 --------------------------------------------------------------------------------
@@ -3279,10 +2664,12 @@ fn check(x: Pointer) -> Bool where x.var where x.ref:
       (identifier))
     (where_clause
       (attribute
-        object: (identifier)))
+        object: (identifier)
+        attribute: (identifier)))
     (where_clause
       (attribute
-        object: (identifier)))
+        object: (identifier)
+        attribute: (identifier)))
     body: (block
       (return_statement
         (identifier)))))
@@ -3291,7 +2678,7 @@ fn check(x: Pointer) -> Bool where x.var where x.ref:
 Function with everything - unified, effects, and where clauses
 ================================================================================
 
-fn ultimate[T, U](x: T, y: U) unified {read config, mut state} capturing raises Error -> Result[T] where T.is_valid where U == Int:
+def ultimate[T, U](x: T, y: U) capturing raises Error {imm config, mut state} -> Result[T] where T.is_valid where U == Int:
     pass
 
 --------------------------------------------------------------------------------
@@ -3313,19 +2700,17 @@ fn ultimate[T, U](x: T, y: U) unified {read config, mut state} capturing raises 
         (identifier)
         type: (type
           (identifier))))
-    (unified_clause
-      (argument_convention)
-      (identifier)
-      (argument_convention)
-      (identifier))
     raises_type: (type
       (identifier))
+    (capture_list
+      (named_capture
+        name: (identifier))
+      (named_capture
+        name: (identifier)))
     return_type: (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier)))))
+      (subscript
+        value: (identifier)
+        subscript: (identifier)))
     (where_clause
       (attribute
         object: (identifier)
@@ -3338,212 +2723,10 @@ fn ultimate[T, U](x: T, y: U) unified {read config, mut state} capturing raises 
       (pass_statement))))
 
 ================================================================================
-Function with type parameter where clause - single parameter
-================================================================================
-
-fn foo[i: Int where i > 5]():
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    type_parameters: (type_parameter
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier))))
-      (where_clause
-        (comparison_operator
-          (identifier)
-          (integer))))
-    parameters: (parameters)
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Function with type parameter where clause - multiple parameters
-================================================================================
-
-fn foo[i: Int where i > 5, j: Float32]():
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    type_parameters: (type_parameter
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier))))
-      (where_clause
-        (comparison_operator
-          (identifier)
-          (integer)))
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier)))))
-    parameters: (parameters)
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Function with type parameter where clause - all parameters have where
-================================================================================
-
-fn bar[T: SomeTrait where T.is_copyable, U: AnotherTrait where U.size > 0]() -> None:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    type_parameters: (type_parameter
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier))))
-      (where_clause
-        (attribute
-          object: (identifier)
-          attribute: (identifier)))
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier))))
-      (where_clause
-        (comparison_operator
-          (attribute
-            object: (identifier)
-            attribute: (identifier))
-          (integer))))
-    parameters: (parameters)
-    return_type: (type
-      (none))
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Function with type parameter where - complex condition
-================================================================================
-
-fn compute[N: Int where N > 0 where N < 100](value: Int) -> Int:
-    return value
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    type_parameters: (type_parameter
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier))))
-      (where_clause
-        (comparison_operator
-          (identifier)
-          (integer)))
-      (where_clause
-        (comparison_operator
-          (identifier)
-          (integer))))
-    parameters: (parameters
-      (typed_parameter
-        (identifier)
-        type: (type
-          (identifier))))
-    return_type: (type
-      (identifier))
-    body: (block
-      (return_statement
-        (identifier)))))
-
-================================================================================
-Function with both type parameter where and function where
-================================================================================
-
-fn process[T: Type where T.is_valid](x: T) -> T where x != null:
-    return x
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    type_parameters: (type_parameter
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier))))
-      (where_clause
-        (attribute
-          object: (identifier)
-          attribute: (identifier))))
-    parameters: (parameters
-      (typed_parameter
-        (identifier)
-        type: (type
-          (identifier))))
-    return_type: (type
-      (identifier))
-    (where_clause
-      (comparison_operator
-        (identifier)
-        (identifier)))
-    body: (block
-      (return_statement
-        (identifier)))))
-
-================================================================================
-Function with type parameter where - no constraint type
-================================================================================
-
-fn simple[T where T.is_movable]() -> None:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    type_parameters: (type_parameter
-      (type
-        (identifier))
-      (where_clause
-        (attribute
-          object: (identifier)
-          attribute: (identifier))))
-    parameters: (parameters)
-    return_type: (type
-      (none))
-    body: (block
-      (pass_statement))))
-
-================================================================================
 Struct with type parameter where clause
 ================================================================================
 
-struct Vector[T: Numeric where T.is_floating_point]:
+struct Vector[T: Numeric] where T.is_floating_point:
     pass
 
 --------------------------------------------------------------------------------
@@ -3552,99 +2735,10 @@ struct Vector[T: Numeric where T.is_floating_point]:
   (class_definition
     name: (identifier)
     type_parameters: (type_parameter
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier))))
-      (where_clause
-        (attribute
-          object: (identifier)
-          attribute: (identifier))))
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Function with trailing comma in type parameters with where
-================================================================================
-
-fn test[T: Type where T.is_valid,]():
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    type_parameters: (type_parameter
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier))))
-      (where_clause
-        (attribute
-          object: (identifier)
-          attribute: (identifier))))
-    parameters: (parameters)
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Complex function with all features and type parameter where
-================================================================================
-
-async fn ultimate[T: Trait where T.is_valid, U: Other where U.size == 8](x: T) unified {read config} raises Error -> Result[T, U] where x.ready:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    type_parameters: (type_parameter
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier))))
-      (where_clause
-        (attribute
-          object: (identifier)
-          attribute: (identifier)))
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier))))
-      (where_clause
-        (comparison_operator
-          (attribute
-            object: (identifier)
-            attribute: (identifier))
-          (integer))))
-    parameters: (parameters
-      (typed_parameter
-        (identifier)
+      (constrained_parameter
+        name: (identifier)
         type: (type
           (identifier))))
-    (unified_clause
-      (argument_convention)
-      (identifier))
-    raises_type: (type
-      (identifier))
-    return_type: (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier))
-          (type
-            (identifier)))))
     (where_clause
       (attribute
         object: (identifier)
@@ -3729,7 +2823,7 @@ __comptime_assert obj.is_valid
 Comptime assert - in function
 ================================================================================
 
-fn foo(x: Int):
+def foo(x: Int):
     __comptime_assert x > 0
     return x
 
@@ -3755,7 +2849,7 @@ fn foo(x: Int):
 Comptime assert - with type parameters
 ================================================================================
 
-fn process[N: Int where N > 0]():
+def process[N: Int]() where N > 0:
     __comptime_assert N < 100
     pass
 
@@ -3765,17 +2859,15 @@ fn process[N: Int where N > 0]():
   (function_definition
     name: (identifier)
     type_parameters: (type_parameter
-      (type
-        (constrained_type
-          (type
-            (identifier))
-          (type
-            (identifier))))
-      (where_clause
-        (comparison_operator
-          (identifier)
-          (integer))))
+      (constrained_parameter
+        name: (identifier)
+        type: (type
+          (identifier))))
     parameters: (parameters)
+    (where_clause
+      (comparison_operator
+        (identifier)
+        (integer)))
     body: (block
       (comptime_assert_statement
         (comparison_operator
@@ -3809,7 +2901,7 @@ __comptime_assert not is_negative
 Comptime assert - multiple in block
 ================================================================================
 
-fn validate():
+def validate():
     __comptime_assert x > 0
     __comptime_assert y > 0
     __comptime_assert x + y > 0
@@ -3850,3 +2942,72 @@ __comptime_assert (x > 0)
       (comparison_operator
         (identifier)
         (integer)))))
+
+================================================================================
+Bindings inside destructuring patterns
+================================================================================
+
+_, var r = udivmod_unchecked(val, ShapeType.static_value)
+(var codepoint), (ref expected_utf8) = elements
+
+for var idx, var item in enumerate(items):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (pattern_list
+      (identifier)
+      (binding_pattern
+        (identifier)))
+    (call
+      (identifier)
+      (argument_list
+        (identifier)
+        (attribute
+          (identifier)
+          (identifier)))))
+  (assignment
+    (pattern_list
+      (tuple_pattern
+        (binding_pattern
+          (identifier)))
+      (tuple_pattern
+        (binding_pattern
+          (identifier))))
+    (identifier))
+  (for_statement
+    (argument_convention)
+    (pattern_list
+      (identifier)
+      (binding_pattern
+        (identifier)))
+    (call
+      (identifier)
+      (argument_list
+        (identifier)))
+    (block
+      (pass_statement))))
+
+================================================================================
+Reference arguments
+================================================================================
+
+var clc_resp = SMemArray[UInt128, stages](ref smem.clc_response)
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (call
+      (identifier)
+      (parameter_list
+        (identifier)
+        (identifier))
+      (argument_list
+        (binding_pattern
+          (attribute
+            (identifier)
+            (identifier)))))))

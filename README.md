@@ -1,8 +1,16 @@
 # tree-sitter-mojo
 
-Mojo grammar for [tree-sitter][]. Forked from the [tree-sitter-python](https://github.com/tree-sitter/tree-sitter-python) project.
+Mojo grammar for [tree-sitter][].
+
+Originally forked from [tree-sitter-python][] (by Max Brunsfeld and
+contributors), with the Mojo-specific grammar authored and maintained by
+[Lukas Hermann][] for current Mojo (unified closures, capture lists,
+t-strings, contextual member refs, and more — see the [feature notes][]).
 
 [tree-sitter]: https://github.com/tree-sitter/tree-sitter
+[tree-sitter-python]: https://github.com/tree-sitter/tree-sitter-python
+[Lukas Hermann]: https://github.com/lsh
+[feature notes]: docs/features.md
 
 ## References
 

@@ -2,7 +2,7 @@
 Matching specific values
 ================================================================================
 
-match command.split():
+__match command.split():
     case ["quit"]:
         print("Goodbye!")
         quit_game()
@@ -102,7 +102,7 @@ match command.split():
 Matching multiple values
 ================================================================================
 
-match command.split():
+__match command.split():
     case ["drop", *objects]:
         for obj in objects:
             character.drop(obj, current_room)
@@ -145,13 +145,13 @@ match command.split():
 Adding a wild card
 ================================================================================
 
-match command.split():
+__match command.split():
 # ^ conditional
     case ["quit"]: ... # Code omitted for brevity
     case ["go", direction]: pass
     case ["drop", *objects]: pass
     case _:
-        print(f"Sorry, I couldn't understand {command!r}")
+        print(t"Sorry, I couldn't understand {command}")
 
 --------------------------------------------------------------------------------
 
@@ -211,15 +211,14 @@ match command.split():
                 (string_start)
                 (string_content)
                 (interpolation
-                  (identifier)
-                  (type_conversion))
+                  (identifier))
                 (string_end)))))))))
 
 ================================================================================
 Or patterns
 ================================================================================
 
-match command.split():
+__match command.split():
     case ["north"] | ["go", "north"]:
         current_room = current_room.neighbor("north")
     case ["get", obj] | ["pick", "up", obj] | ["pick", obj, "up"]:
@@ -314,7 +313,7 @@ match command.split():
 As patterns
 ================================================================================
 
-match command.split():
+__match command.split():
     case ["go", ("north" | "south" | "east" | "west") as direction]:
         current_room = current_room.neighbor(direction)
 
@@ -370,7 +369,7 @@ match command.split():
                 (identifier)))))))))
 
 ================================================================================
-Actually not match
+Match used as an identifier
 ================================================================================
 
 match = 2
@@ -383,50 +382,49 @@ def foo(**match): pass
 --------------------------------------------------------------------------------
 
 (module
-  (assignment
-    (identifier)
-    (integer))
-  (assignment
-    (pattern_list
-      (identifier)
-      (identifier))
-    (expression_list
-      (integer)
-      (integer)))
-  (assignment
-    (identifier)
-    (type
-      (identifier))
+  (ERROR
+    (identifier))
+  (integer)
+  (ERROR
     (identifier))
   (assignment
-    (pattern_list
-      (identifier)
-      (identifier))
-    (expression_list
+    left: (identifier)
+    right: (expression_list
       (integer)
-      (string
-        (string_start)
-        (string_content)
-        (string_end))))
+      (integer)))
+  (ERROR
+    (identifier))
   (assignment
-    (pattern_list
-      (list_splat_pattern
+    left: (identifier)
+    right: (identifier))
+  (tuple_expression
+    (identifier)
+    (ERROR
+      (identifier))
+    (integer)
+    (string
+      (string_start)
+      (string_content)
+      (string_end)))
+  (assignment
+    left: (list_splat_pattern
+      (ERROR
         (identifier))
       (identifier))
-    (list
+    right: (list
       (integer)
       (integer)
       (integer)))
   (function_definition
-    (identifier)
-    (parameters
-      (dictionary_splat_pattern
+    name: (identifier)
+    parameters: (parameters
+      (ERROR
         (identifier)))
-    (block
+    body: (block
       (pass_statement))))
 
 ================================================================================
-Match is match but not pattern matching
+Match inside collection literals
 ================================================================================
 
 a = [match]
@@ -436,16 +434,18 @@ match = [match]
 
 (module
   (assignment
-    (identifier)
-    (list
-      (identifier)))
-  (assignment
-    (identifier)
-    (list
+    left: (identifier)
+    right: (list
+      (ERROR
+        (identifier))))
+  (ERROR
+    (identifier))
+  (list
+    (ERROR
       (identifier))))
 
 ================================================================================
-Match kwargs
+Match as a keyword argument name
 ================================================================================
 
 field = call(match=r".*\.txt$")
@@ -454,19 +454,19 @@ field = call(match=r".*\.txt$")
 
 (module
   (assignment
-    (identifier)
-    (call
-      (identifier)
-      (argument_list
-        (keyword_argument
-          (identifier)
-          (string
-            (string_start)
-            (string_content)
-            (string_end)))))))
+    left: (identifier)
+    right: (call
+      function: (identifier)
+      arguments: (argument_list
+        (ERROR
+          (identifier))
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))))
 
 ================================================================================
-Match kwargs 2
+Match as a call target
 ================================================================================
 
 field = match(match=match, match)
@@ -475,17 +475,17 @@ field = match(match=match, match)
 
 (module
   (assignment
-    (identifier)
-    (call
-      (identifier)
-      (argument_list
-        (keyword_argument
-          (identifier)
-          (identifier))
+    left: (identifier)
+    (ERROR
+      (identifier))
+    right: (tuple
+      (ERROR
+        (identifier)
+        (identifier)
         (identifier)))))
 
 ================================================================================
-Case used as identifier
+Case used as an identifier
 ================================================================================
 
 a = [case]
@@ -496,27 +496,25 @@ just_in_case = call_me(case=True)
 
 (module
   (assignment
-    (identifier)
-    (list
-      (identifier)))
+    left: (identifier)
+    right: (list
+      (ERROR)))
+  (ERROR)
+  (list
+    (ERROR))
   (assignment
-    (identifier)
-    (list
-      (identifier)))
-  (assignment
-    (identifier)
-    (call
-      (identifier)
-      (argument_list
-        (keyword_argument
-          (identifier)
-          (true))))))
+    left: (identifier)
+    right: (call
+      function: (identifier)
+      arguments: (argument_list
+        (ERROR)
+        (true)))))
 
 ================================================================================
 If guards
 ================================================================================
 
-match 0:
+__match 0:
     case 0 if False:
         x = False
     case 0 if True:
@@ -551,7 +549,7 @@ match 0:
 Literals
 ================================================================================
 
-match xxx:
+__match xxx:
     case 3 | -3:
       pass
     case "something":
@@ -623,7 +621,7 @@ match xxx:
 Comma separated cases
 ================================================================================
 
-match (0, 1, 2):
+__match (0, 1, 2):
     case 0,1:
         x = 0
     case 0, *x:
@@ -662,7 +660,7 @@ match (0, 1, 2):
 Case terminating in comma
 ================================================================================
 
-match x,:
+__match x,:
     case *x,:
         y = 0
 
@@ -685,7 +683,7 @@ match x,:
 Multiple match patterns
 ================================================================================
 
-match ..., ...:
+__match ..., ...:
     case a, b:
         return locals()
 
@@ -710,35 +708,27 @@ match ..., ...:
               (argument_list))))))))
 
 ================================================================================
-Match match, case case
+Match and case as assignment targets
 ================================================================================
 
 match = case = 0
-match match:
+__match match:
     case case:
         x = 0
 --------------------------------------------------------------------------------
 
 (module
-  (assignment
-    (identifier)
-    (assignment
+  (ERROR
+    (identifier))
+  (integer)
+  (ERROR
+    (ERROR
       (identifier)
-      (integer)))
-  (match_statement
-    (identifier)
-    (block
-      (case_clause
-        (case_pattern
-          (dotted_name
-            (identifier)))
-        (block
-          (assignment
-            (identifier)
-            (integer)))))))
+      (identifier))
+    (integer)))
 
 ================================================================================
-Walrus match (Issue #150)
+Match used in a named expression
 ================================================================================
 
 if match := re.fullmatch(r"(-)?(\d+:)?\d?\d:\d\d(\.\d*)?", time, flags=re.ASCII):
@@ -748,24 +738,24 @@ if match := re.fullmatch(r"(-)?(\d+:)?\d?\d:\d\d(\.\d*)?", time, flags=re.ASCII)
 
 (module
   (if_statement
-    (named_expression
-      (identifier)
-      (call
-        (attribute
-          (identifier)
-          (identifier))
-        (argument_list
-          (string
-            (string_start)
-            (string_content)
-            (string_end))
-          (identifier)
-          (keyword_argument
-            (identifier)
-            (attribute
-              (identifier)
-              (identifier))))))
-    (block
+    (ERROR
+      (identifier))
+    condition: (call
+      function: (attribute
+        object: (identifier)
+        attribute: (identifier))
+      arguments: (argument_list
+        (string
+          (string_start)
+          (string_content)
+          (string_end))
+        (identifier)
+        (keyword_argument
+          name: (identifier)
+          value: (attribute
+            object: (identifier)
+            attribute: (identifier)))))
+    consequence: (block
       (return_statement
         (integer)))))
 
@@ -773,7 +763,7 @@ if match := re.fullmatch(r"(-)?(\d+:)?\d?\d:\d\d(\.\d*)?", time, flags=re.ASCII)
 Matching objects
 ================================================================================
 
-match event.get():
+__match event.get():
     case Click(position=(x, y)):
         handle_click_at(x, y)
     case KeyPress(key_name="Q") | Quit():
@@ -784,7 +774,7 @@ match event.get():
     case KeyPress():
         pass # Ignore other keystrokes
     case other_event:
-        raise ValueError(f"Unrecognized event: {other_event}")
+        raise ValueError(t"Unrecognized event: {other_event}")
 
 --------------------------------------------------------------------------------
 
@@ -886,7 +876,7 @@ match event.get():
 Positional arguments
 ================================================================================
 
-match event.get():
+__match event.get():
     case Click((x, y)):
         handle_click_at(x, y)
 
@@ -924,7 +914,7 @@ match event.get():
 Constants and enums
 ================================================================================
 
-match event.get():
+__match event.get():
     case Click((x, y), button=Button.LEFT):  # This is a left click
         handle_click_at(x, y)
     case Click():
@@ -980,7 +970,7 @@ Dict mappings
 ================================================================================
 
 for action in actions:
-    match action:
+    __match action:
         case {"text": message, "color": c}:
             ui.set_text_color(c)
             ui.display(message)
@@ -1115,7 +1105,7 @@ Builtin classes
 ================================================================================
 
 for action in actions:
-    match action:
+    __match action:
         case {"text": str(message), "color": str(c)}:
             ui.set_text_color(c)
             ui.display(message)
@@ -1251,7 +1241,7 @@ for action in actions:
 Complex case patterns on classes
 ================================================================================
 
-match x:
+__match x:
     case Something(): # no args
         foo1()
     case Something.Else(): # more complex class name
@@ -1425,7 +1415,7 @@ match x:
 Complex case patterns on complex numbers
 ================================================================================
 
-match x:
+__match x:
     case  -3 + 5j:
         pass
     case  -3 + 5j as b2:
@@ -1494,7 +1484,7 @@ match x:
 Maybe sequence pattern right hand side precedence validation
 ================================================================================
 
-match x:
+__match x:
     case a1, *a2, a3:
         pass
 

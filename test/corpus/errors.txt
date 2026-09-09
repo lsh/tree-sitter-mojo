@@ -4,7 +4,7 @@ An error before a string literal
 ====================================
 
 def a(b):
-    c.
+    c.-
 
     """
     d
@@ -19,29 +19,28 @@ def a(b):
     (identifier)
     (parameters
       (identifier))
-    (ERROR
-      (identifier))
     (block
-      (expression_statement
+      (attribute
+        (identifier)
+        (ERROR)
         (string
           (string_start)
           (string_content)
           (string_end)))
-      (expression_statement
-        (identifier)))))
+      (identifier))))
 
 =================================================
 Error detected at globally reserved keyword
 =================================================
 
 def test_comprehension():
-    [x for.    # Should error here, and not use def as a method call
+    [x for    # Should error here, and not swallow the next def
 
     def valid_func():    # Should parse as valid function
         pass
 
 def test_incomplete_call():
-    print(    # Should error here
+    foo(    # Should error here
     class Example:    # Should still parse as valid class definition
         pass
 
@@ -64,7 +63,8 @@ def test_incomplete_call():
   (function_definition
     (identifier)
     (parameters)
-    (ERROR)
+    (ERROR
+      (identifier))
     (comment)
     (block
       (class_definition
@@ -72,3 +72,35 @@ def test_incomplete_call():
         (comment)
         (block
           (pass_statement))))))
+================================================================================
+Python statements are rejected
+:error
+================================================================================
+
+del x
+global x
+nonlocal x
+
+--------------------------------------------------------------------------------
+
+(module [0, 0] - [3, 0]
+  (ERROR [0, 0] - [2, 8]
+    (identifier [0, 4] - [0, 5])
+    (identifier [1, 7] - [1, 8]))
+  (identifier [2, 9] - [2, 10]))
+
+================================================================================
+match is a reserved word
+:error
+================================================================================
+
+var match = 2
+x = match
+
+--------------------------------------------------------------------------------
+
+(module [0, 0] - [2, 0]
+  (ERROR [0, 0] - [1, 9]
+    (ERROR [0, 4] - [0, 13]
+      (integer [0, 12] - [0, 13]))
+    (identifier [1, 0] - [1, 1])))
