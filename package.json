@@ -5,10 +5,15 @@
   "repository": "github:lsh/tree-sitter-mojo",
   "license": "MIT",
   "author": {
-    "name": "Max Brunsfeld",
-    "email": "maxbrunsfeld@gmail.com"
+    "name": "Lukas Hermann",
+    "email": "1734032+lsh@users.noreply.github.com"
   },
   "contributors": [
+    {
+      "name": "Max Brunsfeld",
+      "email": "maxbrunsfeld@gmail.com",
+      "url": "https://github.com/maxbrunsfeld"
+    },
     {
       "name": "Amaan Qureshi",
       "email": "amaanq12@gmail.com"

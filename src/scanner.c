@@ -362,16 +362,17 @@ bool tree_sitter_mojo_external_scanner_scan(void *payload, TSLexer *lexer, const
     if (first_comment_indent_length == -1 && valid_symbols[STRING_START]) {
         Delimiter delimiter = new_delimiter();
 
+        // String prefixes in Mojo: `t`/`T` for t-strings (with
+        // interpolation) and `r`/`R` for raw strings, freely combined
+        // (`rt`, `tR`, ...). Python's `f`, `b`, and `u` prefixes do not exist
+        // in Mojo and are deliberately not recognized here.
         bool has_flags = false;
         while (lexer->lookahead) {
-            if (lexer->lookahead == 'f' || lexer->lookahead == 'F' || lexer->lookahead == 't' ||
-                lexer->lookahead == 'T') {
+            if (lexer->lookahead == 't' || lexer->lookahead == 'T') {
                 set_format(&delimiter);
             } else if (lexer->lookahead == 'r' || lexer->lookahead == 'R') {
                 set_raw(&delimiter);
-            } else if (lexer->lookahead == 'b' || lexer->lookahead == 'B') {
-                set_bytes(&delimiter);
-            } else if (lexer->lookahead != 'u' && lexer->lookahead != 'U') {
+            } else {
                 break;
             }
             has_flags = true;
