@@ -110,6 +110,8 @@ module.exports = grammar({
     [$.parameter_list, $.primary_expression],
     // A superclass list containing a splat vs a splat expression.
     [$.superclass_list, $.primary_expression],
+    // `__extension X(` — the conformance list vs a call on the extended name.
+    [$.extension_definition, $.primary_expression],
     // `for var x in ...` — the loop convention vs a `binding_pattern` loop
     // variable (the convention reading wins via dynamic precedence).
     [$.binding_pattern, $.argument_convention],
@@ -130,6 +132,9 @@ module.exports = grammar({
     [$.transfer_expression, $.binary_operator, $.unary_operator],
     [$.transfer_expression, $.binary_operator, $.await],
     [$.type_parameter, $.list],
+    // `__generator_type[Int] Int` — the brackets are the parameter clause, not
+    // a list literal standing as the body type.
+    [$.type, $._collection_elements],
     // `lambda [mut, ...]` — a soft-keyword parameter name in a type parameter
     // list vs the identifier reading of the same word.
     [$.type_parameter, $.primary_expression],
@@ -138,11 +143,6 @@ module.exports = grammar({
     [$._type_parameter_default, $.primary_expression],
     [$.parameterized_alias_statement, $.primary_expression],
     [$._collection_elements, $.struct_literal],
-    // `A & B` may be a `binary_operator` (expressions) or an `intersection_type`
-    // (e.g. when an operand is a `function_type`).
-    [$.primary_expression, $._intersection_operand],
-    // A callable type standing alone vs. the leading operand of an
-    // `intersection_type`, e.g. `def() -> None` vs `def() -> None & Copyable`.
     // `with x as a, b:` — the alias may be a pattern list of several names.
     [$.with_item, $.pattern_list],
     // A call result may be an assignment target (`node[].right() = x`), so it
@@ -150,14 +150,9 @@ module.exports = grammar({
     [$.with_item, $.primary_expression],
     // The repeat boundary of `pattern_list`, e.g. `with x as a, b:`.
     [$.pattern_list],
-    // The dotted-name repeat boundary of a thrown type, e.g. `raises E.a.b`.
-    [$._raises_type],
     // `raises E[X]` is a generic type, not an identifier plus an origin set
     // (the generic reading wins via dynamic precedence).
-    [$._raises_type, $.generic_type],
-    // `Self.member` may be a member type (in `-> Self.T` position) or an
-    // attribute expression (`x = Self.foo`).
-    [$.primary_expression, $.type],
+    [$._raises_type, $.primary_expression],
   ],
 
   supertypes: ($) => [
@@ -364,7 +359,7 @@ module.exports = grammar({
     extension_definition: ($) =>
       seq(
         '__extension',
-        field('name', choice($.identifier, $.generic_type)),
+        field('name', choice($.identifier, $.subscript)),
         // The traits the extension conforms the type to, e.g.
         //   __extension MyStruct(Convertible):
         field(
@@ -557,14 +552,14 @@ module.exports = grammar({
     // name, a parametric type like `Errors[X]`, or a parenthesized union) —
     // never a bare `constrained_type`, whose `:` would otherwise swallow the
     // function body colon in `def f() raises HALError:`. Member access is
-    // spelled out directly (rather than via `member_type`) so the full
-    // expression grammar stays out of the effect clause.
+    // spelled out directly (rather than as a general attribute chain) so the
+    // full expression grammar stays out of the effect clause.
     _raises_type: ($) => choice(
       prec(1, $.identifier),
-      // Dynamic precedence so `raises E[X]` reads as a generic type rather
+      // Dynamic precedence so `raises E[X]` reads as a parametric type rather
       // than a bare identifier followed by an origin set (see the declared
-      // `_raises_type`/`generic_type` conflict).
-      prec.dynamic(1, $.generic_type),
+      // `_raises_type`/`subscript` conflict).
+      prec.dynamic(1, $.subscript),
       $.self_type,
       $.parenthesized_expression,
       prec(1, seq(
@@ -741,7 +736,7 @@ module.exports = grammar({
     // A named parameter with a constraint in a `[...]` parameter list,
     // e.g. the `T: AnyType` in `def f[T: AnyType](x: T)` or the `*Ts: AnyType`
     // in `def g[*Ts: AnyType]()`. (Bare `*Ts` without a constraint parses as
-    // a `splat_type` expression instead.)
+    // a `list_splat` expression instead.)
     constrained_parameter: ($) => seq(
       optional('*'),
       field('name', $.identifier),
@@ -1369,10 +1364,15 @@ module.exports = grammar({
         $.augmented_assignment,
         $.pattern_list,
         $.yield,
-        // A callable type as the value, e.g. `comptime F = def() -> None` or
-        // the parenthesized `comptime F = (def[n: Int](x: Int) -> None)`, or
+        // A callable type as the value, e.g. `comptime F = def() -> None`, the
+        // parenthesized `comptime F = (def[n: Int](x: Int) -> None)`, or an
+        // intersection ending in one, e.g.
+        // `comptime RowBody = ImplicitlyCopyable & RegisterPassable & (
+        //      def[_p: ContextParams](Coord, mut Context[_p]) -> None
+        //  )`.
         $.function_type,
         alias($.parenthesized_function_type, $.parenthesized_expression),
+        $.intersection_type,
       ),
 
     yield: ($) =>
@@ -1432,8 +1432,10 @@ module.exports = grammar({
               $.keyword_argument,
               // A keyword argument whose value is a slice, e.g. `x[byte=1:n]`.
               alias($.slice_keyword_argument, $.keyword_argument),
-              // A callable type argument, e.g. `Variant[def() -> Path]`.
+              // A callable type argument, e.g. `Variant[def() -> Path]` or
+              // `Some[ImplicitlyCopyable & (def() raises)]`.
               $.function_type,
+              $.intersection_type,
               // A bare convention keyword used as a parameter argument, e.g.
               // the `mut` in `unsafe_mut_cast[mut]`.
               alias(choice(...SOFT_CONVENTIONS), $.identifier),
@@ -1464,57 +1466,21 @@ module.exports = grammar({
         ),
       ),
 
+    // A type expression. Mojo spells types with the expression grammar: a
+    // parametric instantiation is a `subscript` (`List[Int]`), a qualified name
+    // an `attribute` (`Self.T`), a specialization-and-call a `call`
+    // (`get_device_spec[0]()`), a union a `binary_operator` (`Int | None`), a
+    // variadic a `list_splat` (`*Ts`), and parameter arithmetic an ordinary
+    // `binary_operator` (`size_of[T]() * 2`). So `type` adds only the forms
+    // that have no expression spelling. Re-deriving those constructs as
+    // type-only rules is what used to double the parse table and make an
+    // `intersection_type` unusable in value position.
     type: ($) => choice(
-      prec(1, $.expression),
-      // Arithmetic over compile-time parameter values, e.g. the
-      // `size_of[decimal.dtype]() * 2` in `SIMD[.uint8, size_of[T]() * 2]`
-      // or the `SF_ATOM_M[1] * SF_ATOM_K` in `ComptimeInt[...]`. In a type
-      // position the left operand reduces to a parametric type, which an
-      // ordinary `binary_operator` cannot carry.
-      alias($.type_arithmetic, $.binary_operator),
-      alias($.parametric_member_type, $.generic_type),
-      $.splat_type,
-      $.generic_type,
-      $.called_type,
-      $.union_type,
+      $.expression,
       $.intersection_type,
-      $.member_type,
       $.function_type,
       $.generator_type,
-      $.self_type,
     ),
-
-    type_arithmetic: ($) => {
-      const table = [
-        [PREC.plus, choice('+', '-')],
-        [PREC.times, choice('*', '/', '%', '//')],
-        [PREC.shift, choice('<<', '>>')],
-      ];
-      return choice(...table.map(([precedence, operator]) => prec.left(
-        precedence,
-        seq(
-          field('left', choice($.generic_type, $.called_type, $.member_type)),
-          field('operator', operator),
-          field('right', $.type),
-        ),
-      )));
-    },
-
-    // A parametric instantiation that is immediately called, used in type
-    // position, e.g. `Device[get_device_spec[0]()]`. The generic-type reading
-    // would otherwise consume `Name[...]` and strand the trailing `()`. A
-    // trailing member-call chain (`get_device_spec[0]()._mlir_target()`) and a
-    // dotted parametric base (`TypeList.splat[...]()`) are also supported.
-    called_type: ($) => prec.right(PREC.call, seq(
-      choice(
-        $.generic_type,
-        seq($.member_type, optional($.type_parameter)),
-      ),
-      $.argument_list,
-      // The call result may be indexed, e.g. `_field_types_of[Self.T]()[idx]`.
-      repeat(seq('[', commaSep1($.expression), optional(','), ']')),
-      repeat(seq('.', $.identifier, optional($.type_parameter), optional($.argument_list))),
-    )),
 
     // A callable type literal, e.g. `def(Int) raises -> Bool` or
     // `def() capturing -> Path`, usable anywhere a type is expected.
@@ -1588,30 +1554,6 @@ module.exports = grammar({
       field('parameter', $.type),
     )),
 
-    splat_type: ($) => prec.right(1, seq(
-      choice('*', '**'),
-      choice(
-        $.identifier,
-        $.attribute,
-        $.subscript,
-        $.generic_type,
-        $.member_type,
-        $.called_type,
-      ),
-    )),
-    generic_type: ($) => prec(1, seq(
-      choice(
-        $.identifier,
-      ),
-      $.type_parameter,
-    )),
-
-    // A parametric member, e.g. `CompTest[.int32].SquareMatrixType[10]` or the
-    // `].TensorType[Self.dtype]` of a multi-line parametric base. Kept apart
-    // from `generic_type` so the plain-name form stays available where only a
-    // simple parametric name is meant (an extension's target, say).
-    parametric_member_type: ($) => prec(1, seq($.member_type, $.type_parameter)),
-    union_type: ($) => prec.left(seq($.type, '|', $.type)),
     // The `&` intersection/conjunction type operator combining trait/types with
     // a callable type, e.g. `Copyable & RegisterPassable & def() -> None`. A
     // trailing `function_type` is required, so a plain `A & B` of identifiers
@@ -1625,22 +1567,19 @@ module.exports = grammar({
     // `def() -> A & B` reads `A & B` as the result type.
     intersection_type: ($) =>
       prec.left(PREC.bitwise_and, choice(
+        // The trait bounds are an ordinary `&` expression — `A & B & C` is a
+        // `binary_operator` until a callable operand turns up — so the chain
+        // shares the expression grammar instead of re-deriving it.
         seq(
-          $._intersection_operand,
-          repeat(seq('&', $._intersection_operand)),
+          field('left', $.primary_expression),
           '&',
-          $._callable_type_operand,
+          field('right', $._callable_type_operand),
         ),
         seq(
           alias($.parenthesized_function_type, $.parenthesized_expression),
-          repeat1(seq('&', $._intersection_operand)),
+          repeat1(seq('&', $.primary_expression)),
         ),
       )),
-
-    _intersection_operand: ($) => choice(
-      $.identifier,
-      $.generic_type,
-    ),
 
     // A callable type, bare or parenthesized.
     _callable_type_operand: ($) => choice(
@@ -1648,7 +1587,6 @@ module.exports = grammar({
       alias($.parenthesized_function_type, $.parenthesized_expression),
     ),
     parenthesized_function_type: ($) => seq('(', $.function_type, ')'),
-    member_type: ($) => seq($.type, '.', $.identifier),
 
     // The `Self` type, referring to the enclosing struct/trait/extension.
     self_type: (_) => 'Self',

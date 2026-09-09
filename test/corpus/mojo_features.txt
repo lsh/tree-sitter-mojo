@@ -223,11 +223,11 @@ def span[mut: Bool, origin: Origin[mut=mut], //](ref[origin] self):
       (constrained_parameter
         name: (identifier)
         type: (type
-          (generic_type
-            (identifier)
-            (type_parameter
-              (identifier)
-              default: (identifier)))))
+          (subscript
+            value: (identifier)
+            subscript: (keyword_argument
+              name: (identifier)
+              value: (identifier)))))
       (infer_separator))
     parameters: (parameters
       (self_parameter
@@ -256,9 +256,8 @@ def make() -> Buffer[]:
     name: (identifier)
     parameters: (parameters)
     return_type: (type
-      (generic_type
-        (identifier)
-        (type_parameter)))
+      (subscript
+        value: (identifier)))
     body: (block
       (pass_statement))))
 
@@ -321,11 +320,11 @@ comptime Ptr[
       (constrained_parameter
         name: (identifier)
         type: (type
-          (generic_type
-            (identifier)
-            (type_parameter
-              (identifier)
-              default: (identifier))))
+          (subscript
+            value: (identifier)
+            subscript: (keyword_argument
+              name: (identifier)
+              value: (identifier))))
         default: (subscript
           value: (identifier)
           subscript: (keyword_argument
@@ -429,14 +428,11 @@ struct Buffer:
         parameters: (parameters
           (self_parameter
             type: (type
-              (generic_type
-                (identifier)
-                (type_parameter
-                  (type
-                    (member_type
-                      (type
-                        (self_type))
-                      (identifier)))))))
+              (subscript
+                value: (identifier)
+                subscript: (attribute
+                  object: (self_type)
+                  attribute: (identifier)))))
           (typed_parameter
             (identifier)
             type: (type
@@ -722,9 +718,9 @@ struct S:
           (constrained_parameter
             (identifier)
             (type
-              (generic_type
+              (subscript
                 (identifier)
-                (type_parameter
+                (keyword_argument
                   (identifier)
                   (identifier))))))
         (type
@@ -969,21 +965,15 @@ struct S:
         (parameters
           (self_parameter))
         (type
-          (generic_type
+          (subscript
             (identifier)
-            (type_parameter
-              (type
-                (generic_type
+            (subscript
+              (identifier)
+              (call
+                (subscript
                   (identifier)
-                  (type_parameter
-                    (type
-                      (called_type
-                        (generic_type
-                          (identifier)
-                          (type_parameter
-                            (type
-                              (integer))))
-                        (argument_list)))))))))
+                  (integer))
+                (argument_list)))))
         (block
           (pass_statement)))
       (function_definition
@@ -991,19 +981,17 @@ struct S:
         (parameters
           (self_parameter))
         (type
-          (generic_type
+          (subscript
             (identifier)
-            (type_parameter
-              (type
-                (called_type
-                  (generic_type
+            (call
+              (attribute
+                (call
+                  (subscript
                     (identifier)
-                    (type_parameter
-                      (type
-                        (integer))))
-                  (argument_list)
-                  (identifier)
-                  (argument_list))))))
+                    (integer))
+                  (argument_list))
+                (identifier))
+              (argument_list))))
         (block
           (pass_statement)))
       (function_definition
@@ -1011,23 +999,19 @@ struct S:
         (parameters
           (self_parameter))
         (type
-          (generic_type
+          (subscript
             (identifier)
-            (type_parameter
-              (type
-                (called_type
-                  (member_type
-                    (type
-                      (splat_type
-                        (identifier)))
+            (list_splat
+              (call
+                (attribute
+                  (identifier)
+                  (identifier))
+                (parameter_list
+                  (keyword_argument
+                    (identifier)
                     (identifier))
-                  (type_parameter
-                    (type
-                      (identifier))
-                    (identifier)
-                    (type
-                      (identifier)))
-                  (argument_list))))))
+                  (identifier))
+                (argument_list)))))
         (block
           (pass_statement))))))
 
@@ -1127,13 +1111,10 @@ __extension SIMD[T, n]:
         (block
           (pass_statement)))))
   (extension_definition
-    (generic_type
+    (subscript
       (identifier)
-      (type_parameter
-        (type
-          (identifier))
-        (type
-          (identifier))))
+      (identifier)
+      (identifier))
     (block
       (pass_statement))))
 
@@ -1308,8 +1289,9 @@ def stencil[
         (identifier)
         (type
           (intersection_type
-            (identifier)
-            (identifier)
+            (binary_operator
+              (identifier)
+              (identifier))
             (function_type
               (type
                 (identifier))
@@ -1847,9 +1829,8 @@ struct A:
           (constrained_parameter
             (identifier)
             (type
-              (member_type
-                (type
-                  (self_type))
+              (attribute
+                (self_type)
                 (identifier)))))
         (where_clause
           (call
@@ -1898,9 +1879,9 @@ trait Iterator:
           (constrained_parameter
             (identifier)
             (type
-              (generic_type
+              (subscript
                 (identifier)
-                (type_parameter
+                (keyword_argument
                   (identifier)
                   (identifier))))))
         (type
@@ -2130,9 +2111,8 @@ struct Foo[T: Writable](def(x: T) __param_trait__):
           (typed_parameter
             (identifier)
             (type
-              (member_type
-                (type
-                  (self_type))
+              (attribute
+                (self_type)
                 (identifier)))))
         (block
           (pass_statement))))))

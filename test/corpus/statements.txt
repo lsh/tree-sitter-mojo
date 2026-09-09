@@ -596,11 +596,9 @@ async def d(a:str="default", b=c) -> None:
       (typed_parameter
         (identifier)
         type: (type
-          (generic_type
-            (identifier)
-            (type_parameter
-              (type
-                (identifier)))))))
+          (subscript
+            value: (identifier)
+            subscript: (identifier)))))
     return_type: (type
       (identifier))
     body: (block
@@ -1597,11 +1595,9 @@ var z: List[Int]
   (assignment
     (identifier)
     (type
-      (generic_type
+      (subscript
         (identifier)
-        (type_parameter
-          (type
-            (identifier)))))))
+        (identifier)))))
 
 ================================================================================
 Assignment with comptime and type annotation
@@ -1889,11 +1885,9 @@ def update(mut data: List[Int]):
         (argument_convention)
         (identifier)
         type: (type
-          (generic_type
-            (identifier)
-            (type_parameter
-              (type
-                (identifier)))))))
+          (subscript
+            value: (identifier)
+            subscript: (identifier)))))
     body: (block
       (call
         function: (attribute
@@ -2302,11 +2296,9 @@ def generic_error() raises MyError[T] -> None:
     name: (identifier)
     parameters: (parameters)
     raises_type: (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier)))))
+      (subscript
+        value: (identifier)
+        subscript: (identifier)))
     return_type: (type
       (none))
     body: (block
@@ -2381,11 +2373,9 @@ def convert(mut data: List[Int]) raises ConversionError -> String:
         (argument_convention)
         (identifier)
         type: (type
-          (generic_type
-            (identifier)
-            (type_parameter
-              (type
-                (identifier)))))))
+          (subscript
+            value: (identifier)
+            subscript: (identifier)))))
     raises_type: (type
       (identifier))
     return_type: (type
@@ -2718,11 +2708,9 @@ def ultimate[T, U](x: T, y: U) capturing raises Error {imm config, mut state} ->
       (named_capture
         name: (identifier)))
     return_type: (type
-      (generic_type
-        (identifier)
-        (type_parameter
-          (type
-            (identifier)))))
+      (subscript
+        value: (identifier)
+        subscript: (identifier)))
     (where_clause
       (attribute
         object: (identifier)

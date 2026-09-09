@@ -617,11 +617,9 @@ tail_leaves: List[Leaf] = []
   (assignment
     (identifier)
     (type
-      (generic_type
+      (subscript
         (identifier)
-        (type_parameter
-          (type
-            (identifier)))))
+        (identifier)))
     (list)))
 
 ================================================================================
@@ -1081,23 +1079,17 @@ y: type[int] = int
   (assignment
     (identifier)
     (type
-      (union_type
-        (type
-          (generic_type
-            (identifier)
-            (type_parameter
-              (type
-                (identifier)))))
-        (type
-          (identifier)))))
+      (binary_operator
+        (subscript
+          (identifier)
+          (identifier))
+        (identifier))))
   (assignment
     (identifier)
     (type
-      (generic_type
+      (subscript
         (identifier)
-        (type_parameter
-          (type
-            (identifier)))))
+        (identifier)))
     (identifier)))
 
 ================================================================================
@@ -1116,7 +1108,7 @@ comptime G = def(Int, Int, /) thin -> Int
       (variadic_type_parameter
         (identifier)
         (type
-          (splat_type
+          (list_splat
             (identifier))))
       (argument_convention)
       (variadic_type_parameter
@@ -1183,14 +1175,12 @@ def enqueue(closure_type: (def() -> None) & DevicePassable & ImplicitlyCopyable)
       (typed_parameter
         (identifier)
         (type
-          (generic_type
+          (subscript
             (identifier)
-            (type_parameter
-              (type
-                (intersection_type
-                  (identifier)
-                  (parenthesized_expression
-                    (function_type)))))))))
+            (intersection_type
+              (identifier)
+              (parenthesized_expression
+                (function_type)))))))
     (block
       (pass_statement)))
   (function_definition
@@ -1204,8 +1194,9 @@ def enqueue(closure_type: (def() -> None) & DevicePassable & ImplicitlyCopyable)
               (function_type
                 (type
                   (none))))
-            (identifier)
-            (identifier)))))
+            (binary_operator
+              (identifier)
+              (identifier))))))
     (block
       (pass_statement))))
 
@@ -1268,22 +1259,19 @@ struct S:
             (argument_convention)
             (identifier)
             (type
-              (member_type
-                (type
-                  (self_type))
+              (attribute
+                (self_type)
                 (identifier)))))
         (identifier)
         (type
-          (called_type
-            (generic_type
-              (identifier)
-              (type_parameter
-                (type
-                  (member_type
-                    (type
-                      (self_type))
-                    (identifier)))))
-            (argument_list)
+          (subscript
+            (call
+              (subscript
+                (identifier)
+                (attribute
+                  (self_type)
+                  (identifier)))
+              (argument_list))
             (identifier)))
         (block
           (pass_statement))))))
@@ -1306,25 +1294,19 @@ def to_chars(decimal: Scalar) -> SIMD[.uint8, size_of[decimal.dtype]() * 2]:
         (type
           (identifier))))
     (type
-      (generic_type
+      (subscript
         (identifier)
-        (type_parameter
-          (type
-            (inferred_attribute
-              (identifier)))
-          (type
-            (binary_operator
-              (called_type
-                (generic_type
-                  (identifier)
-                  (type_parameter
-                    (type
-                      (attribute
-                        (identifier)
-                        (identifier)))))
-                (argument_list))
-              (type
-                (integer)))))))
+        (inferred_attribute
+          (identifier))
+        (binary_operator
+          (call
+            (subscript
+              (identifier)
+              (attribute
+                (identifier)
+                (identifier)))
+            (argument_list))
+          (integer))))
     (block
       (pass_statement))))
 
@@ -1347,19 +1329,14 @@ def f():
       (assignment
         (identifier)
         (type
-          (generic_type
-            (member_type
-              (type
-                (generic_type
-                  (identifier)
-                  (type_parameter
-                    (type
-                      (inferred_attribute
-                        (identifier))))))
+          (subscript
+            (attribute
+              (subscript
+                (identifier)
+                (inferred_attribute
+                  (identifier)))
               (identifier))
-            (type_parameter
-              (type
-                (integer)))))
+            (integer)))
         (call
           (identifier)
           (parameter_list

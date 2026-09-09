@@ -584,6 +584,10 @@
             "named": true
           },
           {
+            "type": "intersection_type",
+            "named": true
+          },
+          {
             "type": "parenthesized_expression",
             "named": true
           },
@@ -758,6 +762,10 @@
             "named": true
           },
           {
+            "type": "intersection_type",
+            "named": true
+          },
+          {
             "type": "parenthesized_expression",
             "named": true
           },
@@ -796,18 +804,6 @@
         "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "called_type",
-            "named": true
-          },
-          {
-            "type": "generic_type",
-            "named": true
-          },
-          {
-            "type": "member_type",
-            "named": true
-          },
           {
             "type": "primary_expression",
             "named": true
@@ -878,10 +874,6 @@
         "types": [
           {
             "type": "primary_expression",
-            "named": true
-          },
-          {
-            "type": "type",
             "named": true
           }
         ]
@@ -1013,41 +1005,6 @@
       "types": [
         {
           "type": "parameter_list",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "called_type",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "argument_list",
-          "named": true
-        },
-        {
-          "type": "expression",
-          "named": true
-        },
-        {
-          "type": "generic_type",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "member_type",
-          "named": true
-        },
-        {
-          "type": "type_parameter",
           "named": true
         }
       ]
@@ -1903,11 +1860,11 @@
         "required": true,
         "types": [
           {
-            "type": "generic_type",
+            "type": "identifier",
             "named": true
           },
           {
-            "type": "identifier",
+            "type": "subscript",
             "named": true
           }
         ]
@@ -2325,29 +2282,6 @@
     }
   },
   {
-    "type": "generic_type",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "member_type",
-          "named": true
-        },
-        {
-          "type": "type_parameter",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "if_clause",
     "named": true,
     "fields": {},
@@ -2519,25 +2453,38 @@
   {
     "type": "intersection_type",
     "named": true,
-    "fields": {},
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "primary_expression",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "function_type",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
-          "type": "function_type",
-          "named": true
-        },
-        {
-          "type": "generic_type",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
+          "type": "primary_expression",
           "named": true
         }
       ]
@@ -2875,25 +2822,6 @@
     }
   },
   {
-    "type": "member_type",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "type",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "mlir_region",
     "named": true,
     "fields": {
@@ -3165,6 +3093,10 @@
           },
           {
             "type": "function_type",
+            "named": true
+          },
+          {
+            "type": "intersection_type",
             "named": true
           },
           {
@@ -3470,41 +3402,6 @@
     }
   },
   {
-    "type": "splat_type",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute",
-          "named": true
-        },
-        {
-          "type": "called_type",
-          "named": true
-        },
-        {
-          "type": "generic_type",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "member_type",
-          "named": true
-        },
-        {
-          "type": "subscript",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "string",
     "named": true,
     "fields": {},
@@ -3613,6 +3510,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "intersection_type",
             "named": true
           },
           {
@@ -3841,14 +3742,6 @@
       "required": true,
       "types": [
         {
-          "type": "binary_operator",
-          "named": true
-        },
-        {
-          "type": "called_type",
-          "named": true
-        },
-        {
           "type": "expression",
           "named": true
         },
@@ -3861,19 +3754,11 @@
           "named": true
         },
         {
-          "type": "generic_type",
-          "named": true
-        },
-        {
           "type": "identifier",
           "named": true
         },
         {
           "type": "intersection_type",
-          "named": true
-        },
-        {
-          "type": "member_type",
           "named": true
         },
         {
@@ -3885,11 +3770,7 @@
           "named": true
         },
         {
-          "type": "splat_type",
-          "named": true
-        },
-        {
-          "type": "union_type",
+          "type": "subscript",
           "named": true
         }
       ]
@@ -3941,6 +3822,10 @@
           },
           {
             "type": "function_type",
+            "named": true
+          },
+          {
+            "type": "intersection_type",
             "named": true
           },
           {
@@ -4203,21 +4088,6 @@
         },
         {
           "type": "union_pattern",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "union_type",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "type",
           "named": true
         }
       ]
