@@ -5411,10 +5411,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "mlir_type"
-        },
-        {
-          "type": "SYMBOL",
           "name": "comptime_expression"
         }
       ]
@@ -7000,7 +6996,7 @@
                 "name": "attribute",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "mlir_fragment"
+                  "name": "string"
                 }
               }
             ]
@@ -8751,144 +8747,6 @@
         }
       ]
     },
-    "mlir_fragment": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_mlir_backtick"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_mlir_ident"
-                },
-                "named": true,
-                "value": "type"
-              },
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_mlir_number"
-                },
-                "named": true,
-                "value": "integer"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "mlir_punctuation"
-              }
-            ]
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_mlir_backtick"
-        }
-      ]
-    },
-    "mlir_type": {
-      "type": "PREC_RIGHT",
-      "value": 0,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "__mlir_type"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": "."
-                  },
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "ALIAS",
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "identifier"
-                        },
-                        "named": true,
-                        "value": "type"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "mlir_fragment"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": "["
-                  },
-                  {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "expression"
-                      },
-                      {
-                        "type": "REPEAT",
-                        "content": {
-                          "type": "SEQ",
-                          "members": [
-                            {
-                              "type": "STRING",
-                              "value": ","
-                            },
-                            {
-                              "type": "SYMBOL",
-                              "name": "expression"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": ","
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "]"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    },
     "list": {
       "type": "SEQ",
       "members": [
@@ -10271,22 +10129,6 @@
     {
       "type": "STRING",
       "value": "except"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_mlir_backtick"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_mlir_ident"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_mlir_number"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "mlir_punctuation"
     }
   ],
   "inline": [

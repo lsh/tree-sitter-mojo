@@ -1228,10 +1228,10 @@ def f():
           (subscript
             (attribute
               (identifier)
-              (mlir_fragment
-                (type)
-                (mlir_punctuation)
-                (type)))
+              (string
+                (string_start)
+                (string_content)
+                (string_end)))
             (keyword_argument
               (identifier)
               (function_type

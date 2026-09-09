@@ -336,10 +336,6 @@
         "named": true
       },
       {
-        "type": "mlir_type",
-        "named": true
-      },
-      {
         "type": "none",
         "named": true
       },
@@ -636,7 +632,7 @@
             "named": true
           },
           {
-            "type": "mlir_fragment",
+            "type": "string",
             "named": true
           }
         ]
@@ -2898,29 +2894,6 @@
     }
   },
   {
-    "type": "mlir_fragment",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "mlir_punctuation",
-          "named": true
-        },
-        {
-          "type": "type",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "mlir_region",
     "named": true,
     "fields": {
@@ -2954,29 +2927,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "mlir_type",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        },
-        {
-          "type": "mlir_fragment",
-          "named": true
-        },
-        {
-          "type": "type",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -3888,7 +3838,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "binary_operator",
@@ -4675,10 +4625,6 @@
     "named": false
   },
   {
-    "type": "__mlir_type",
-    "named": false
-  },
-  {
     "type": "__param_trait__",
     "named": false
   },
@@ -4831,10 +4777,6 @@
     "type": "line_continuation",
     "named": true,
     "extra": true
-  },
-  {
-    "type": "mlir_punctuation",
-    "named": true
   },
   {
     "type": "mut",

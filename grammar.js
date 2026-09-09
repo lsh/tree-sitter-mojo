@@ -192,13 +192,6 @@ module.exports = grammar({
     ')',
     '}',
     'except',
-
-    // MLIR backtick-fragment interior tokens (see scanner.c). The interior of a
-    // backtick MLIR fragment is tokenized into pieces so it highlights as MLIR.
-    $._mlir_backtick,
-    $._mlir_ident,
-    $._mlir_number,
-    $.mlir_punctuation,
   ],
 
   inline: ($) => [
@@ -1167,7 +1160,6 @@ module.exports = grammar({
         $.generator_expression,
         $.ellipsis,
         $.list_splat,
-        $.mlir_type,
         $.comptime_expression,
       ),
 
@@ -1402,9 +1394,9 @@ module.exports = grammar({
               $.identifier,
               alias(choice(...HARD_KEYWORDS, ...SOFT_KEYWORDS), $.identifier),
             )),
-            // A backtick-quoted MLIR member, e.g. the `pop.cast` in
-            // ``__mlir_op.`pop.cast` ``.
-            field('attribute', $.mlir_fragment),
+            // A backtick-quoted raw identifier (lexed as a string) may name a
+            // member, e.g. the `pop.cast` in ``__mlir_op.`pop.cast` ``.
+            field('attribute', $.string),
           ),
         ),
       ),
@@ -1692,39 +1684,6 @@ module.exports = grammar({
       ),
 
     // Literals
-
-    // A backtick-quoted MLIR fragment whose interior is tokenized by the
-    // external scanner (see scanner.c) into typed identifiers, numbers and
-    // punctuation, e.g. `pop.cast`, `!co.routine`, `0:index` or
-    // `#kgen.dtype.constant<ui8> : !kgen.dtype`. This lets the interior be
-    // highlighted as MLIR rather than as an opaque string.
-    mlir_fragment: ($) =>
-      seq(
-        $._mlir_backtick,
-        repeat(choice(
-          alias($._mlir_ident, $.type),
-          alias($._mlir_number, $.integer),
-          $.mlir_punctuation,
-        )),
-        $._mlir_backtick,
-      ),
-
-    // MLIR type interop. A type is a plain dotted member
-    // (`__mlir_type.index`), a backtick-quoted MLIR type fragment
-    // (``__mlir_type.`!co.routine` ``), or a bracketed parametric type that
-    // interpolates expressions between backtick fragments
-    // (``__mlir_type[`!pop.array<`, size, `>`] ``). Backtick fragments are
-    // lexed as (string) tokens, so arbitrary MLIR syntax inside them is opaque.
-    mlir_type: ($) =>
-      prec.right(
-        seq(
-          '__mlir_type',
-          choice(
-            seq('.', choice(alias($.identifier, $.type), $.mlir_fragment)),
-            seq('[', commaSep1($.expression), optional(','), ']'),
-          ),
-        ),
-      ),
 
     list: ($) => seq('[', optional($._collection_elements), ']'),
 

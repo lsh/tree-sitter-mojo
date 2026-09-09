@@ -19,13 +19,6 @@ enum TokenType {
     CLOSE_BRACKET,
     CLOSE_BRACE,
     EXCEPT,
-    // MLIR backtick-fragment interior tokens. Emitted only inside ``…`` MLIR
-    // fragments (where comment/string lexing is suppressed) so the interior is
-    // tokenized into highlightable pieces.
-    MLIR_BACKTICK,
-    MLIR_IDENT,
-    MLIR_NUMBER,
-    MLIR_PUNCTUATION,
 };
 
 typedef enum {
@@ -104,60 +97,6 @@ bool tree_sitter_mojo_external_scanner_scan(void *payload, TSLexer *lexer, const
 
     bool error_recovery_mode = valid_symbols[STRING_CONTENT] && valid_symbols[INDENT];
     bool within_brackets = valid_symbols[CLOSE_BRACE] || valid_symbols[CLOSE_PAREN] || valid_symbols[CLOSE_BRACKET];
-
-    // MLIR backtick-fragment tokenization. Inside ``__mlir_op.`...` `` and the
-    // like, the interior is lexed into typed/number/punctuation pieces so it can
-    // be highlighted as MLIR. Comment and string lexing are suppressed here by
-    // handling the characters directly and returning before that logic runs.
-    bool mlir_interior = valid_symbols[MLIR_IDENT] || valid_symbols[MLIR_NUMBER] ||
-                         valid_symbols[MLIR_PUNCTUATION];
-    if (!error_recovery_mode && (mlir_interior || valid_symbols[MLIR_BACKTICK])) {
-        if (mlir_interior) {
-            // Skip insignificant whitespace between fragment pieces.
-            while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
-                skip(lexer);
-            }
-        }
-        int32_t c = lexer->lookahead;
-        if (c == '`' && valid_symbols[MLIR_BACKTICK]) {
-            advance(lexer);
-            lexer->mark_end(lexer);
-            lexer->result_symbol = MLIR_BACKTICK;
-            return true;
-        }
-        if (mlir_interior) {
-            if (c == '_' || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-                while (true) {
-                    int32_t d = lexer->lookahead;
-                    if (d == '_' || (d >= 'A' && d <= 'Z') || (d >= 'a' && d <= 'z') ||
-                        (d >= '0' && d <= '9')) {
-                        advance(lexer);
-                    } else {
-                        break;
-                    }
-                }
-                lexer->mark_end(lexer);
-                lexer->result_symbol = MLIR_IDENT;
-                return true;
-            }
-            if (c >= '0' && c <= '9') {
-                while (lexer->lookahead >= '0' && lexer->lookahead <= '9') {
-                    advance(lexer);
-                }
-                lexer->mark_end(lexer);
-                lexer->result_symbol = MLIR_NUMBER;
-                return true;
-            }
-            if (c != 0 && c != '`' && c != '\n' && c != '\r') {
-                // A single punctuation/other character.
-                advance(lexer);
-                lexer->mark_end(lexer);
-                lexer->result_symbol = MLIR_PUNCTUATION;
-                return true;
-            }
-        }
-        return false;
-    }
 
     bool advanced_once = false;
     if (valid_symbols[ESCAPE_INTERPOLATION] && scanner->delimiters.size > 0 &&

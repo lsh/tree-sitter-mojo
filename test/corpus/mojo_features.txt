@@ -559,15 +559,12 @@ struct S:
     (identifier)
     (parameters)
     (type
-      (mlir_type
-        (mlir_fragment
-          (mlir_punctuation)
-          (type)
-          (mlir_punctuation)
-          (type)
-          (mlir_punctuation)
-          (integer)
-          (mlir_punctuation))))
+      (attribute
+        (identifier)
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))
     (block
       (pass_statement)))
   (class_definition
@@ -575,7 +572,8 @@ struct S:
     (block
       (assignment
         (identifier)
-        (mlir_type
+        (subscript
+          (identifier)
           (string
             (string_start)
             (string_content)
@@ -592,8 +590,9 @@ struct S:
           (typed_parameter
             (identifier)
             (type
-              (mlir_type
-                (type)))))
+              (attribute
+                (identifier)
+                (identifier)))))
         (type
           (identifier))
         (block
@@ -602,14 +601,15 @@ struct S:
               (subscript
                 (attribute
                   (identifier)
-                  (mlir_fragment
-                    (type)
-                    (mlir_punctuation)
-                    (type)))
+                  (string
+                    (string_start)
+                    (string_content)
+                    (string_end)))
                 (keyword_argument
                   (identifier)
-                  (mlir_type
-                    (type))))
+                  (attribute
+                    (identifier)
+                    (identifier))))
               (argument_list
                 (identifier))))))
       (function_definition
@@ -622,12 +622,12 @@ struct S:
               (typed_parameter
                 (identifier)
                 (type
-                  (mlir_type
-                    (mlir_fragment
-                      (mlir_punctuation)
-                      (type)
-                      (mlir_punctuation)
-                      (type))))))
+                  (attribute
+                    (identifier)
+                    (string
+                      (string_start)
+                      (string_content)
+                      (string_end))))))
             (block
               (call
                 (identifier)
@@ -637,10 +637,10 @@ struct S:
             (subscript
               (attribute
                 (identifier)
-                (mlir_fragment
-                  (type)
-                  (mlir_punctuation)
-                  (type)))
+                (string
+                  (string_start)
+                  (string_content)
+                  (string_end)))
               (keyword_argument
                 (identifier)
                 (attribute
@@ -2003,10 +2003,10 @@ def f():
               (string_end))
             (attribute
               (identifier)
-              (mlir_fragment
-                (mlir_punctuation)
-                (type)
-                (mlir_punctuation)))))))
+              (string
+                (string_start)
+                (string_content)
+                (string_end)))))))
     (function_definition
       (identifier)
       (parameters)
