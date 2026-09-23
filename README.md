@@ -16,3 +16,11 @@ t-strings, contextual member refs, and more — see the [feature notes][]).
 
 - [Mojo manual](https://docs.modular.com/mojo/manual/)
 - [tree-sitter-python](https://github.com/tree-sitter/tree-sitter-python)
+
+## License
+
+MIT (see [LICENSE](LICENSE)), except `queries/locals.scm`,
+`queries/textobjects.scm` and `queries/injections.scm`, which are adapted
+from [Helix](https://github.com/helix-editor/helix)'s Python queries and are
+licensed under the [Mozilla Public License 2.0](https://mozilla.org/MPL/2.0/),
+as noted in each file's header.
