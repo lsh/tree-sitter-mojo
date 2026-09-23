@@ -112,13 +112,24 @@
   "{" @punctuation.special
   "}" @punctuation.special) @embedded
 
-; Docstrings.
+; Docstrings. A bare string statement is a direct child of its block (there
+; is no expression_statement wrapper), so anchor on the block's first child.
 (function_definition
-  "async"?
-  "def"
-  name: (_)
-  (parameters)?
-  body: (block (expression_statement (string) @string.doc)))
+  body: (block . (string) @string.doc))
+(class_definition
+  body: (block . (string) @string.doc))
+(trait_definition
+  body: (block . (string) @string.doc))
+(extension_definition
+  body: (block . (string) @string.doc))
+(module . (string) @string.doc)
+
+[
+  ","
+  "."
+  ":"
+  ";"
+] @punctuation.delimiter
 
 [
   "-"
@@ -133,14 +144,17 @@
   "//="
   "/="
   "&"
+  "&="
   "%"
   "%="
   "^"
+  "^="
   "+"
   "->"
   "+="
   "<"
   "<<"
+  "<<="
   "<="
   "<>"
   "="
@@ -149,8 +163,11 @@
   ">"
   ">="
   ">>"
+  ">>="
   "|"
+  "|="
   "~"
+  "@="
   "^" ; capture-list move marker (var^ x)
   "and"
   "in"
@@ -160,6 +177,9 @@
   "is not"
   "not in"
 ] @operator
+
+; `@` is also the decorator sigil; only matrix multiplication is an operator.
+(binary_operator "@" @operator)
 
 [
   "as"
@@ -188,6 +208,9 @@
   "while"
   "with"
   "yield"
+  "del"
+  "global"
+  "nonlocal"
   "__match"
   "case"
   "where"
