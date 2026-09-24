@@ -28,7 +28,7 @@ __match command.split():
     case ["go", direction]: pass
     case ["drop", *objects]: pass
     case _:
-        print(f"Sorry, I couldn't understand {command!r}")
+        print(t"Sorry, I couldn't understand {command}")
 
 __match command.split():
 # ^ keyword

@@ -41,7 +41,15 @@ jobs:
           test-node: true
           test-python: true
           test-go: true
-          test-swift: true
+          # The action installs its own Swift toolchain, which on macOS can
+          # lag the runner's Xcode SDK and fail to build SDK modules. Use
+          # Xcode's bundled Swift there instead (next step).
+          test-swift: ${{ runner.os != 'macOS' }}
+      - name: Run Swift tests (Xcode toolchain)
+        if: runner.os == 'macOS'
+        run: |
+          swift build --build-tests
+          swift test --skip-build -q
       - name: Parse Mojo examples
         uses: tree-sitter/parse-action@v4
         with:
