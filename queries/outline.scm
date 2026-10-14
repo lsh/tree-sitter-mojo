@@ -16,6 +16,14 @@
     "__extension" @context
     name: (_) @name) @item
 
+(enum_definition
+    "__enum" @context
+    name: (identifier) @name) @item
+
+(enum_case
+    "case" @context
+    name: (_) @name) @item
+
 ; Compile-time constants read as top-level declarations in an outline.
 (parameterized_alias_statement
     "comptime" @context

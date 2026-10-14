@@ -1,4 +1,4 @@
-__match command.split():
+match command.split():
 # ^ keyword
     case ["quit"]:
     # ^ keyword
@@ -15,14 +15,14 @@ __match command.split():
         current_room = current_room.neighbor(direction)
     # The rest of your commands go here
 
-__match command.split():
+match command.split():
 # ^ keyword
     case ["drop", *objects]:
     # ^ keyword
         for obj in objects:
             character.drop(obj, current_room)
 
-__match command.split():
+match command.split():
 # ^ keyword
     case ["quit"]: ... # Code omitted for brevity
     case ["go", direction]: pass
@@ -30,7 +30,7 @@ __match command.split():
     case _:
         print(t"Sorry, I couldn't understand {command}")
 
-__match command.split():
+match command.split():
 # ^ keyword
     case ["north"] | ["go", "north"]:
     # ^ keyword
@@ -52,3 +52,59 @@ x, where: str = 2, "hey, what's up?"
 if result := re.fullmatch(r"(-)?(\d+:)?\d?\d:\d\d(\.\d*)?", time, flags=re.ASCII):
     #  ^ variable
     return result
+
+__match legacy:
+# ^ keyword
+    case _:
+        pass
+
+match color:
+# ^ keyword
+    case .red:
+    #     ^ constructor
+        pass
+    case Color.green:
+        pass
+    case .rgb(var r, _, _):
+    #     ^ constructor
+    #         ^ keyword
+        pass
+    case == expected:
+    #    ^ operator
+        pass
+    case Point(x=0, y=var y):
+    #          ^ property
+        pass
+
+if case .Some(ref value) = maybe:
+# <- keyword
+#  ^ keyword
+#        ^ constructor
+#             ^ keyword
+    pass
+elif case .None = maybe:
+# <- keyword
+#    ^ keyword
+    pass
+
+while case .Some(item) = it.next():
+# <- keyword
+#     ^ keyword
+    pass
+
+__enum Shade:
+# <- keyword
+#      ^ type
+    case light
+    # <- keyword
+    #    ^ constructor
+    case rgb(Int, Int, Int)
+    #    ^ constructor
+    #        ^ type
+
+__enum Color:
+    """A color."""
+    # <- string.doc
+    case red
+    """Red."""
+    # <- string.doc

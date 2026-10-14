@@ -2,7 +2,7 @@
 Matching specific values
 ================================================================================
 
-__match command.split():
+match command.split():
     case ["quit"]:
         print("Goodbye!")
         quit_game()
@@ -102,7 +102,7 @@ __match command.split():
 Matching multiple values
 ================================================================================
 
-__match command.split():
+match command.split():
     case ["drop", *objects]:
         for obj in objects:
             character.drop(obj, current_room)
@@ -145,7 +145,7 @@ __match command.split():
 Adding a wild card
 ================================================================================
 
-__match command.split():
+match command.split():
 # ^ conditional
     case ["quit"]: ... # Code omitted for brevity
     case ["go", direction]: pass
@@ -218,7 +218,7 @@ __match command.split():
 Or patterns
 ================================================================================
 
-__match command.split():
+match command.split():
     case ["north"] | ["go", "north"]:
         current_room = current_room.neighbor("north")
     case ["get", obj] | ["pick", "up", obj] | ["pick", obj, "up"]:
@@ -313,7 +313,7 @@ __match command.split():
 As patterns
 ================================================================================
 
-__match command.split():
+match command.split():
     case ["go", ("north" | "south" | "east" | "west") as direction]:
         current_room = current_room.neighbor(direction)
 
@@ -370,6 +370,7 @@ __match command.split():
 
 ================================================================================
 Match used as an identifier
+:error
 ================================================================================
 
 match = 2
@@ -382,49 +383,47 @@ def foo(**match): pass
 --------------------------------------------------------------------------------
 
 (module
-  (ERROR
-    (identifier))
-  (integer)
-  (ERROR
-    (identifier))
-  (assignment
-    left: (identifier)
-    right: (expression_list
-      (integer)
-      (integer)))
-  (ERROR
-    (identifier))
-  (assignment
-    left: (identifier)
-    right: (identifier))
-  (tuple_expression
-    (identifier)
+  (match_statement
+    (ERROR)
+    (integer)
     (ERROR
       (identifier))
+    (identifier)
+    (ERROR
+      (integer))
+    (integer)
+    (ERROR
+      (identifier))
+    (block))
+  (assignment
+    (identifier)
+    (identifier))
+  (tuple_expression
+    (identifier)
+    (ERROR)
     (integer)
     (string
       (string_start)
       (string_content)
       (string_end)))
   (assignment
-    left: (list_splat_pattern
-      (ERROR
-        (identifier))
+    (list_splat_pattern
+      (ERROR)
       (identifier))
-    right: (list
+    (list
       (integer)
       (integer)
       (integer)))
   (function_definition
-    name: (identifier)
-    parameters: (parameters
-      (ERROR
-        (identifier)))
-    body: (block
+    (identifier)
+    (parameters
+      (ERROR))
+    (block
       (pass_statement))))
 
 ================================================================================
 Match inside collection literals
+:error
 ================================================================================
 
 a = [match]
@@ -434,18 +433,17 @@ match = [match]
 
 (module
   (assignment
-    left: (identifier)
-    right: (list
-      (ERROR
-        (identifier))))
+    (identifier)
+    (list
+      (ERROR)))
   (ERROR
-    (identifier))
-  (list
-    (ERROR
-      (identifier))))
+    (ERROR)
+    (list
+      (ERROR))))
 
 ================================================================================
 Match as a keyword argument name
+:error
 ================================================================================
 
 field = call(match=r".*\.txt$")
@@ -454,12 +452,11 @@ field = call(match=r".*\.txt$")
 
 (module
   (assignment
-    left: (identifier)
-    right: (call
-      function: (identifier)
-      arguments: (argument_list
-        (ERROR
-          (identifier))
+    (identifier)
+    (call
+      (identifier)
+      (argument_list
+        (ERROR)
         (string
           (string_start)
           (string_content)
@@ -467,6 +464,7 @@ field = call(match=r".*\.txt$")
 
 ================================================================================
 Match as a call target
+:error
 ================================================================================
 
 field = match(match=match, match)
@@ -475,14 +473,10 @@ field = match(match=match, match)
 
 (module
   (assignment
-    left: (identifier)
-    (ERROR
-      (identifier))
-    right: (tuple
-      (ERROR
-        (identifier)
-        (identifier)
-        (identifier)))))
+    (identifier)
+    (ERROR)
+    (tuple
+      (ERROR))))
 
 ================================================================================
 Case used as an identifier
@@ -514,7 +508,7 @@ just_in_case = call_me(case=True)
 If guards
 ================================================================================
 
-__match 0:
+match 0:
     case 0 if False:
         x = False
     case 0 if True:
@@ -549,7 +543,7 @@ __match 0:
 Literals
 ================================================================================
 
-__match xxx:
+match xxx:
     case 3 | -3:
       pass
     case "something":
@@ -621,7 +615,7 @@ __match xxx:
 Comma separated cases
 ================================================================================
 
-__match (0, 1, 2):
+match (0, 1, 2):
     case 0,1:
         x = 0
     case 0, *x:
@@ -660,7 +654,7 @@ __match (0, 1, 2):
 Case terminating in comma
 ================================================================================
 
-__match x,:
+match x,:
     case *x,:
         y = 0
 
@@ -683,7 +677,7 @@ __match x,:
 Multiple match patterns
 ================================================================================
 
-__match ..., ...:
+match ..., ...:
     case a, b:
         return locals()
 
@@ -709,26 +703,30 @@ __match ..., ...:
 
 ================================================================================
 Match and case as assignment targets
+:error
 ================================================================================
 
 match = case = 0
-__match match:
+match match:
     case case:
         x = 0
 --------------------------------------------------------------------------------
 
 (module
   (ERROR
-    (identifier))
-  (integer)
-  (ERROR
-    (ERROR
+    (match_statement
+      (ERROR)
+      (integer)
+      (ERROR
+        (identifier))
+      (block))
+    (assignment
       (identifier)
-      (identifier))
-    (integer)))
+      (integer))))
 
 ================================================================================
 Match used in a named expression
+:error
 ================================================================================
 
 if match := re.fullmatch(r"(-)?(\d+:)?\d?\d:\d\d(\.\d*)?", time, flags=re.ASCII):
@@ -738,24 +736,23 @@ if match := re.fullmatch(r"(-)?(\d+:)?\d?\d:\d\d(\.\d*)?", time, flags=re.ASCII)
 
 (module
   (if_statement
-    (ERROR
-      (identifier))
-    condition: (call
-      function: (attribute
-        object: (identifier)
-        attribute: (identifier))
-      arguments: (argument_list
+    (ERROR)
+    (call
+      (attribute
+        (identifier)
+        (identifier))
+      (argument_list
         (string
           (string_start)
           (string_content)
           (string_end))
         (identifier)
         (keyword_argument
-          name: (identifier)
-          value: (attribute
-            object: (identifier)
-            attribute: (identifier)))))
-    consequence: (block
+          (identifier)
+          (attribute
+            (identifier)
+            (identifier)))))
+    (block
       (return_statement
         (integer)))))
 
@@ -763,7 +760,7 @@ if match := re.fullmatch(r"(-)?(\d+:)?\d?\d:\d\d(\.\d*)?", time, flags=re.ASCII)
 Matching objects
 ================================================================================
 
-__match event.get():
+match event.get():
     case Click(position=(x, y)):
         handle_click_at(x, y)
     case KeyPress(key_name="Q") | Quit():
@@ -791,9 +788,9 @@ __match event.get():
           (class_pattern
             (dotted_name
               (identifier))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (tuple_pattern
                   (case_pattern
                     (dotted_name
@@ -813,9 +810,9 @@ __match event.get():
             (class_pattern
               (dotted_name
                 (identifier))
-              (case_pattern
-                (keyword_pattern
-                  (identifier)
+              (keyword_pattern
+                (identifier)
+                (case_pattern
                   (string
                     (string_start)
                     (string_content)
@@ -834,9 +831,9 @@ __match event.get():
           (class_pattern
             (dotted_name
               (identifier))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (string
                   (string_start)
                   (string_content)
@@ -876,7 +873,7 @@ __match event.get():
 Positional arguments
 ================================================================================
 
-__match event.get():
+match event.get():
     case Click((x, y)):
         handle_click_at(x, y)
 
@@ -914,7 +911,7 @@ __match event.get():
 Constants and enums
 ================================================================================
 
-__match event.get():
+match event.get():
     case Click((x, y), button=Button.LEFT):  # This is a left click
         handle_click_at(x, y)
     case Click():
@@ -943,9 +940,9 @@ __match event.get():
                 (case_pattern
                   (dotted_name
                     (identifier)))))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (dotted_name
                   (identifier)
                   (identifier))))))
@@ -966,22 +963,20 @@ __match event.get():
           (comment))))))
 
 ================================================================================
-Dict mappings
+Initializer-list patterns
 ================================================================================
 
 for action in actions:
-    __match action:
-        case {"text": message, "color": c}:
-            ui.set_text_color(c)
-            ui.display(message)
-        case {"sleep": duration}:
+    match action:
+        case {}:
+            ui.reset()
+        case {1, offset=2}:
             ui.wait(duration)
-        case {"sound": url, "format": "ogg"}:
-            ui.play(url)
-        case {a.b: c}:
-            action()
-        case {"sound": _, "format": _}:
+        case {var text, color=c}:
+            ui.set_text_color(c)
+        case {_, flag=True,}:
             warning("Unsupported audio format")
+
 --------------------------------------------------------------------------------
 
 (module
@@ -994,240 +989,55 @@ for action in actions:
         (block
           (case_clause
             (case_pattern
-              (dict_pattern
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern
-                  (dotted_name
-                    (identifier)))
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern
-                  (dotted_name
-                    (identifier)))))
+              (struct_pattern))
             (block
               (call
                 (attribute
                   (identifier)
                   (identifier))
-                (argument_list
-                  (identifier)))
-              (call
-                (attribute
-                  (identifier)
-                  (identifier))
-                (argument_list
-                  (identifier)))))
-          (case_clause
-            (case_pattern
-              (dict_pattern
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern
-                  (dotted_name
-                    (identifier)))))
-            (block
-              (call
-                (attribute
-                  (identifier)
-                  (identifier))
-                (argument_list
-                  (identifier)))))
-          (case_clause
-            (case_pattern
-              (dict_pattern
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern
-                  (dotted_name
-                    (identifier)))
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern
-                  (string
-                    (string_start)
-                    (string_content)
-                    (string_end)))))
-            (block
-              (call
-                (attribute
-                  (identifier)
-                  (identifier))
-                (argument_list
-                  (identifier)))))
-          (case_clause
-            (case_pattern
-              (dict_pattern
-                (dotted_name
-                  (identifier)
-                  (identifier))
-                (case_pattern
-                  (dotted_name
-                    (identifier)))))
-            (block
-              (call
-                (identifier)
                 (argument_list))))
           (case_clause
             (case_pattern
-              (dict_pattern
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
+              (struct_pattern
+                (case_pattern
+                  (integer))
+                (keyword_pattern
+                  (identifier)
+                  (case_pattern
+                    (integer)))))
+            (block
+              (call
+                (attribute
+                  (identifier)
+                  (identifier))
+                (argument_list
+                  (identifier)))))
+          (case_clause
+            (case_pattern
+              (struct_pattern
+                (case_pattern
+                  (binding_pattern
+                    (identifier)))
+                (keyword_pattern
+                  (identifier)
+                  (case_pattern
+                    (dotted_name
+                      (identifier))))))
+            (block
+              (call
+                (attribute
+                  (identifier)
+                  (identifier))
+                (argument_list
+                  (identifier)))))
+          (case_clause
+            (case_pattern
+              (struct_pattern
                 (case_pattern)
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern)))
-            (block
-              (call
-                (identifier)
-                (argument_list
-                  (string
-                    (string_start)
-                    (string_content)
-                    (string_end)))))))))))
-
-================================================================================
-Builtin classes
-================================================================================
-
-for action in actions:
-    __match action:
-        case {"text": str(message), "color": str(c)}:
-            ui.set_text_color(c)
-            ui.display(message)
-        case {"sleep": float(duration)}:
-            ui.wait(duration)
-        case {"sound": str(url), "format": "ogg"}:
-            ui.play(url)
-        case {"sound": _, "format": _}:
-            warning("Unsupported audio format")
-
---------------------------------------------------------------------------------
-
-(module
-  (for_statement
-    (identifier)
-    (identifier)
-    (block
-      (match_statement
-        (identifier)
-        (block
-          (case_clause
-            (case_pattern
-              (dict_pattern
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern
-                  (class_pattern
-                    (dotted_name
-                      (identifier))
-                    (case_pattern
-                      (dotted_name
-                        (identifier)))))
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern
-                  (class_pattern
-                    (dotted_name
-                      (identifier))
-                    (case_pattern
-                      (dotted_name
-                        (identifier)))))))
-            (block
-              (call
-                (attribute
+                (keyword_pattern
                   (identifier)
-                  (identifier))
-                (argument_list
-                  (identifier)))
-              (call
-                (attribute
-                  (identifier)
-                  (identifier))
-                (argument_list
-                  (identifier)))))
-          (case_clause
-            (case_pattern
-              (dict_pattern
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern
-                  (class_pattern
-                    (dotted_name
-                      (identifier))
-                    (case_pattern
-                      (dotted_name
-                        (identifier)))))))
-            (block
-              (call
-                (attribute
-                  (identifier)
-                  (identifier))
-                (argument_list
-                  (identifier)))))
-          (case_clause
-            (case_pattern
-              (dict_pattern
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern
-                  (class_pattern
-                    (dotted_name
-                      (identifier))
-                    (case_pattern
-                      (dotted_name
-                        (identifier)))))
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern
-                  (string
-                    (string_start)
-                    (string_content)
-                    (string_end)))))
-            (block
-              (call
-                (attribute
-                  (identifier)
-                  (identifier))
-                (argument_list
-                  (identifier)))))
-          (case_clause
-            (case_pattern
-              (dict_pattern
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern)
-                (string
-                  (string_start)
-                  (string_content)
-                  (string_end))
-                (case_pattern)))
+                  (case_pattern
+                    (true)))))
             (block
               (call
                 (identifier)
@@ -1241,7 +1051,7 @@ for action in actions:
 Complex case patterns on classes
 ================================================================================
 
-__match x:
+match x:
     case Something(): # no args
         foo1()
     case Something.Else(): # more complex class name
@@ -1307,17 +1117,17 @@ __match x:
           (class_pattern
             (dotted_name
               (identifier))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))))
         (comment)
         (block
@@ -1331,17 +1141,17 @@ __match x:
               (identifier))
             (case_pattern
               (integer))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))))
         (comment)
         (block
@@ -1369,17 +1179,17 @@ __match x:
           (class_pattern
             (dotted_name
               (identifier))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))))
         (comment)
         (block
@@ -1393,17 +1203,17 @@ __match x:
               (identifier))
             (case_pattern
               (integer))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))
-            (case_pattern
-              (keyword_pattern
-                (identifier)
+            (keyword_pattern
+              (identifier)
+              (case_pattern
                 (integer)))))
         (comment)
         (block
@@ -1415,7 +1225,7 @@ __match x:
 Complex case patterns on complex numbers
 ================================================================================
 
-__match x:
+match x:
     case  -3 + 5j:
         pass
     case  -3 + 5j as b2:
@@ -1484,7 +1294,7 @@ __match x:
 Maybe sequence pattern right hand side precedence validation
 ================================================================================
 
-__match x:
+match x:
     case a1, *a2, a3:
         pass
 
@@ -1506,3 +1316,742 @@ __match x:
             (identifier)))
         (block
           (pass_statement))))))
+
+================================================================================
+Deprecated __match spelling
+================================================================================
+
+__match x:
+    case 0:
+        pass
+    case _:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (match_statement
+    (identifier)
+    (block
+      (case_clause
+        (case_pattern
+          (integer))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern)
+        (block
+          (pass_statement))))))
+
+================================================================================
+Cases at the same indentation as match
+================================================================================
+
+def f(x: Int):
+    match x:
+    case 0:
+        callee[0]()
+    case 1 if x > 0:
+        callee[1]()
+    case _:
+        callee[2]()
+    _ = also_here
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (typed_parameter
+        (identifier)
+        (type
+          (identifier))))
+    (block
+      (match_statement
+        (identifier)
+        (block
+          (case_clause
+            (case_pattern
+              (integer))
+            (block
+              (call
+                (subscript
+                  (identifier)
+                  (integer))
+                (argument_list))))
+          (case_clause
+            (case_pattern
+              (integer))
+            (if_clause
+              (comparison_operator
+                (identifier)
+                (integer)))
+            (block
+              (call
+                (subscript
+                  (identifier)
+                  (integer))
+                (argument_list))))
+          (case_clause
+            (case_pattern)
+            (block
+              (call
+                (subscript
+                  (identifier)
+                  (integer))
+                (argument_list))))))
+      (assignment
+        (identifier)
+        (identifier)))))
+
+================================================================================
+Comptime match
+================================================================================
+
+def f[x: Int, T: AnyType]():
+    comptime match x:
+        case 0 | 1:
+            pass
+        case y if y > 0:
+            pass
+        case _:
+            pass
+    comptime match T:
+    case == Int:
+        pass
+    case == String:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (type_parameter
+      (constrained_parameter
+        (identifier)
+        (type
+          (identifier)))
+      (constrained_parameter
+        (identifier)
+        (type
+          (identifier))))
+    (parameters)
+    (block
+      (comptime_statement
+        (match_statement
+          (identifier)
+          (block
+            (case_clause
+              (case_pattern
+                (union_pattern
+                  (integer)
+                  (integer)))
+              (block
+                (pass_statement)))
+            (case_clause
+              (case_pattern
+                (dotted_name
+                  (identifier)))
+              (if_clause
+                (comparison_operator
+                  (identifier)
+                  (integer)))
+              (block
+                (pass_statement)))
+            (case_clause
+              (case_pattern)
+              (block
+                (pass_statement))))))
+      (comptime_statement
+        (match_statement
+          (identifier)
+          (block
+            (case_clause
+              (case_pattern
+                (equality_pattern
+                  (identifier)))
+              (block
+                (pass_statement)))
+            (case_clause
+              (case_pattern
+                (equality_pattern
+                  (identifier)))
+              (block
+                (pass_statement)))))))))
+
+================================================================================
+Inferred enum case patterns
+================================================================================
+
+match c:
+    case Color.red:
+        pass
+    case .green:
+        pass
+    case .Some(x):
+        pass
+    case .Some:
+        pass
+    case Optional.Some(ref elt):
+        pass
+    case ((.None)):
+        pass
+    case (.Some(x), .None) | (.None, .Some(x)):
+        pass
+    case .Some(Point(x=0, y=y)):
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (match_statement
+    (identifier)
+    (block
+      (case_clause
+        (case_pattern
+          (dotted_name
+            (identifier)
+            (identifier)))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (inferred_attribute
+            (identifier)))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (class_pattern
+            (inferred_attribute
+              (identifier))
+            (case_pattern
+              (dotted_name
+                (identifier)))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (inferred_attribute
+            (identifier)))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (class_pattern
+            (dotted_name
+              (identifier)
+              (identifier))
+            (case_pattern
+              (binding_pattern
+                (identifier)))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (tuple_pattern
+            (case_pattern
+              (tuple_pattern
+                (case_pattern
+                  (inferred_attribute
+                    (identifier)))))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (union_pattern
+            (tuple_pattern
+              (case_pattern
+                (class_pattern
+                  (inferred_attribute
+                    (identifier))
+                  (case_pattern
+                    (dotted_name
+                      (identifier)))))
+              (case_pattern
+                (inferred_attribute
+                  (identifier))))
+            (tuple_pattern
+              (case_pattern
+                (inferred_attribute
+                  (identifier)))
+              (case_pattern
+                (class_pattern
+                  (inferred_attribute
+                    (identifier))
+                  (case_pattern
+                    (dotted_name
+                      (identifier))))))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (class_pattern
+            (inferred_attribute
+              (identifier))
+            (case_pattern
+              (class_pattern
+                (dotted_name
+                  (identifier))
+                (keyword_pattern
+                  (identifier)
+                  (case_pattern
+                    (integer)))
+                (keyword_pattern
+                  (identifier)
+                  (case_pattern
+                    (dotted_name
+                      (identifier))))))))
+        (block
+          (pass_statement))))))
+
+================================================================================
+Binding patterns
+================================================================================
+
+match value:
+    case var x:
+        pass
+    case ref y:
+        pass
+    case (0, var x) | (var x, 1):
+        pass
+    case (2, ref x) | (ref x, 3):
+        pass
+    case Point(x=var x, y=0, z=_):
+        pass
+    case (var x, 0) as p:
+        pass
+    case var ref z:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (match_statement
+    (identifier)
+    (block
+      (case_clause
+        (case_pattern
+          (binding_pattern
+            (identifier)))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (binding_pattern
+            (identifier)))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (union_pattern
+            (tuple_pattern
+              (case_pattern
+                (integer))
+              (case_pattern
+                (binding_pattern
+                  (identifier))))
+            (tuple_pattern
+              (case_pattern
+                (binding_pattern
+                  (identifier)))
+              (case_pattern
+                (integer)))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (union_pattern
+            (tuple_pattern
+              (case_pattern
+                (integer))
+              (case_pattern
+                (binding_pattern
+                  (identifier))))
+            (tuple_pattern
+              (case_pattern
+                (binding_pattern
+                  (identifier)))
+              (case_pattern
+                (integer)))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (class_pattern
+            (dotted_name
+              (identifier))
+            (keyword_pattern
+              (identifier)
+              (case_pattern
+                (binding_pattern
+                  (identifier))))
+            (keyword_pattern
+              (identifier)
+              (case_pattern
+                (integer)))
+            (keyword_pattern
+              (identifier)
+              (case_pattern))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (as_pattern
+            (case_pattern
+              (tuple_pattern
+                (case_pattern
+                  (binding_pattern
+                    (identifier)))
+                (case_pattern
+                  (integer))))
+            (identifier)))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (binding_pattern
+            (binding_pattern
+              (identifier))))
+        (block
+          (pass_statement))))))
+
+================================================================================
+Equality patterns
+================================================================================
+
+match value:
+    case == expected:
+        pass
+    case (_, == expected):
+        pass
+    case == (expected + 1):
+        pass
+    case == (expected if use_expected else alternate):
+        pass
+    case == expected if flag:
+        pass
+    case == x | 1:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (match_statement
+    (identifier)
+    (block
+      (case_clause
+        (case_pattern
+          (equality_pattern
+            (identifier)))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (tuple_pattern
+            (case_pattern)
+            (case_pattern
+              (equality_pattern
+                (identifier)))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (equality_pattern
+            (parenthesized_expression
+              (binary_operator
+                (identifier)
+                (integer)))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (equality_pattern
+            (parenthesized_expression
+              (conditional_expression
+                (identifier)
+                (identifier)
+                (identifier)))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (equality_pattern
+            (identifier)))
+        (if_clause
+          (identifier))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (equality_pattern
+            (binary_operator
+              (identifier)
+              (integer))))
+        (block
+          (pass_statement))))))
+
+================================================================================
+If case
+================================================================================
+
+if case .Some(x) = value:
+    print(x)
+elif case .Some(ref count) = counter:
+    pass
+elif fallback:
+    pass
+elif case (y, 1) = (a, b):
+    pass
+else:
+    pass
+
+if case (0, value as same_value) = pair:
+    pass
+
+if case ((0, value) | (value, 1)) as matched = pair:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (if_statement
+    (case_condition
+      (case_pattern
+        (class_pattern
+          (inferred_attribute
+            (identifier))
+          (case_pattern
+            (dotted_name
+              (identifier)))))
+      (identifier))
+    (block
+      (call
+        (identifier)
+        (argument_list
+          (identifier))))
+    (elif_clause
+      (case_condition
+        (case_pattern
+          (class_pattern
+            (inferred_attribute
+              (identifier))
+            (case_pattern
+              (binding_pattern
+                (identifier)))))
+        (identifier))
+      (block
+        (pass_statement)))
+    (elif_clause
+      (identifier)
+      (block
+        (pass_statement)))
+    (elif_clause
+      (case_condition
+        (case_pattern
+          (tuple_pattern
+            (case_pattern
+              (dotted_name
+                (identifier)))
+            (case_pattern
+              (integer))))
+        (tuple
+          (identifier)
+          (identifier)))
+      (block
+        (pass_statement)))
+    (else_clause
+      (block
+        (pass_statement))))
+  (if_statement
+    (case_condition
+      (case_pattern
+        (tuple_pattern
+          (case_pattern
+            (integer))
+          (case_pattern
+            (as_pattern
+              (case_pattern
+                (dotted_name
+                  (identifier)))
+              (identifier)))))
+      (identifier))
+    (block
+      (pass_statement)))
+  (if_statement
+    (case_condition
+      (case_pattern
+        (as_pattern
+          (case_pattern
+            (tuple_pattern
+              (case_pattern
+                (union_pattern
+                  (tuple_pattern
+                    (case_pattern
+                      (integer))
+                    (case_pattern
+                      (dotted_name
+                        (identifier))))
+                  (tuple_pattern
+                    (case_pattern
+                      (dotted_name
+                        (identifier)))
+                    (case_pattern
+                      (integer)))))))
+          (identifier)))
+      (identifier))
+    (block
+      (pass_statement))))
+
+================================================================================
+While case
+================================================================================
+
+while case ((0, value) | (value, 1)) as matched = pair:
+    pair = (4, 4)
+else:
+    done()
+
+while case .Some(var item) = iter.next():
+    process(item^)
+
+--------------------------------------------------------------------------------
+
+(module
+  (while_statement
+    (case_condition
+      (case_pattern
+        (as_pattern
+          (case_pattern
+            (tuple_pattern
+              (case_pattern
+                (union_pattern
+                  (tuple_pattern
+                    (case_pattern
+                      (integer))
+                    (case_pattern
+                      (dotted_name
+                        (identifier))))
+                  (tuple_pattern
+                    (case_pattern
+                      (dotted_name
+                        (identifier)))
+                    (case_pattern
+                      (integer)))))))
+          (identifier)))
+      (identifier))
+    (block
+      (assignment
+        (identifier)
+        (tuple
+          (integer)
+          (integer))))
+    (else_clause
+      (block
+        (call
+          (identifier)
+          (argument_list)))))
+  (while_statement
+    (case_condition
+      (case_pattern
+        (class_pattern
+          (inferred_attribute
+            (identifier))
+          (case_pattern
+            (binding_pattern
+              (identifier)))))
+      (call
+        (attribute
+          (identifier)
+          (identifier))
+        (argument_list)))
+    (block
+      (call
+        (identifier)
+        (argument_list
+          (transfer_expression
+            (identifier)))))))
+
+================================================================================
+Comptime if case
+================================================================================
+
+def f[T: AnyType, pair: Tuple[Int, Int]]():
+    comptime if case == Int = T:
+        pass
+    elif case == String = T:
+        pass
+    comptime if case (0, value) = pair:
+        pass
+    elif case (value, 1) = pair:
+        pass
+    else:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (type_parameter
+      (constrained_parameter
+        (identifier)
+        (type
+          (identifier)))
+      (constrained_parameter
+        (identifier)
+        (type
+          (subscript
+            (identifier)
+            (identifier)
+            (identifier)))))
+    (parameters)
+    (block
+      (comptime_statement
+        (if_statement
+          (case_condition
+            (case_pattern
+              (equality_pattern
+                (identifier)))
+            (identifier))
+          (block
+            (pass_statement))
+          (elif_clause
+            (case_condition
+              (case_pattern
+                (equality_pattern
+                  (identifier)))
+              (identifier))
+            (block
+              (pass_statement)))))
+      (comptime_statement
+        (if_statement
+          (case_condition
+            (case_pattern
+              (tuple_pattern
+                (case_pattern
+                  (integer))
+                (case_pattern
+                  (dotted_name
+                    (identifier)))))
+            (identifier))
+          (block
+            (pass_statement))
+          (elif_clause
+            (case_condition
+              (case_pattern
+                (tuple_pattern
+                  (case_pattern
+                    (dotted_name
+                      (identifier)))
+                  (case_pattern
+                    (integer))))
+              (identifier))
+            (block
+              (pass_statement)))
+          (else_clause
+            (block
+              (pass_statement))))))))
