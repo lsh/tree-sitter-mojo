@@ -34,6 +34,8 @@
   name: (identifier) @type)
 (extension_definition
   name: (identifier) @type)
+(enum_definition
+  name: (identifier) @type)
 (type_alias_statement
   name: (identifier) @type)
 (parameterized_alias_statement
@@ -59,6 +61,8 @@
   name: (identifier) @variable.parameter)
 (struct_literal_field
   name: (identifier) @property)
+(keyword_pattern
+  name: (identifier) @property)
 
 ; Capture-list entries bind names from the enclosing scope.
 (named_capture
@@ -71,6 +75,17 @@
 
 ((identifier) @constant
  (#match? @constant "^_*[A-Z][A-Z\\d_]*$"))
+
+; Enum cases: their declarations (`case red`, `case rgb(Int, Int, Int)`) and
+; the inferred-case patterns that match them (`case .red:`, `.Some(x)`).
+(enum_case
+  name: (identifier) @constructor)
+(case_pattern
+  (inferred_attribute
+    attribute: (identifier) @constructor))
+(class_pattern
+  (inferred_attribute
+    attribute: (identifier) @constructor))
 
 ; Builtin functions
 
@@ -122,6 +137,12 @@
   body: (block . (string) @string.doc))
 (extension_definition
   body: (block . (string) @string.doc))
+(enum_definition
+  body: (block . (string) @string.doc))
+; A doc string sits on the line after the enum case it documents.
+(enum_definition
+  body: (block
+    (enum_case) . (string) @string.doc))
 (module . (string) @string.doc)
 
 [
@@ -208,12 +229,14 @@
   "while"
   "with"
   "yield"
+  "match"
   "__match"
   "case"
   "where"
   "alias"
   "comptime"
   "__comptime_assert"
+  "__enum"
   "__extension"
   "__generator_type"
   "__mlir_region"

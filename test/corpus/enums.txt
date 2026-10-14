@@ -1,0 +1,257 @@
+================================================================================
+Enum definition
+================================================================================
+
+__enum Color:
+    case red
+    case green
+    case rgb(Int, Int, Int)
+
+    def is_red(self) -> Bool:
+        return True
+
+    @staticmethod
+    def make() -> Int:
+        return 1
+
+    comptime N = 3
+
+--------------------------------------------------------------------------------
+
+(module
+  (enum_definition
+    (identifier)
+    (block
+      (enum_case
+        (identifier))
+      (enum_case
+        (identifier))
+      (enum_case
+        (identifier)
+        (enum_case_payload
+          (type
+            (identifier))
+          (type
+            (identifier))
+          (type
+            (identifier))))
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (type
+          (identifier))
+        (block
+          (return_statement
+            (true))))
+      (decorated_definition
+        (decorator
+          (identifier))
+        (function_definition
+          (identifier)
+          (parameters)
+          (type
+            (identifier))
+          (block
+            (return_statement
+              (integer)))))
+      (assignment
+        (identifier)
+        (integer)))))
+
+================================================================================
+Parametric enum with conformances and a where clause
+================================================================================
+
+@deprecated("use Color")
+__enum Bounded[n: Int](Movable) where n > 0:
+    case a(Int)
+    case b
+
+__enum Result[T: Movable & Deinitable, E: Movable & Deinitable](Movable):
+    case success(Self.T)
+    case failure(Self.E)
+
+--------------------------------------------------------------------------------
+
+(module
+  (decorated_definition
+    (decorator
+      (call
+        (identifier)
+        (argument_list
+          (string
+            (string_start)
+            (string_content)
+            (string_end)))))
+    (enum_definition
+      (identifier)
+      (type_parameter
+        (constrained_parameter
+          (identifier)
+          (type
+            (identifier))))
+      (argument_list
+        (identifier))
+      (where_clause
+        (comparison_operator
+          (identifier)
+          (integer)))
+      (block
+        (enum_case
+          (identifier)
+          (enum_case_payload
+            (type
+              (identifier))))
+        (enum_case
+          (identifier)))))
+  (enum_definition
+    (identifier)
+    (type_parameter
+      (constrained_parameter
+        (identifier)
+        (type
+          (binary_operator
+            (identifier)
+            (identifier))))
+      (constrained_parameter
+        (identifier)
+        (type
+          (binary_operator
+            (identifier)
+            (identifier)))))
+    (argument_list
+      (identifier))
+    (block
+      (enum_case
+        (identifier)
+        (enum_case_payload
+          (type
+            (attribute
+              (self_type)
+              (identifier)))))
+      (enum_case
+        (identifier)
+        (enum_case_payload
+          (type
+            (attribute
+              (self_type)
+              (identifier))))))))
+
+================================================================================
+One-line enum and cases sharing a line
+================================================================================
+
+__enum OneLine: case only
+
+__enum Spellings:
+    case a; case b(Int)
+    case trailing_comma(Int, Bool,)
+    case multi_line(
+        Int,
+        Bool,
+    )
+    case tuple(Tuple[Int, Int])
+    case `def`
+
+--------------------------------------------------------------------------------
+
+(module
+  (enum_definition
+    (identifier)
+    (block
+      (enum_case
+        (identifier))))
+  (enum_definition
+    (identifier)
+    (block
+      (enum_case
+        (identifier))
+      (enum_case
+        (identifier)
+        (enum_case_payload
+          (type
+            (identifier))))
+      (enum_case
+        (identifier)
+        (enum_case_payload
+          (type
+            (identifier))
+          (type
+            (identifier))))
+      (enum_case
+        (identifier)
+        (enum_case_payload
+          (type
+            (identifier))
+          (type
+            (identifier))))
+      (enum_case
+        (identifier)
+        (enum_case_payload
+          (type
+            (subscript
+              (identifier)
+              (identifier)
+              (identifier)))))
+      (enum_case
+        (string
+          (string_start)
+          (string_content)
+          (string_end))))))
+
+================================================================================
+Enum doc strings and caseless enums
+================================================================================
+
+__enum Documented:
+    """A documented enum."""
+    case red
+    """Red."""
+    case rgb(Int, Int, Int)
+    """
+    A color by its components.
+    """
+
+__enum Caseless:
+    def method(self):
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (enum_definition
+    (identifier)
+    (block
+      (string
+        (string_start)
+        (string_content)
+        (string_end))
+      (enum_case
+        (identifier))
+      (string
+        (string_start)
+        (string_content)
+        (string_end))
+      (enum_case
+        (identifier)
+        (enum_case_payload
+          (type
+            (identifier))
+          (type
+            (identifier))
+          (type
+            (identifier))))
+      (string
+        (string_start)
+        (string_content)
+        (string_end))))
+  (enum_definition
+    (identifier)
+    (block
+      (function_definition
+        (identifier)
+        (parameters
+          (self_parameter))
+        (block
+          (pass_statement))))))
