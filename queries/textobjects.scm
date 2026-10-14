@@ -19,6 +19,9 @@
 (extension_definition
   body: (block)? @class.inside) @class.around
 
+(enum_definition
+  body: (block)? @class.inside) @class.around
+
 (parameters
   ((_) @parameter.inside . ","? @parameter.around) @parameter.around)
 
@@ -31,6 +34,10 @@
   ((_) @parameter.inside . ","? @parameter.around) @parameter.around)
 
 (argument_list
+  ((_) @parameter.inside . ","? @parameter.around) @parameter.around)
+
+; Enum case payload types: `case rgb(Int, Int, Int)`
+(enum_case_payload
   ((_) @parameter.inside . ","? @parameter.around) @parameter.around)
 
 (comment) @comment.inside

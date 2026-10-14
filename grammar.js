@@ -58,8 +58,8 @@ const HARD_KEYWORDS = [
   // Mojo-specific keywords.
   'Self', 'alias', 'case', 'comptime', 'match', 'ref', 'struct',
   'trait', 'var',
-  '__comptime_assert', '__extension', '__generator_type', '__match',
-  '__mlir_region',
+  '__comptime_assert', '__enum', '__extension', '__generator_type',
+  '__match', '__mlir_region',
 ];
 
 // Contextual (soft) keywords: the argument-convention words (`imm`, `mut`,
@@ -352,7 +352,56 @@ module.exports = grammar({
       $.comptime_statement,
       $.mlir_region,
       $.extension_definition,
+      $.enum_definition,
     ),
+
+    // An enum declaration, e.g.
+    //   __enum Color:
+    //       case red
+    //       case rgb(Int, Int, Int)
+    // The header takes what a struct's does (parameters, conformances, a
+    // `where` clause); the body holds `case` declarations alongside ordinary
+    // struct members (methods, comptime aliases, doc strings).
+    enum_definition: ($) =>
+      seq(
+        '__enum',
+        field('name', $.identifier),
+        field('type_parameters', optional($.type_parameter)),
+        field(
+          'superclasses',
+          optional(alias($.superclass_list, $.argument_list)),
+        ),
+        repeat($.where_clause),
+        ':',
+        field('body', $._enum_suite),
+      ),
+
+    _enum_suite: ($) =>
+      choice(
+        // A one-line enum: `__enum OneLine: case only`.
+        alias($._enum_case_statements, $.block),
+        seq($._indent, alias($._enum_block, $.block)),
+        alias($._newline, $.block),
+      ),
+
+    _enum_block: ($) =>
+      seq(repeat(choice($._enum_case_statements, $._statement)), $._dedent),
+
+    // Several cases may share a line: `case a; case b(Int)`.
+    _enum_case_statements: ($) =>
+      seq(sep1($.enum_case, SEMICOLON), optional(SEMICOLON), $._newline),
+
+    // An enum case declaration: `case name` or `case name(T, U)`. The payload
+    // types are positional; the compiler rejects labeled payloads.
+    enum_case: ($) =>
+      seq(
+        'case',
+        field('name', choice($.identifier, $.string)),
+        optional(field('payload', $.enum_case_payload)),
+      ),
+
+    enum_case_payload: ($) =>
+      seq('(', commaSep1(field('type', $.type)), optional(','), ')'),
 
     // An extension declaration, e.g. `__extension List:` or
     // `__extension List[T]:`.
@@ -388,13 +437,13 @@ module.exports = grammar({
     // assert_statement above.)
     comptime_statement: ($) => seq(
       'comptime',
-      choice($.if_statement, $.for_statement),
+      choice($.if_statement, $.for_statement, $.match_statement),
     ),
 
     if_statement: ($) =>
       seq(
         'if',
-        field('condition', $.expression),
+        field('condition', choice($.expression, $.case_condition)),
         ':',
         field('consequence', $._suite),
         repeat(field('alternative', $.elif_clause)),
@@ -404,19 +453,31 @@ module.exports = grammar({
     elif_clause: ($) =>
       seq(
         'elif',
-        field('condition', $.expression),
+        field('condition', choice($.expression, $.case_condition)),
         ':',
         field('consequence', $._suite),
       ),
 
     else_clause: ($) => seq('else', ':', field('body', $._suite)),
 
-    // The experimental match statement is spelled `__match` in the current
-    // compiler (TokenKinds: `__match` // Experimental match statement). The
-    // plain `match` keyword is reserved but has no statement rule yet.
+    // A pattern-matching conditional, e.g. `if case .Some(x) = value:` or
+    // `while case (0, n) = pair:`. The pattern is matched against the value
+    // on the right of the `=`, binding names for the body.
+    case_condition: ($) =>
+      seq(
+        'case',
+        field('pattern', choice($.case_pattern, $.equality_pattern)),
+        '=',
+        field('value', $.expression),
+      ),
+
+    // The match statement. `__match` was the experimental spelling; the
+    // compiler still accepts it but warns that it is deprecated in favor of
+    // `match`. The `case` clauses may be indented under the `match` line or
+    // sit at the same indentation as it.
     match_statement: ($) =>
       seq(
-        '__match',
+        choice('match', '__match'),
         commaSep1(field('subject', $.expression)),
         optional(','),
         ':',
@@ -426,13 +487,16 @@ module.exports = grammar({
     _match_block: ($) =>
       choice(
         seq($._indent, repeat(field('alternative', $.case_clause)), $._dedent),
-        $._newline,
+        // Right associativity keeps a following `case` attached to this
+        // match rather than, inside an enum body, reading it as a case
+        // declaration.
+        prec.right(seq($._newline, repeat(field('alternative', $.case_clause)))),
       ),
 
     case_clause: ($) =>
       seq(
         'case',
-        commaSep1($.case_pattern),
+        commaSep1(choice($.case_pattern, $.equality_pattern)),
         optional(','),
         optional(field('guard', $.if_clause)),
         ':',
@@ -457,7 +521,7 @@ module.exports = grammar({
     while_statement: ($) =>
       seq(
         'while',
-        field('condition', $.expression),
+        field('condition', choice($.expression, $.case_condition)),
         ':',
         field('body', $._suite),
         optional(field('alternative', $.else_clause)),
@@ -825,6 +889,7 @@ module.exports = grammar({
         $.class_definition,
         $.function_definition,
         $.trait_definition,
+        $.enum_definition,
         // A decorated comptime alias, e.g.
         //   @deprecated(use=ImplicitlyDeletable)
         //   comptime X = ImplicitlyDeletable
@@ -858,7 +923,25 @@ module.exports = grammar({
         ),
       ),
 
-    dotted_name: ($) => prec(1, sep1($.identifier, '.')),
+    // A dotted name, e.g. `a.b.c` in an import or `Optional.None` in a case
+    // pattern. As with `attribute`, keywords are accepted as member names
+    // after a dot (`Optional.None`, `Token.`match``).
+    dotted_name: ($) =>
+      prec(
+        1,
+        seq(
+          $.identifier,
+          repeat(
+            seq(
+              '.',
+              choice(
+                $.identifier,
+                alias(choice(...HARD_KEYWORDS, ...SOFT_KEYWORDS), $.identifier),
+              ),
+            ),
+          ),
+        ),
+      ),
 
     // Match cases
 
@@ -867,7 +950,6 @@ module.exports = grammar({
         1,
         choice(
           alias($._as_pattern, $.as_pattern),
-          $.keyword_pattern,
           $._simple_pattern,
         ),
       ),
@@ -881,7 +963,7 @@ module.exports = grammar({
           $.union_pattern,
           alias($._list_pattern, $.list_pattern),
           alias($._tuple_pattern, $.tuple_pattern),
-          $.dict_pattern,
+          $.struct_pattern,
           $.string,
           $.concatenated_string,
           $.true,
@@ -890,9 +972,37 @@ module.exports = grammar({
           seq(optional('-'), choice($.integer, $.float)),
           $.complex_pattern,
           $.dotted_name,
+          // An inferred enum case, e.g. the `.red` in `case .red:` (the
+          // enum type is taken from the match subject).
+          $.inferred_attribute,
+          alias($._case_binding_pattern, $.binding_pattern),
           '_',
         ),
       ),
+
+    // A binding that declares how the matched value is captured, e.g.
+    // `case var x:` (a copy) or `case .Some(ref x):` (a reference). The
+    // compiler accepts, but warns about, nested spellings like `var ref x`.
+    _case_binding_pattern: ($) =>
+      seq(
+        choice('var', 'ref'),
+        choice($.identifier, alias($._case_binding_pattern, $.binding_pattern)),
+      ),
+
+    // A pattern comparing the subject against an arbitrary expression's
+    // value, e.g. `case == expected:` or `case == (expected + 1):`, and the
+    // type patterns of a `comptime match T:` (`case == Int:`). Precedence
+    // keeps a trailing `if` for the case guard rather than a conditional
+    // expression.
+    //
+    // This is deliberately not part of `_simple_pattern`: it is accepted at
+    // the top of a `case` clause or `case` condition and as a tuple or list
+    // element, but not as a class-pattern argument (`Point(== x)`). Making
+    // `==` a valid token at every pattern position lets the parse table's
+    // `function_type` states no longer merge, nearly doubling the table
+    // (28k -> 48k states); the positions above cover every spelling the
+    // compiler's own tests use.
+    equality_pattern: ($) => prec(1, seq('==', $.expression)),
 
     _as_pattern: ($) => seq($.case_pattern, 'as', $.identifier),
 
@@ -902,36 +1012,46 @@ module.exports = grammar({
       ),
 
     _list_pattern: ($) =>
-      seq('[', optional(seq(commaSep1($.case_pattern), optional(','))), ']'),
+      seq('[', optional(seq(commaSep1(choice($.case_pattern, $.equality_pattern)), optional(','))), ']'),
 
     _tuple_pattern: ($) =>
-      seq('(', optional(seq(commaSep1($.case_pattern), optional(','))), ')'),
+      seq('(', optional(seq(commaSep1(choice($.case_pattern, $.equality_pattern)), optional(','))), ')'),
 
-    dict_pattern: ($) =>
+    // An initializer-list pattern, e.g. `case {}:` or `case {1, offset=2}:`,
+    // matching a struct against the arguments of one of its constructors.
+    struct_pattern: ($) =>
       seq(
         '{',
         optional(
           seq(
-            commaSep1(choice($._key_value_pattern, $.splat_pattern)),
+            commaSep1(choice($.case_pattern, $.keyword_pattern)),
             optional(','),
           ),
         ),
         '}',
       ),
 
-    _key_value_pattern: ($) =>
-      seq(field('key', $._simple_pattern), ':', field('value', $.case_pattern)),
-
-    keyword_pattern: ($) => seq($.identifier, '=', $._simple_pattern),
+    // A field pattern inside a class or initializer-list pattern, e.g. the
+    // `x=0` and `y=var y` in `case Point(x=0, y=var y):`.
+    keyword_pattern: ($) =>
+      seq(field('name', $.identifier), '=', field('value', $.case_pattern)),
 
     splat_pattern: ($) =>
       prec(1, seq(choice('*', '**'), choice($.identifier, '_'))),
 
+    // A struct or enum-case pattern with arguments, e.g.
+    // `case Point(x=0, y=y):`, `case Optional.Some(ref x):` or the inferred
+    // `case .Some(x):`.
     class_pattern: ($) =>
       seq(
-        $.dotted_name,
+        choice($.dotted_name, $.inferred_attribute),
         '(',
-        optional(seq(commaSep1($.case_pattern), optional(','))),
+        optional(
+          seq(
+            commaSep1(choice($.case_pattern, $.keyword_pattern)),
+            optional(','),
+          ),
+        ),
         ')',
       ),
 
