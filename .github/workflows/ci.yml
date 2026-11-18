@@ -28,7 +28,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        # swift-actions/setup-swift (used by parser-test-action for the Swift
+        # bindings) rejects Ubuntu 26.04, which ubuntu-latest now resolves to.
+        os: [ubuntu-24.04, windows-latest, macos-latest]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
