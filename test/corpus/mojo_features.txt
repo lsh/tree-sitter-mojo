@@ -1711,26 +1711,6 @@ def i() -> Int:
             (integer)))))))
 
 ================================================================================
-Plain alias statement
-================================================================================
-
-alias Result = Int
-
-alias Typed: Int = 42
-
---------------------------------------------------------------------------------
-
-(module
-  (type_alias_statement
-    name: (identifier)
-    value: (identifier))
-  (type_alias_statement
-    name: (identifier)
-    type: (type
-      (identifier))
-    value: (integer)))
-
-================================================================================
 fn is an ordinary identifier
 ================================================================================
 
@@ -2116,3 +2096,177 @@ struct Foo[T: Writable](def(x: T) __param_trait__):
                 (identifier)))))
         (block
           (pass_statement))))))
+
+================================================================================
+Negative conformances and conformance messages
+================================================================================
+
+struct Array[T: AnyType](
+    Copyable where conforms_to(T, Copyable),
+    Deinitable where conforms_to(T, Deinitable) else (
+        "Use `deinit_with()` to destroy it"
+    ),
+):
+    pass
+
+struct FileDescriptor(
+    not Deinitable else "close it with `fd^.close()`",
+    Movable,
+):
+    pass
+
+struct Plain(not Copyable, Movable):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (class_definition
+    (identifier)
+    (type_parameter
+      (constrained_parameter
+        (identifier)
+        (type
+          (identifier))))
+    (argument_list
+      (identifier)
+      (where_clause
+        (call
+          (identifier)
+          (argument_list
+            (identifier)
+            (identifier))))
+      (identifier)
+      (where_clause
+        (call
+          (identifier)
+          (argument_list
+            (identifier)
+            (identifier)))
+        (parenthesized_expression
+          (string
+            (string_start)
+            (string_content)
+            (string_end)))))
+    (block
+      (pass_statement)))
+  (class_definition
+    (identifier)
+    (argument_list
+      (negative_conformance
+        (identifier)
+        (string
+          (string_start)
+          (string_content)
+          (string_end)))
+      (identifier))
+    (block
+      (pass_statement)))
+  (class_definition
+    (identifier)
+    (argument_list
+      (negative_conformance
+        (identifier))
+      (identifier))
+    (block
+      (pass_statement))))
+
+================================================================================
+Removed alias keyword as a name
+================================================================================
+
+var alias: Int = 1
+alias = 2
+alias.reset()
+def alias(var self: Self) -> Self:
+    return self
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (type
+      (identifier))
+    (integer))
+  (assignment
+    (identifier)
+    (integer))
+  (call
+    (attribute
+      (identifier)
+      (identifier))
+    (argument_list))
+  (function_definition
+    (identifier)
+    (parameters
+      (self_parameter
+        (argument_convention)
+        (type
+          (self_type))))
+    (type
+      (self_type))
+    (block
+      (return_statement
+        (identifier)))))
+
+================================================================================
+Generator types as values
+================================================================================
+
+comptime G = __generator_type[From: From] To
+comptime H = type_of(__generator_type[From: From] To)
+
+def f[function: __generator_type[index: Int] def(*args: *Args) thin -> None]():
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    (identifier)
+    (generator_type
+      (type_parameter
+        (constrained_parameter
+          (identifier)
+          (type
+            (identifier))))
+      (type
+        (identifier))))
+  (assignment
+    (identifier)
+    (call
+      (identifier)
+      (argument_list
+        (generator_type
+          (type_parameter
+            (constrained_parameter
+              (identifier)
+              (type
+                (identifier))))
+          (type
+            (identifier))))))
+  (function_definition
+    (identifier)
+    (type_parameter
+      (constrained_parameter
+        (identifier)
+        (type
+          (generator_type
+            (type_parameter
+              (constrained_parameter
+                (identifier)
+                (type
+                  (identifier))))
+            (type
+              (function_type
+                (variadic_type_parameter
+                  (identifier)
+                  (type
+                    (list_splat
+                      (identifier))))
+                (type
+                  (none))))))))
+    (parameters)
+    (block
+      (pass_statement))))

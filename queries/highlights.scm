@@ -36,8 +36,6 @@
   name: (identifier) @type)
 (enum_definition
   name: (identifier) @type)
-(type_alias_statement
-  name: (identifier) @type)
 (parameterized_alias_statement
   name: (identifier) @type)
 
@@ -207,6 +205,8 @@
   "assert"
   "async"
   "await"
+  "__async"
+  "__await"
   "break"
   "class"
   "continue"
@@ -233,10 +233,10 @@
   "__match"
   "case"
   "where"
-  "alias"
   "comptime"
-  "__comptime_assert"
   "__enum"
+  "__guard"
+  "__union"
   "__extension"
   "__generator_type"
   "__mlir_region"

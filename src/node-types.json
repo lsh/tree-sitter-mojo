@@ -200,6 +200,10 @@
         "named": true
       },
       {
+        "type": "generator_type",
+        "named": true
+      },
+      {
         "type": "identifier",
         "named": true
       },
@@ -359,6 +363,10 @@
         },
         {
           "type": "list_splat",
+          "named": true
+        },
+        {
+          "type": "negative_conformance",
           "named": true
         },
         {
@@ -858,10 +866,6 @@
           "named": true
         },
         {
-          "type": "comptime_assert_statement",
-          "named": true
-        },
-        {
           "type": "comptime_statement",
           "named": true
         },
@@ -895,6 +899,10 @@
         },
         {
           "type": "function_definition",
+          "named": true
+        },
+        {
+          "type": "guard_statement",
           "named": true
         },
         {
@@ -939,10 +947,6 @@
         },
         {
           "type": "try_statement",
-          "named": true
-        },
-        {
-          "type": "type_alias_statement",
           "named": true
         },
         {
@@ -1096,6 +1100,10 @@
         {
           "type": "equality_pattern",
           "named": true
+        },
+        {
+          "type": "union_pattern",
+          "named": true
         }
       ]
     }
@@ -1114,6 +1122,10 @@
           },
           {
             "type": "equality_pattern",
+            "named": true
+          },
+          {
+            "type": "union_pattern",
             "named": true
           }
         ]
@@ -1382,21 +1394,6 @@
     }
   },
   {
-    "type": "comptime_assert_statement",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "comptime_expression",
     "named": true,
     "fields": {},
@@ -1421,6 +1418,10 @@
       "types": [
         {
           "type": "for_statement",
+          "named": true
+        },
+        {
+          "type": "guard_statement",
           "named": true
         },
         {
@@ -1574,10 +1575,6 @@
           },
           {
             "type": "trait_definition",
-            "named": true
-          },
-          {
-            "type": "type_alias_statement",
             "named": true
           }
         ]
@@ -1744,6 +1741,10 @@
           "named": true
         },
         {
+          "type": "self_type",
+          "named": true
+        },
+        {
           "type": "string",
           "named": true
         }
@@ -1832,7 +1833,7 @@
     "fields": {
       "type": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "type",
@@ -1907,7 +1908,7 @@
       "required": true,
       "types": [
         {
-          "type": "expression",
+          "type": "primary_expression",
           "named": true
         }
       ]
@@ -2388,6 +2389,36 @@
     }
   },
   {
+    "type": "guard_statement",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "case_condition",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "if_clause",
     "named": true,
     "fields": {},
@@ -2818,6 +2849,10 @@
         {
           "type": "pattern",
           "named": true
+        },
+        {
+          "type": "union_pattern",
+          "named": true
         }
       ]
     }
@@ -2944,10 +2979,6 @@
           "named": true
         },
         {
-          "type": "comptime_assert_statement",
-          "named": true
-        },
-        {
           "type": "comptime_statement",
           "named": true
         },
@@ -2977,6 +3008,10 @@
         },
         {
           "type": "function_definition",
+          "named": true
+        },
+        {
+          "type": "guard_statement",
           "named": true
         },
         {
@@ -3021,10 +3056,6 @@
         },
         {
           "type": "try_statement",
-          "named": true
-        },
-        {
-          "type": "type_alias_statement",
           "named": true
         },
         {
@@ -3081,6 +3112,32 @@
         ]
       },
       "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "negative_conformance",
+    "named": true,
+    "fields": {
+      "message": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "trait": {
         "multiple": false,
         "required": true,
         "types": [
@@ -3913,6 +3970,10 @@
         {
           "type": "pattern",
           "named": true
+        },
+        {
+          "type": "union_pattern",
+          "named": true
         }
       ]
     }
@@ -3926,11 +3987,59 @@
       "required": true,
       "types": [
         {
+          "type": "attribute",
+          "named": true
+        },
+        {
+          "type": "await",
+          "named": true
+        },
+        {
+          "type": "binary_operator",
+          "named": true
+        },
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "comptime_expression",
+          "named": true
+        },
+        {
+          "type": "concatenated_string",
+          "named": true
+        },
+        {
+          "type": "dictionary",
+          "named": true
+        },
+        {
+          "type": "dictionary_comprehension",
+          "named": true
+        },
+        {
+          "type": "ellipsis",
+          "named": true
+        },
+        {
           "type": "expression",
           "named": true
         },
         {
+          "type": "false",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
           "type": "function_type",
+          "named": true
+        },
+        {
+          "type": "generator_expression",
           "named": true
         },
         {
@@ -3942,7 +4051,31 @@
           "named": true
         },
         {
+          "type": "inferred_attribute",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
           "type": "intersection_type",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "list_comprehension",
+          "named": true
+        },
+        {
+          "type": "list_splat",
+          "named": true
+        },
+        {
+          "type": "none",
           "named": true
         },
         {
@@ -3954,78 +4087,42 @@
           "named": true
         },
         {
+          "type": "set",
+          "named": true
+        },
+        {
+          "type": "set_comprehension",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "struct_literal",
+          "named": true
+        },
+        {
           "type": "subscript",
+          "named": true
+        },
+        {
+          "type": "transfer_expression",
+          "named": true
+        },
+        {
+          "type": "true",
+          "named": true
+        },
+        {
+          "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "type_alias_statement",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "assignment",
-            "named": true
-          },
-          {
-            "type": "augmented_assignment",
-            "named": true
-          },
-          {
-            "type": "expression",
-            "named": true
-          },
-          {
-            "type": "expression_list",
-            "named": true
-          },
-          {
-            "type": "function_type",
-            "named": true
-          },
-          {
-            "type": "intersection_type",
-            "named": true
-          },
-          {
-            "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "pattern_list",
-            "named": true
-          },
-          {
-            "type": "yield",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -4235,6 +4332,10 @@
           "named": true
         },
         {
+          "type": "equality_pattern",
+          "named": true
+        },
+        {
           "type": "false",
           "named": true
         },
@@ -4314,7 +4415,18 @@
   {
     "type": "where_clause",
     "named": true,
-    "fields": {},
+    "fields": {
+      "message": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": false,
       "required": true,
@@ -4671,7 +4783,11 @@
     "named": false
   },
   {
-    "type": "__comptime_assert",
+    "type": "__async",
+    "named": false
+  },
+  {
+    "type": "__await",
     "named": false
   },
   {
@@ -4687,6 +4803,10 @@
     "named": false
   },
   {
+    "type": "__guard",
+    "named": false
+  },
+  {
     "type": "__match",
     "named": false
   },
@@ -4699,11 +4819,11 @@
     "named": false
   },
   {
-    "type": "abi",
+    "type": "__union",
     "named": false
   },
   {
-    "type": "alias",
+    "type": "abi",
     "named": false
   },
   {

@@ -255,3 +255,50 @@ __enum Caseless:
           (self_parameter))
         (block
           (pass_statement))))))
+
+================================================================================
+Union definition
+================================================================================
+
+__union Tok(Copyable, Writable):
+    """A lexer token."""
+    case eof()
+    """The end of the input."""
+    case word(String)
+    case none
+
+__union Unit: case only()
+
+--------------------------------------------------------------------------------
+
+(module
+  (enum_definition
+    (identifier)
+    (argument_list
+      (identifier)
+      (identifier))
+    (block
+      (string
+        (string_start)
+        (string_content)
+        (string_end))
+      (enum_case
+        (identifier)
+        (enum_case_payload))
+      (string
+        (string_start)
+        (string_content)
+        (string_end))
+      (enum_case
+        (identifier)
+        (enum_case_payload
+          (type
+            (identifier))))
+      (enum_case
+        (identifier))))
+  (enum_definition
+    (identifier)
+    (block
+      (enum_case
+        (identifier)
+        (enum_case_payload)))))

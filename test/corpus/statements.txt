@@ -2747,203 +2747,6 @@ struct Vector[T: Numeric] where T.is_floating_point:
       (pass_statement))))
 
 ================================================================================
-Comptime assert - simple condition
-================================================================================
-
-__comptime_assert x > 5
-
---------------------------------------------------------------------------------
-
-(module
-  (comptime_assert_statement
-    (comparison_operator
-      (identifier)
-      (integer))))
-
-================================================================================
-Comptime assert - boolean literal
-================================================================================
-
-__comptime_assert True
-__comptime_assert False
-
---------------------------------------------------------------------------------
-
-(module
-  (comptime_assert_statement
-    (true))
-  (comptime_assert_statement
-    (false)))
-
-================================================================================
-Comptime assert - equality comparison
-================================================================================
-
-__comptime_assert value == 10
-
---------------------------------------------------------------------------------
-
-(module
-  (comptime_assert_statement
-    (comparison_operator
-      (identifier)
-      (integer))))
-
-================================================================================
-Comptime assert - complex expression
-================================================================================
-
-__comptime_assert x + y < 100
-
---------------------------------------------------------------------------------
-
-(module
-  (comptime_assert_statement
-    (comparison_operator
-      (binary_operator
-        (identifier)
-        (identifier))
-      (integer))))
-
-================================================================================
-Comptime assert - attribute access
-================================================================================
-
-__comptime_assert obj.is_valid
-
---------------------------------------------------------------------------------
-
-(module
-  (comptime_assert_statement
-    (attribute
-      object: (identifier)
-      attribute: (identifier))))
-
-================================================================================
-Comptime assert - in function
-================================================================================
-
-def foo(x: Int):
-    __comptime_assert x > 0
-    return x
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters
-      (typed_parameter
-        (identifier)
-        type: (type
-          (identifier))))
-    body: (block
-      (comptime_assert_statement
-        (comparison_operator
-          (identifier)
-          (integer)))
-      (return_statement
-        (identifier)))))
-
-================================================================================
-Comptime assert - with type parameters
-================================================================================
-
-def process[N: Int]() where N > 0:
-    __comptime_assert N < 100
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    type_parameters: (type_parameter
-      (constrained_parameter
-        name: (identifier)
-        type: (type
-          (identifier))))
-    parameters: (parameters)
-    (where_clause
-      (comparison_operator
-        (identifier)
-        (integer)))
-    body: (block
-      (comptime_assert_statement
-        (comparison_operator
-          (identifier)
-          (integer)))
-      (pass_statement))))
-
-================================================================================
-Comptime assert - logical operators
-================================================================================
-
-__comptime_assert x > 0 and x < 100
-__comptime_assert not is_negative
-
---------------------------------------------------------------------------------
-
-(module
-  (comptime_assert_statement
-    (boolean_operator
-      (comparison_operator
-        (identifier)
-        (integer))
-      (comparison_operator
-        (identifier)
-        (integer))))
-  (comptime_assert_statement
-    (not_operator
-      (identifier))))
-
-================================================================================
-Comptime assert - multiple in block
-================================================================================
-
-def validate():
-    __comptime_assert x > 0
-    __comptime_assert y > 0
-    __comptime_assert x + y > 0
-
---------------------------------------------------------------------------------
-
-(module
-  (function_definition
-    name: (identifier)
-    parameters: (parameters)
-    body: (block
-      (comptime_assert_statement
-        (comparison_operator
-          (identifier)
-          (integer)))
-      (comptime_assert_statement
-        (comparison_operator
-          (identifier)
-          (integer)))
-      (comptime_assert_statement
-        (comparison_operator
-          (binary_operator
-            left: (identifier)
-            right: (identifier))
-          (integer))))))
-
-================================================================================
-Comptime assert - with parentheses
-================================================================================
-
-__comptime_assert (x > 0)
-
---------------------------------------------------------------------------------
-
-(module
-  (comptime_assert_statement
-    (parenthesized_expression
-      (comparison_operator
-        (identifier)
-        (integer)))))
-
-================================================================================
 Bindings inside destructuring patterns
 ================================================================================
 
@@ -3011,3 +2814,72 @@ var clc_resp = SMemArray[UInt128, stages](ref smem.clc_response)
           (attribute
             (identifier)
             (identifier)))))))
+
+================================================================================
+Where clauses with messages
+================================================================================
+
+def _powi(
+    base: Scalar, exp: Scalar
+) -> type_of(base) where (
+    exp.dtype.is_integral()
+) else "exponent must be integral":
+    pass
+
+def f[T: AnyType]() where conforms_to(T, Copyable) else "T must be copyable":
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (typed_parameter
+        (identifier)
+        (type
+          (identifier)))
+      (typed_parameter
+        (identifier)
+        (type
+          (identifier))))
+    (type
+      (call
+        (identifier)
+        (argument_list
+          (identifier))))
+    (where_clause
+      (parenthesized_expression
+        (call
+          (attribute
+            (attribute
+              (identifier)
+              (identifier))
+            (identifier))
+          (argument_list)))
+      (string
+        (string_start)
+        (string_content)
+        (string_end)))
+    (block
+      (pass_statement)))
+  (function_definition
+    (identifier)
+    (type_parameter
+      (constrained_parameter
+        (identifier)
+        (type
+          (identifier))))
+    (parameters)
+    (where_clause
+      (call
+        (identifier)
+        (argument_list
+          (identifier)
+          (identifier)))
+      (string
+        (string_start)
+        (string_content)
+        (string_end)))
+    (block
+      (pass_statement))))

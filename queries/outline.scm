@@ -4,7 +4,7 @@
     ) @item
 
 (function_definition
-    "async"? @context
+    ["async" "__async"]? @context
     "def" @context
     name: (_) @name) @item
 
@@ -17,7 +17,7 @@
     name: (_) @name) @item
 
 (enum_definition
-    "__enum" @context
+    ["__enum" "__union"] @context
     name: (identifier) @name) @item
 
 (enum_case

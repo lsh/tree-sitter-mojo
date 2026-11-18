@@ -55,11 +55,11 @@ const HARD_KEYWORDS = [
   'as', 'def', 'from', 'nonlocal', 'while',
   'assert', 'del', 'global', 'not', 'with',
   'async', 'elif', 'if', 'or', 'yield',
-  // Mojo-specific keywords.
-  'Self', 'alias', 'case', 'comptime', 'match', 'ref', 'struct',
-  'trait', 'var',
-  '__comptime_assert', '__enum', '__extension', '__generator_type',
-  '__match', '__mlir_region',
+  // Mojo-specific keywords. (`alias` and `__comptime_assert` were removed
+  // from the language and now read as ordinary identifiers.)
+  'Self', 'case', 'comptime', 'match', 'ref', 'struct', 'trait', 'var',
+  '__async', '__await', '__enum', '__extension', '__generator_type',
+  '__guard', '__match', '__mlir_region', '__union',
 ];
 
 // Contextual (soft) keywords: the argument-convention words (`imm`, `mut`,
@@ -239,14 +239,12 @@ module.exports = grammar({
         $.import_statement,
         $.import_from_statement,
         $.assert_statement,
-        $.comptime_assert_statement,
         $.expression_statement,
         $.return_statement,
         $.raise_statement,
         $.pass_statement,
         $.break_statement,
         $.continue_statement,
-        $.type_alias_statement,
         $.parameterized_alias_statement,
       ),
 
@@ -296,8 +294,6 @@ module.exports = grammar({
 
     assert_statement: ($) =>
       seq(optional('comptime'), 'assert', commaSep1($.expression)),
-
-    comptime_assert_statement: ($) => seq('__comptime_assert', $.expression),
 
     expression_statement: ($) =>
       choice(
@@ -349,22 +345,25 @@ module.exports = grammar({
       $.trait_definition,
       $.decorated_definition,
       $.match_statement,
+      $.guard_statement,
       $.comptime_statement,
       $.mlir_region,
       $.extension_definition,
       $.enum_definition,
     ),
 
-    // An enum declaration, e.g.
+    // An enum or union declaration, e.g.
     //   __enum Color:
     //       case red
     //       case rgb(Int, Int, Int)
-    // The header takes what a struct's does (parameters, conformances, a
-    // `where` clause); the body holds `case` declarations alongside ordinary
-    // struct members (methods, comptime aliases, doc strings).
+    // `__union` declares the same shape and shares this node; the keyword
+    // child tells them apart. The header takes what a struct's does
+    // (parameters, conformances, a `where` clause); the body holds `case`
+    // declarations alongside ordinary struct members (methods, comptime
+    // aliases, doc strings).
     enum_definition: ($) =>
       seq(
-        '__enum',
+        choice('__enum', '__union'),
         field('name', $.identifier),
         field('type_parameters', optional($.type_parameter)),
         field(
@@ -391,8 +390,9 @@ module.exports = grammar({
     _enum_case_statements: ($) =>
       seq(sep1($.enum_case, SEMICOLON), optional(SEMICOLON), $._newline),
 
-    // An enum case declaration: `case name` or `case name(T, U)`. The payload
-    // types are positional; the compiler rejects labeled payloads.
+    // An enum case declaration: `case name`, `case name()` or
+    // `case name(T, U)`. The payload types are positional; the compiler
+    // rejects labeled payloads.
     enum_case: ($) =>
       seq(
         'case',
@@ -401,7 +401,11 @@ module.exports = grammar({
       ),
 
     enum_case_payload: ($) =>
-      seq('(', commaSep1(field('type', $.type)), optional(','), ')'),
+      seq(
+        '(',
+        optional(seq(commaSep1(field('type', $.type)), optional(','))),
+        ')',
+      ),
 
     // An extension declaration, e.g. `__extension List:` or
     // `__extension List[T]:`.
@@ -437,7 +441,12 @@ module.exports = grammar({
     // assert_statement above.)
     comptime_statement: ($) => seq(
       'comptime',
-      choice($.if_statement, $.for_statement, $.match_statement),
+      choice(
+        $.if_statement,
+        $.for_statement,
+        $.match_statement,
+        $.guard_statement,
+      ),
     ),
 
     if_statement: ($) =>
@@ -466,9 +475,22 @@ module.exports = grammar({
     case_condition: ($) =>
       seq(
         'case',
-        field('pattern', choice($.case_pattern, $.equality_pattern)),
+        field('pattern', $._top_pattern),
         '=',
         field('value', $.expression),
+      ),
+
+    // An early-exit guard, e.g. `__guard case .Some(x) = opt else: return`.
+    // The `else` suite runs when the condition fails and must leave the
+    // enclosing scope; names bound by a `case` condition stay visible after
+    // the guard.
+    guard_statement: ($) =>
+      seq(
+        '__guard',
+        field('condition', choice($.expression, $.case_condition)),
+        'else',
+        ':',
+        field('body', $._suite),
       ),
 
     // The match statement. `__match` was the experimental spelling; the
@@ -496,7 +518,7 @@ module.exports = grammar({
     case_clause: ($) =>
       seq(
         'case',
-        commaSep1(choice($.case_pattern, $.equality_pattern)),
+        commaSep1($._top_pattern),
         optional(','),
         optional(field('guard', $.if_clause)),
         ':',
@@ -569,7 +591,7 @@ module.exports = grammar({
     )),
 
     function_definition: ($) => seq(
-      optional('async'),
+      optional(choice('__async', 'async')),
       'def',
       // A backtick-quoted raw identifier (lexed as a string) may name a
       // definition, e.g. ``def `import`():``.
@@ -684,14 +706,6 @@ module.exports = grammar({
       $.expression,
     ),
 
-    type_alias_statement: ($) => prec.dynamic(1, seq(
-      'alias',
-      field('name', $.identifier),
-      optional(seq(':', field('type', $.type))),
-      '=',
-      field('value', $._right_hand_side),
-    )),
-
     // A parameterized compile-time constant, e.g.
     //   comptime Ptr[mut: Bool, //, origin: Origin[mut=mut] = Default] = Value
     parameterized_alias_statement: ($) => prec.dynamic(1, seq(
@@ -725,8 +739,9 @@ module.exports = grammar({
     ),
 
     // A struct conformance list, like an argument list except each entry may
-    // carry trailing `where` constraints, e.g.
+    // carry trailing `where` constraints or be a negative conformance, e.g.
     //   struct Tuple[*Ts: Movable](Copyable where AllCopyable[*Ts], Defaultable):
+    //   struct Handle(not Deinitable else "call `close()`", Movable):
     superclass_list: ($) =>
       seq(
         '(',
@@ -742,6 +757,7 @@ module.exports = grammar({
                 // A callable-type conformance, e.g. the last entry in
                 //   ](ImplicitlyCopyable, RegisterPassable, def() -> None):
                 $.function_type,
+                $.negative_conformance,
               ),
               repeat($.where_clause),
             ),
@@ -749,6 +765,20 @@ module.exports = grammar({
         ),
         optional(','),
         ')',
+      ),
+
+    // A conformance the struct explicitly opts out of, e.g. `not Deinitable`,
+    // with an optional message for the diagnostic when code relies on it.
+    // Precedence over `not_operator` claims every `not` entry in a
+    // conformance list.
+    negative_conformance: ($) =>
+      prec(
+        PREC.not + 1,
+        seq(
+          'not',
+          field('trait', $.expression),
+          optional(seq('else', field('message', $.expression))),
+        ),
       ),
 
     // The `[...]` parameter clause of a function, struct, or alias, also reused
@@ -895,7 +925,6 @@ module.exports = grammar({
         //   comptime X = ImplicitlyDeletable
         seq($.assignment, $._newline),
         seq($.parameterized_alias_statement, $._newline),
-        seq($.type_alias_statement, $._newline),
         // A decorated import, e.g.
         //   @__doc_inline
         //   from .src import InlinedStruct
@@ -924,13 +953,14 @@ module.exports = grammar({
       ),
 
     // A dotted name, e.g. `a.b.c` in an import or `Optional.None` in a case
-    // pattern. As with `attribute`, keywords are accepted as member names
-    // after a dot (`Optional.None`, `Token.`match``).
+    // pattern, where it may also start with `Self` (`case Self.HOST:`). As
+    // with `attribute`, keywords are accepted as member names after a dot
+    // (`Optional.None`, `Token.`match``).
     dotted_name: ($) =>
       prec(
         1,
         seq(
-          $.identifier,
+          choice($.identifier, $.self_type),
           repeat(
             seq(
               '.',
@@ -993,7 +1023,10 @@ module.exports = grammar({
     // value, e.g. `case == expected:` or `case == (expected + 1):`, and the
     // type patterns of a `comptime match T:` (`case == Int:`). Precedence
     // keeps a trailing `if` for the case guard rather than a conditional
-    // expression.
+    // expression. As in the compiler, `==` is a prefix operator binding as
+    // tightly as unary minus: `case == a | == b:` is an or-pattern of two
+    // equality patterns, and a compound operand needs parentheses
+    // (`case == (expected + 1):`).
     //
     // This is deliberately not part of `_simple_pattern`: it is accepted at
     // the top of a `case` clause or `case` condition and as a tuple or list
@@ -1002,20 +1035,51 @@ module.exports = grammar({
     // `function_type` states no longer merge, nearly doubling the table
     // (28k -> 48k states); the positions above cover every spelling the
     // compiler's own tests use.
-    equality_pattern: ($) => prec(1, seq('==', $.expression)),
+    equality_pattern: ($) => prec(PREC.unary, seq('==', $.primary_expression)),
+
+    // The pattern positions that admit an equality pattern: the top of a
+    // `case` clause or condition, and tuple and list elements.
+    _top_pattern: ($) =>
+      choice(
+        $.case_pattern,
+        $.equality_pattern,
+        alias($._equality_union_pattern, $.union_pattern),
+      ),
+
+    // An or-pattern led by an equality pattern, e.g. `case == a | == b:`.
+    // One led by any other pattern is a `union_pattern`, which admits an
+    // equality pattern after any `|`.
+    _equality_union_pattern: ($) =>
+      prec.right(
+        seq(
+          $.equality_pattern,
+          repeat1(
+            prec.left(
+              seq('|', choice($._simple_pattern, $.equality_pattern)),
+            ),
+          ),
+        ),
+      ),
 
     _as_pattern: ($) => seq($.case_pattern, 'as', $.identifier),
 
     union_pattern: ($) =>
       prec.right(
-        seq($._simple_pattern, repeat1(prec.left(seq('|', $._simple_pattern)))),
+        seq(
+          $._simple_pattern,
+          repeat1(
+            prec.left(
+              seq('|', choice($._simple_pattern, $.equality_pattern)),
+            ),
+          ),
+        ),
       ),
 
     _list_pattern: ($) =>
-      seq('[', optional(seq(commaSep1(choice($.case_pattern, $.equality_pattern)), optional(','))), ']'),
+      seq('[', optional(seq(commaSep1($._top_pattern), optional(','))), ']'),
 
     _tuple_pattern: ($) =>
-      seq('(', optional(seq(commaSep1(choice($.case_pattern, $.equality_pattern)), optional(','))), ')'),
+      seq('(', optional(seq(commaSep1($._top_pattern), optional(','))), ')'),
 
     // An initializer-list pattern, e.g. `case {}:` or `case {1, offset=2}:`,
     // matching a struct against the arguments of one of its constructors.
@@ -1140,7 +1204,15 @@ module.exports = grammar({
         $._ref_convention,
       ),
 
-    where_clause: ($) => seq('where', $.expression),
+    // A constraint, e.g. `where conforms_to(T, Copyable)`. It may carry a
+    // diagnostic for when it fails: `where cond else "message"`, with the
+    // message optionally parenthesized to wrap across lines.
+    where_clause: ($) =>
+      seq(
+        'where',
+        $.expression,
+        optional(seq('else', field('message', $.expression))),
+      ),
 
     self_parameter: ($) =>
       prec.right(seq(
@@ -1276,6 +1348,7 @@ module.exports = grammar({
         $.ellipsis,
         $.list_splat,
         $.comptime_expression,
+        $.generator_type,
       ),
 
     // `comptime` applied to a parenthesized expression in value position, e.g.
@@ -1599,7 +1672,7 @@ module.exports = grammar({
       $.expression,
       $.intersection_type,
       $.function_type,
-      $.generator_type,
+      alias($._callable_generator_type, $.generator_type),
     ),
 
     // A callable type literal, e.g. `def(Int) raises -> Bool` or
@@ -1609,7 +1682,7 @@ module.exports = grammar({
     // `def f() -> def() -> None:`) rather than being read as the start of a
     // constrained_type operand.
     function_type: ($) => prec.right(1, seq(
-      optional('async'),
+      optional(choice('__async', 'async')),
       'def',
       // A callable type may carry a compile-time parameter clause before its
       // value parameters, e.g. `def[width: Int, alignment: Int = 1](Coord)`.
@@ -1659,13 +1732,30 @@ module.exports = grammar({
       repeat($.where_clause),
     )),
 
-    // A generator type literal, e.g. `__generator_type[Int]` — the type of a
-    // `yield`-producing function, parameterized by its element types.
+    // A generator type literal, e.g. `__generator_type[Int] String` — the type
+    // of a `yield`-producing function, parameterized by its element types. It
+    // is a primary expression, as in the compiler, so it may appear as a value
+    // (`comptime G = __generator_type[From: From] To`) or an argument.
     generator_type: ($) => prec.right(1, seq(
       '__generator_type',
       field('type_parameters', optional($.type_parameter)),
-      field('body', $.type),
+      field('body', alias($.primary_expression, $.type)),
     )),
+
+    // A generator type with a callable body, e.g.
+    //   function: __generator_type[index: Int] def(*args: *Args) thin -> None
+    // Only a type position admits it: a callable type's trailing return type
+    // and `where` clauses would otherwise compete with an enclosing
+    // expression's `as` or `else`.
+    _callable_generator_type: ($) => prec.right(1, seq(
+      '__generator_type',
+      field('type_parameters', optional($.type_parameter)),
+      field('body', alias($._callable_generator_body, $.type)),
+    )),
+
+    // A hidden wrapper, so the alias above wraps the `function_type` in a
+    // `type` node rather than renaming it.
+    _callable_generator_body: ($) => $.function_type,
 
     variadic_type_parameter: ($) => prec.dynamic(2, seq(
       choice('*', '**'),
@@ -1921,7 +2011,10 @@ module.exports = grammar({
     false: (_) => 'False',
     none: (_) => 'None',
 
-    await: ($) => prec(PREC.unary, seq('await', $.primary_expression)),
+    // `__await` is the current spelling; the compiler still accepts `await`
+    // but warns.
+    await: ($) =>
+      prec(PREC.unary, seq(choice('__await', 'await'), $.primary_expression)),
 
     comment: (_) => token(seq('#', /.*/)),
 
