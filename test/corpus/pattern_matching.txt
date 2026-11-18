@@ -1779,10 +1779,10 @@ match value:
         (block
           (pass_statement)))
       (case_clause
-        (equality_pattern
-          (binary_operator
-            (identifier)
-            (integer)))
+        (union_pattern
+          (equality_pattern
+            (identifier))
+          (integer))
         (block
           (pass_statement))))))
 
@@ -2045,3 +2045,165 @@ def f[T: AnyType, pair: Tuple[Int, Int]]():
           (else_clause
             (block
               (pass_statement))))))))
+
+================================================================================
+Guard statements
+================================================================================
+
+def f(opt: Optional[Int]) -> Int:
+    __guard case .Some(var value) = opt else:
+        return 0
+    __guard value > 1 else: return 1
+    comptime __guard case == Int = T else:
+        return 2
+    comptime __guard not cond else:
+        return 3
+    return value
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (typed_parameter
+        (identifier)
+        (type
+          (subscript
+            (identifier)
+            (identifier)))))
+    (type
+      (identifier))
+    (block
+      (guard_statement
+        (case_condition
+          (case_pattern
+            (class_pattern
+              (inferred_attribute
+                (identifier))
+              (case_pattern
+                (binding_pattern
+                  (identifier)))))
+          (identifier))
+        (block
+          (return_statement
+            (integer))))
+      (guard_statement
+        (comparison_operator
+          (identifier)
+          (integer))
+        (block
+          (return_statement
+            (integer))))
+      (comptime_statement
+        (guard_statement
+          (case_condition
+            (equality_pattern
+              (identifier))
+            (identifier))
+          (block
+            (return_statement
+              (integer)))))
+      (comptime_statement
+        (guard_statement
+          (not_operator
+            (identifier))
+          (block
+            (return_statement
+              (integer)))))
+      (return_statement
+        (identifier)))))
+
+================================================================================
+Equality or-patterns
+================================================================================
+
+match errno:
+    case == ErrNo.EPERM | == ErrNo.EACCES:
+        pass
+    case 0 | == other:
+        pass
+    case (== a | == b, _):
+        pass
+    case == -1:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (match_statement
+    (identifier)
+    (block
+      (case_clause
+        (union_pattern
+          (equality_pattern
+            (attribute
+              (identifier)
+              (identifier)))
+          (equality_pattern
+            (attribute
+              (identifier)
+              (identifier))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (union_pattern
+            (integer)
+            (equality_pattern
+              (identifier))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (tuple_pattern
+            (union_pattern
+              (equality_pattern
+                (identifier))
+              (equality_pattern
+                (identifier)))
+            (case_pattern)))
+        (block
+          (pass_statement)))
+      (case_clause
+        (equality_pattern
+          (unary_operator
+            (integer)))
+        (block
+          (pass_statement))))))
+
+================================================================================
+Self value patterns
+================================================================================
+
+match self:
+    case Self.FLOAT8_E4M3 | Self.FLOAT8_E5M2:
+        pass
+    case Self.BARRIER.value:
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (match_statement
+    (identifier)
+    (block
+      (case_clause
+        (case_pattern
+          (union_pattern
+            (dotted_name
+              (self_type)
+              (identifier))
+            (dotted_name
+              (self_type)
+              (identifier))))
+        (block
+          (pass_statement)))
+      (case_clause
+        (case_pattern
+          (dotted_name
+            (self_type)
+            (identifier)
+            (identifier)))
+        (block
+          (pass_statement))))))

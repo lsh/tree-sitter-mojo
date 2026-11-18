@@ -108,3 +108,21 @@ __enum Color:
     case red
     """Red."""
     # <- string.doc
+
+__union Tok:
+# <- keyword
+#       ^ type
+    case eof()
+    # <- keyword
+    #    ^ constructor
+    case word(String)
+    #         ^ type
+
+def first(maybe: Optional[Int]) -> Int:
+    __guard case .Some(var value) = maybe else:
+    # <- keyword
+    #       ^ keyword
+    #             ^ constructor
+    #                                     ^ keyword
+        return 0
+    return value

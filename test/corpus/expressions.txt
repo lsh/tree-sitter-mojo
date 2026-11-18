@@ -1398,3 +1398,35 @@ print((a, b) := (1, 2), clobber(a))
         (identifier)
         (argument_list
           (identifier))))))
+
+================================================================================
+Prefixed async and await
+================================================================================
+
+__async def lane() {var} -> None:
+    var x = __await f()
+
+comptime F = __async def() -> None
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (capture_list
+      (default_capture))
+    (type
+      (none))
+    (block
+      (assignment
+        (identifier)
+        (await
+          (call
+            (identifier)
+            (argument_list))))))
+  (assignment
+    (identifier)
+    (function_type
+      (type
+        (none)))))

@@ -28,3 +28,9 @@ a and b or c
 # ^ operator
 #     ^ variable
 #       ^ operator
+
+__async def lane() -> None:
+# <- keyword
+#       ^ keyword
+    __await f()
+    # <- keyword
